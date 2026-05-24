@@ -1,0 +1,16 @@
+// Tokens semánticos por tema. Placeholder a desarrollar en la fase de theming.
+
+:root,
+[data-theme='default'][data-mode='light'] {
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f5;
+  --color-text: #111111;
+  --color-primary: #2563eb;
+}
+
+[data-theme='default'][data-mode='dark'] {
+  --color-bg: #0f0f10;
+  --color-surface: #1a1a1d;
+  --color-text: #f5f5f5;
+  --color-primary: #60a5fa;
+}
