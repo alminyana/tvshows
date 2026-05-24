@@ -1,1 +1,1 @@
-export {};
+export { ShowcasePage } from './ShowcasePage/ShowcasePage';
