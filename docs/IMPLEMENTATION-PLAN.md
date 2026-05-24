@@ -57,7 +57,7 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
 
 ---
 
-## H1 — Sistema visual, UI kit y showcase · Complejidad: L
+## H1 — Sistema visual, UI kit y showcase · Complejidad: L ✅
 
 - **Objetivo:** Lock visual completo antes de tocar lógica de negocio.
 - **Entregable:** ruta `/showcase` (solo en dev) con todos los componentes UI, los 8 combos de tema cambiables en vivo y mockups estáticos de pantallas clave.
@@ -105,7 +105,28 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
   - Test unitario por cada UI primitive (render + interacción mínima).
   - Test de `ThemeContext`: cambio de tema persiste en localStorage, primer render respeta `prefers-color-scheme`.
 - **Hecho cuando:** puedes recorrer `/showcase`, cambiar los 8 combos sin recarga, y validar visualmente cards, listado, formulario, KPI y gráfico.
+- **Estado:** ✅ Completado.
 - **Dependencias:** H0.
+
+### Notas de implementación
+
+**ThemeContext separado en dos archivos**
+`react-refresh` advierte cuando un archivo exporta a la vez un componente y un valor no-componente. Para eliminar el warning, el contexto (`ThemeContext`) vive en `context/themeContextInstance.ts` (solo crea y exporta el `createContext`) y el proveedor (`ThemeProvider`) en `context/ThemeContext.tsx`. El barrel `context/index.ts` re-exporta ambos, por lo que los consumidores no notan el cambio.
+
+**`window.matchMedia` mockeado globalmente en setup.ts**
+jsdom no implementa `matchMedia`. Se añadió un mock por defecto (siempre `matches: false`, equivalente a modo light) en `src/test/setup.ts` para que todos los tests que inicialicen `ThemeContext` no exploten. Los tests que necesiten verificar comportamiento dark pueden sobreescribir el mock localmente con `Object.defineProperty`.
+
+**CSS modules y `display: none` en tests responsive**
+Con `css: true` en la config de Vitest, jsdom inyecta las hojas de estilo reales y computa `display: none`. Los elementos ocultos por media queries (nav en mobile, controles de tema) no aparecen en el árbol accesible de RTL. Solución adoptada: los tests que verifican la existencia de esos elementos usan `{ hidden: true }` en `getByRole`. Los tests de comportamiento (hamburguesa abre menú) siguen funcionando sobre elementos visibles.
+
+**`toHaveClass` incompatible con CSS modules**
+`toHaveClass('hoverable')` falla porque CSS modules transforma el nombre a `_hoverable_<hash>`. Se usa `expect(el.className).toMatch(/hoverable/)` en su lugar. Criterio general para este proyecto: no testear nombres de clase concretos de CSS modules, solo comportamiento o presencia de substring.
+
+**Separación entre temas en un único `_tokens.scss`**
+El plan mencionaba "un archivo por tema o índice central". Se optó por un único `_tokens.scss` con todos los selectores `[data-theme][data-mode]`. El archivo tiene ~130 líneas pero es autocontenido y fácil de mantener; añadir un quinto tema es añadir un bloque. Si crece se puede partir en un archivo por tema sin tocar ningún consumidor.
+
+**`App.module.scss` eliminado**
+El archivo de estilos del scaffolding (`.app { place-items: center }`) era incompatible con el layout real. Se eliminó y el centrado lo gestiona el propio `Layout.module.scss`.
 
 ---
 
