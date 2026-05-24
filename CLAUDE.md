@@ -5,6 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Instructions
 Always read PROFILE.md, CONTEXT.md, and PRD-Phase-1.md before proposing any changes. In case of conflict: CONTEXT.md > PROFILE.md > PRD.
 
+## Project Documentation
+- Specification: docs/PRD-Phase-1.md
+- Implementation plan: docs/IMPLEMENTATION-PLAN.md
+- Read both before proposing any change.
+
 ## Communication
 
 - Reply **in Spanish** always.
