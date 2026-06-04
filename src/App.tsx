@@ -1,14 +1,33 @@
-import { Routes, Route } from 'react-router-dom';
-import styles from './App.module.scss';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { ThemeProvider, AuthProvider } from '@/context';
+import { Layout, ProtectedRoute } from '@/components/layout';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage } from '@/pages';
 
-function App() {
+export default function App() {
   return (
-    <div className={styles.app}>
-      <Routes>
-        <Route path="/" element={<h1>Hello World</h1>} />
-      </Routes>
-    </div>
+    <ThemeProvider>
+      <AuthProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Navigate to="/series" replace />} />
+            <Route path="/series" element={<SeriesListPage />} />
+            <Route path="/series/:id" element={<SeriesDetailPage />} />
+            <Route path="/dashboard" element={<p>Dashboard — próximamente (H5)</p>} />
+            <Route element={<ProtectedRoute roles={['user', 'admin']} />}>
+              <Route path="/series/new" element={<SeriesFormPage />} />
+              <Route path="/series/:id/edit" element={<SeriesFormPage />} />
+            </Route>
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<ProtectedRoute roles={['admin']} />}>
+              <Route path="/users" element={<p>Usuarios — próximamente (H6)</p>} />
+            </Route>
+            {import.meta.env.DEV && (
+              <Route path="/showcase" element={<ShowcasePage />} />
+            )}
+            <Route path="*" element={<p>404 — próximamente (H7)</p>} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
-
-export default App;

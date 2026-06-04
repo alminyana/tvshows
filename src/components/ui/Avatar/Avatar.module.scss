@@ -1,0 +1,18 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.placeholder {
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.sm  { width: 28px; height: 28px; font-size: var(--font-size-xs); }
+.md  { width: 36px; height: 36px; font-size: var(--font-size-sm); }
+.lg  { width: 48px; height: 48px; font-size: var(--font-size-md); }

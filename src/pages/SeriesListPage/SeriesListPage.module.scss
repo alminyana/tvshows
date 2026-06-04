@@ -1,0 +1,53 @@
+@use '@/styles/mixins' as *;
+
+.page {
+  padding: var(--space-4);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+
+  @include tablet {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.empty,
+.error {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-danger);
+}

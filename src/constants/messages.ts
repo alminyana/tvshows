@@ -1,0 +1,125 @@
+export const MESSAGES = {
+  // Navegación
+  nav: {
+    series: 'Series',
+    dashboard: 'Dashboard',
+    users: 'Usuarios',
+    login: 'Iniciar sesión',
+    logout: 'Cerrar sesión',
+  },
+
+  // Temas
+  theme: {
+    label: 'Tema',
+    modeLight: 'Claro',
+    modeDark: 'Oscuro',
+    toggleMode: 'Cambiar modo',
+    names: {
+      default: 'Predeterminado',
+      ocean: 'Océano',
+      sunset: 'Atardecer',
+      forest: 'Bosque',
+    },
+  },
+
+  // Acciones comunes
+  actions: {
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    create: 'Crear',
+    confirm: 'Confirmar',
+    close: 'Cerrar',
+    add: 'Añadir',
+    remove: 'Quitar',
+    search: 'Buscar',
+    filter: 'Filtrar',
+    clear: 'Limpiar',
+    back: 'Volver',
+  },
+
+  // Series
+  series: {
+    title: 'Título',
+    synopsis: 'Sinopsis',
+    seasons: 'Temporadas',
+    cast: 'Reparto',
+    year: 'Año',
+    opinion: 'Mi opinión',
+    rating: 'Valoración',
+    genres: 'Géneros',
+    cover: 'Portada',
+    createdBy: 'Añadida por',
+    noResults: 'No se encontraron series',
+    searchPlaceholder: 'Buscar por título…',
+    filterByGenre: 'Filtrar por género',
+    filterByRating: 'Filtrar por valoración',
+    deleteConfirm: '¿Eliminar esta serie?',
+    deleteConfirmDetail: 'Esta acción no se puede deshacer.',
+    newSeries: 'Nueva serie',
+    editSeries: 'Editar serie',
+  },
+
+  // Usuarios
+  users: {
+    email: 'Email',
+    password: 'Contraseña',
+    role: 'Rol',
+    roles: {
+      admin: 'Administrador',
+      user: 'Usuario',
+    },
+    deleteConfirm: '¿Eliminar este usuario?',
+    deleteConfirmDetail: 'Esta acción no se puede deshacer.',
+    cannotDeleteSelf: 'No puedes eliminar tu propia cuenta.',
+    newUser: 'Nuevo usuario',
+    editUser: 'Editar usuario',
+  },
+
+  // Login
+  login: {
+    title: 'Iniciar sesión',
+    emailLabel: 'Correo electrónico',
+    passwordLabel: 'Contraseña',
+    submitLabel: 'Entrar',
+    errorCredentials: 'Email o contraseña incorrectos.',
+  },
+
+  // Errores y estados
+  errors: {
+    required: 'Campo obligatorio.',
+    invalidEmail: 'Email no válido.',
+    minLength: (n: number) => `Mínimo ${n} caracteres.`,
+    maxLength: (n: number) => `Máximo ${n} caracteres.`,
+    minValue: (n: number) => `El valor mínimo es ${n}.`,
+    maxValue: (n: number) => `El valor máximo es ${n}.`,
+    invalidYear: 'Año no válido.',
+    imageType: 'Solo se aceptan imágenes JPEG, PNG o WebP.',
+    imageSize: 'La imagen no puede superar 2 MB.',
+    notFound: 'No encontrado.',
+    generic: 'Ha ocurrido un error. Inténtalo de nuevo.',
+  },
+
+  // Dashboard
+  dashboard: {
+    title: 'Dashboard',
+    totalSeries: 'Total de series',
+    featuredSeries: 'Series destacadas',
+    featuredDetail: 'Con valoración ≥ 4',
+    genreDistribution: 'Distribución por género',
+    ratingDistribution: 'Distribución por valoración',
+  },
+
+  // Showcase
+  showcase: {
+    title: 'Showcase de componentes',
+  },
+
+  // 404
+  notFound: {
+    title: 'Página no encontrada',
+    detail: 'La URL que has introducido no existe.',
+    goHome: 'Ir al inicio',
+  },
+} as const;
