@@ -58,13 +58,13 @@ describe('Header', () => {
 
   it('muestra el email y el botón de logout cuando hay sesión', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: '1', email: 'admin@local', password: 'h', role: 'admin', createdAt: '' },
+      user: { id: '1', email: 'admin@local.dev', password: 'h', role: 'admin', createdAt: '' },
       loading: false,
       login: vi.fn(),
       logout: vi.fn(),
     });
     renderHeader();
-    expect(screen.getByText('admin@local')).toBeInTheDocument();
+    expect(screen.getByText('admin@local.dev')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /cerrar sesión/i })).toBeInTheDocument();
   });
 

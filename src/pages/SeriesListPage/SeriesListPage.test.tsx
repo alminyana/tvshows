@@ -8,6 +8,7 @@ vi.mock('@/hooks', () => ({
   useSeries: vi.fn(),
   useSeriesById: vi.fn(),
   useTheme: vi.fn(() => ({ theme: 'default', mode: 'light', setTheme: vi.fn(), setMode: vi.fn(), toggleMode: vi.fn() })),
+  useAuth: vi.fn(() => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() })),
 }));
 
 vi.mock('@/components/features', () => ({

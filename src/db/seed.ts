@@ -42,14 +42,14 @@ export async function seedDatabase(): Promise<void> {
   const users: User[] = [
     {
       id: adminId,
-      email: 'admin@local',
+      email: 'admin@local.dev',
       password: adminHash,
       role: 'admin',
       createdAt: now,
     },
     {
       id: userId,
-      email: 'user@local',
+      email: 'user@local.dev',
       password: userHash,
       role: 'user',
       createdAt: now,
