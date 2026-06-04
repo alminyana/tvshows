@@ -1,1 +1,5 @@
 export { ShowcasePage } from './ShowcasePage/ShowcasePage';
+export { SeriesListPage } from './SeriesListPage/SeriesListPage';
+export { SeriesDetailPage } from './SeriesDetailPage/SeriesDetailPage';
+export { SeriesFormPage } from './SeriesFormPage/SeriesFormPage';
+export { LoginPage } from './LoginPage/LoginPage';

@@ -156,6 +156,47 @@
   }
 }
 
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.userEmail {
+  display: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include m.tablet {
+    display: block;
+  }
+}
+
+.logoutButton {
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
 // ─── Hamburger ────────────────────────────────────────────────────────────────
 
 .hamburger {

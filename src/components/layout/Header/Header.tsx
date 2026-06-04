@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks';
+import { useAuth } from '@/hooks';
 import { MESSAGES } from '@/constants';
 import type { Theme } from '@/types';
 import styles from './Header.module.scss';
@@ -14,12 +15,19 @@ const THEMES: { value: Theme; label: string }[] = [
 
 export function Header() {
   const { theme, mode, setTheme, toggleMode } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
     { to: '/series', label: MESSAGES.nav.series },
     { to: '/dashboard', label: MESSAGES.nav.dashboard },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/series');
+  };
 
   return (
     <header className={styles.header} role="banner">
@@ -64,9 +72,20 @@ export function Header() {
             </button>
           </div>
 
-          <button className={styles.loginButton}>
-            {MESSAGES.nav.login}
-          </button>
+          {user ? (
+            <div className={styles.userInfo}>
+              <span className={styles.userEmail} title={user.email}>
+                {user.email}
+              </span>
+              <button className={styles.logoutButton} onClick={handleLogout}>
+                {MESSAGES.nav.logout}
+              </button>
+            </div>
+          ) : (
+            <button className={styles.loginButton} onClick={() => navigate('/login')}>
+              {MESSAGES.nav.login}
+            </button>
+          )}
 
           <button
             className={styles.hamburger}
