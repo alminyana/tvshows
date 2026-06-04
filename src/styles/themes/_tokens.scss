@@ -1,16 +1,156 @@
-// Tokens semánticos por tema. Placeholder a desarrollar en la fase de theming.
+// ─── Tokens no cromáticos (compartidos por todos los temas) ──────────────────
+
+:root {
+  // Sombras
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  // Radios
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  // Espaciado
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  // Tipografía
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}
+
+// ─── default ─────────────────────────────────────────────────────────────────
 
 :root,
 [data-theme='default'][data-mode='light'] {
   --color-bg: #ffffff;
-  --color-surface: #f5f5f5;
-  --color-text: #111111;
+  --color-surface: #f8f9fa;
+  --color-text: #1a1a2e;
+  --color-text-muted: #6b7280;
   --color-primary: #2563eb;
+  --color-primary-contrast: #ffffff;
+  --color-border: #e5e7eb;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
 }
 
 [data-theme='default'][data-mode='dark'] {
   --color-bg: #0f0f10;
   --color-surface: #1a1a1d;
-  --color-text: #f5f5f5;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
   --color-primary: #60a5fa;
+  --color-primary-contrast: #0f0f10;
+  --color-border: #2d2d30;
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+}
+
+// ─── ocean ────────────────────────────────────────────────────────────────────
+
+[data-theme='ocean'][data-mode='light'] {
+  --color-bg: #f0f9ff;
+  --color-surface: #e0f2fe;
+  --color-text: #0c1a2e;
+  --color-text-muted: #4e7fa8;
+  --color-primary: #0284c7;
+  --color-primary-contrast: #ffffff;
+  --color-border: #bae6fd;
+  --color-danger: #dc2626;
+  --color-success: #059669;
+  --color-warning: #d97706;
+}
+
+[data-theme='ocean'][data-mode='dark'] {
+  --color-bg: #071828;
+  --color-surface: #0d2540;
+  --color-text: #e0f2fe;
+  --color-text-muted: #7ab8d4;
+  --color-primary: #38bdf8;
+  --color-primary-contrast: #071828;
+  --color-border: #1e4a6e;
+  --color-danger: #f87171;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+}
+
+// ─── sunset ───────────────────────────────────────────────────────────────────
+
+[data-theme='sunset'][data-mode='light'] {
+  --color-bg: #fffbf5;
+  --color-surface: #fff3e0;
+  --color-text: #1a0a00;
+  --color-text-muted: #8b5e3c;
+  --color-primary: #ea580c;
+  --color-primary-contrast: #ffffff;
+  --color-border: #fed7aa;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+}
+
+[data-theme='sunset'][data-mode='dark'] {
+  --color-bg: #1a0a00;
+  --color-surface: #2d1500;
+  --color-text: #fff3e0;
+  --color-text-muted: #c4956a;
+  --color-primary: #fb923c;
+  --color-primary-contrast: #1a0a00;
+  --color-border: #5a2e0a;
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+}
+
+// ─── forest ───────────────────────────────────────────────────────────────────
+
+[data-theme='forest'][data-mode='light'] {
+  --color-bg: #f6fdf7;
+  --color-surface: #dcfce7;
+  --color-text: #052e16;
+  --color-text-muted: #4a7c59;
+  --color-primary: #16a34a;
+  --color-primary-contrast: #ffffff;
+  --color-border: #bbf7d0;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+}
+
+[data-theme='forest'][data-mode='dark'] {
+  --color-bg: #051a0d;
+  --color-surface: #0d2d19;
+  --color-text: #dcfce7;
+  --color-text-muted: #6aaf7e;
+  --color-primary: #4ade80;
+  --color-primary-contrast: #051a0d;
+  --color-border: #1a4d2a;
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
 }

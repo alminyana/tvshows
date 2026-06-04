@@ -1,0 +1,29 @@
+.fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.row {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.starLabel {
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  transition: transform 0.1s;
+
+  &:hover { transform: scale(1.15); }
+
+  &:has(input:focus-visible) .filled,
+  &:has(input:focus-visible) .empty {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-radius: 2px;
+  }
+}
+
+.filled { color: #f59e0b; }
+.empty  { color: var(--color-border); }

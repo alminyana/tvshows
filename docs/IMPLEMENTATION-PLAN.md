@@ -57,7 +57,7 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
 
 ---
 
-## H1 — Sistema visual, UI kit y showcase · Complejidad: L
+## H1 — Sistema visual, UI kit y showcase · Complejidad: L ✅
 
 - **Objetivo:** Lock visual completo antes de tocar lógica de negocio.
 - **Entregable:** ruta `/showcase` (solo en dev) con todos los componentes UI, los 8 combos de tema cambiables en vivo y mockups estáticos de pantallas clave.
@@ -105,14 +105,36 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
   - Test unitario por cada UI primitive (render + interacción mínima).
   - Test de `ThemeContext`: cambio de tema persiste en localStorage, primer render respeta `prefers-color-scheme`.
 - **Hecho cuando:** puedes recorrer `/showcase`, cambiar los 8 combos sin recarga, y validar visualmente cards, listado, formulario, KPI y gráfico.
+- **Estado:** ✅ Completado.
 - **Dependencias:** H0.
+
+### Notas de implementación
+
+**ThemeContext separado en dos archivos**
+`react-refresh` advierte cuando un archivo exporta a la vez un componente y un valor no-componente. Para eliminar el warning, el contexto (`ThemeContext`) vive en `context/themeContextInstance.ts` (solo crea y exporta el `createContext`) y el proveedor (`ThemeProvider`) en `context/ThemeContext.tsx`. El barrel `context/index.ts` re-exporta ambos, por lo que los consumidores no notan el cambio.
+
+**`window.matchMedia` mockeado globalmente en setup.ts**
+jsdom no implementa `matchMedia`. Se añadió un mock por defecto (siempre `matches: false`, equivalente a modo light) en `src/test/setup.ts` para que todos los tests que inicialicen `ThemeContext` no exploten. Los tests que necesiten verificar comportamiento dark pueden sobreescribir el mock localmente con `Object.defineProperty`.
+
+**CSS modules y `display: none` en tests responsive**
+Con `css: true` en la config de Vitest, jsdom inyecta las hojas de estilo reales y computa `display: none`. Los elementos ocultos por media queries (nav en mobile, controles de tema) no aparecen en el árbol accesible de RTL. Solución adoptada: los tests que verifican la existencia de esos elementos usan `{ hidden: true }` en `getByRole`. Los tests de comportamiento (hamburguesa abre menú) siguen funcionando sobre elementos visibles.
+
+**`toHaveClass` incompatible con CSS modules**
+`toHaveClass('hoverable')` falla porque CSS modules transforma el nombre a `_hoverable_<hash>`. Se usa `expect(el.className).toMatch(/hoverable/)` en su lugar. Criterio general para este proyecto: no testear nombres de clase concretos de CSS modules, solo comportamiento o presencia de substring.
+
+**Separación entre temas en un único `_tokens.scss`**
+El plan mencionaba "un archivo por tema o índice central". Se optó por un único `_tokens.scss` con todos los selectores `[data-theme][data-mode]`. El archivo tiene ~130 líneas pero es autocontenido y fácil de mantener; añadir un quinto tema es añadir un bloque. Si crece se puede partir en un archivo por tema sin tocar ningún consumidor.
+
+**`App.module.scss` eliminado**
+El archivo de estilos del scaffolding (`.app { place-items: center }`) era incompatible con el layout real. Se eliminó y el centrado lo gestiona el propio `Layout.module.scss`.
 
 ---
 
-## H2 — Capa de datos + Listado + Detalle (read-only) · Complejidad: L
+## H2 — Capa de datos + Listado + Detalle (read-only) · Complejidad: L ✅
 
 - **Objetivo:** Ver series reales persistidas, con filtros y búsqueda. Sin login.
 - **Entregable:** rutas `/series` y `/series/:id` funcionales consumiendo IndexedDB. Seed inicial poblado al primer arranque.
+- **Estado:** ✅ Completado.
 - **Tareas:**
   1. Tipos en `types/`: `Series`, `Genre`, `User`.
   2. Schema Dexie v1 con tablas: `series`, `users`, `images` (Blob).
@@ -150,10 +172,22 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
 - **Hecho cuando:** abres la app sin login, navegas listado → detalle, aplicas filtros y búsqueda, recargas y todo persiste.
 - **Dependencias:** H1.
 
+### Notas de implementación
+
+**`fake-indexeddb` descartado — mocks manuales con `vi.hoisted`**
+Se decidió no instalar `fake-indexeddb`. Los tests de servicios usan `vi.mock` con factory. Para que el mock esté disponible antes del import del módulo bajo test (Vitest hace hoisting de `vi.mock`), el objeto mock se declara con `vi.hoisted()` en lugar de un literal de variable. Sin `vi.hoisted`, el mock se ejecuta antes de que la variable esté inicializada y los tests aparecen como 0.
+
+**`setLoading(true)` síncrono en effects — patrón correcto**
+`eslint-plugin-react-hooks` prohibe llamar `setState` síncronamente dentro del cuerpo de un `useEffect`. Patrón adoptado en `useSeries` y `useSeriesById`: el estado inicial es `loading: true` (desde `useState(true)`); el efecto solo llama `setState` dentro de los callbacks `.then`/`.catch`. El reset de loading en reload se hace en la función `reload()` (fuera del effect), no dentro de él.
+
+**`react-hooks/set-state-in-effect` ya activo en el proyecto**
+La regla está habilitada vía `eslint-plugin-react-hooks`. Es más estricta que el default de CRA; rechaza cualquier `setState` síncrono al inicio del efecto aunque sea un reset de loading.
+
 ---
 
-## H3 — Auth, roles y rutas protegidas · Complejidad: M
+## H3 — Auth, roles y rutas protegidas · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** Login funcional con sesión persistida y guard de rutas.
 - **Entregable:** botón login en header, formulario en `/login`, redirección post-login, `<ProtectedRoute>` operativo filtrando por rol.
 - **Tareas:**
@@ -181,6 +215,23 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
   - `hashPassword`: determinismo (mismo input → mismo hash) y mismatch (inputs distintos → hashes distintos).
 - **Hecho cuando:** te logueas como admin o user, recargas y sigues logueado, logout funciona, una ruta restringida redirige a Viewer.
 - **Dependencias:** H2.
+
+### Notas de implementación
+
+**Mismo patrón de doble archivo que ThemeContext**
+`AuthContext` sigue el patrón `authContextInstance.ts` (solo `createContext` + tipo `AuthContextValue`) + `AuthContext.tsx` (proveedor). Evita el warning de `react-refresh` al mezclar contexto y componente en el mismo archivo.
+
+**Sesión en localStorage con clave `tv-shows:session`**
+Solo se almacena `{ userId: string }`. Al iniciar, `AuthProvider` llama `authService.getCurrentUser()` para verificar que el userId sigue existiendo en Dexie antes de restaurar la sesión.
+
+**Mock de `useAuth` en tests de componentes que dependen del Header**
+`Header`, `Layout`, `SeriesDetailPage` y `App` ahora usan `useAuth`. Los tests de estos componentes mockean `@/hooks` con `useAuth: vi.fn(() => {...})`. `App.test.tsx` también mockea `authService.getCurrentUser` para evitar que `AuthProvider` haga llamadas a Dexie al montar.
+
+**Warning de `act()` en App.test.tsx**
+`AuthProvider` tiene un `useEffect` que resuelve una Promise async, lo que actualiza estado fuera del ciclo síncrono del test. El warning es cosmético — los tests pasan. La Promise no afecta al output renderizado porque los componentes que consumen auth están mockeados vía `useAuth`.
+
+**Emails con TLD en tests de LoginPage**
+Zod 3.x requiere TLD en el validador de email. Los tests usan `test@example.com` en lugar de `admin@local`.
 
 ---
 
