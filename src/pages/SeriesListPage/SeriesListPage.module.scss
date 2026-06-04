@@ -6,6 +6,12 @@
   margin: 0 auto;
 }
 
+.topBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-4);
+}
+
 .filters {
   display: flex;
   flex-direction: column;

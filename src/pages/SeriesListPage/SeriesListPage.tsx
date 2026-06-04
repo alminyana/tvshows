@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useSeries } from '@/hooks';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSeries, useAuth } from '@/hooks';
 import { SeriesCard } from '@/components/features';
-import { Spinner, Select, Input } from '@/components/ui';
+import { Spinner, Select, Input, Button } from '@/components/ui';
+import { canCreateSeries } from '@/utils/permissions';
 import { MESSAGES } from '@/constants';
 import { GENRES } from '@/types';
 import type { Genre } from '@/types';
@@ -24,6 +25,8 @@ const GENRE_OPTIONS = [
 
 export function SeriesListPage() {
   const [params, setParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { series, loading, error } = useSeries();
 
   const search = params.get('q') ?? '';
@@ -53,6 +56,14 @@ export function SeriesListPage() {
 
   return (
     <div className={styles.page}>
+      <div className={styles.topBar}>
+        {canCreateSeries(user) && (
+          <Button variant="primary" size="sm" onClick={() => navigate('/series/new')}>
+            {MESSAGES.series.newSeries}
+          </Button>
+        )}
+      </div>
+
       <div className={styles.filters}>
         <Input
           id="series-search"
