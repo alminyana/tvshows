@@ -14,7 +14,7 @@ import { usersService } from './usersService';
 
 const mockUser: User = {
   id: 'user-1',
-  email: 'admin@local',
+  email: 'admin@local.dev',
   password: 'hashed',
   role: 'admin',
   createdAt: '2024-01-01T00:00:00.000Z',

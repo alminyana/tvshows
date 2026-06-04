@@ -235,8 +235,9 @@ Zod 3.x requiere TLD en el validador de email. Los tests usan `test@example.com`
 
 ---
 
-## H4 — CRUD de series · Complejidad: L
+## H4 — CRUD de series · Complejidad: L ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** Crear, editar y eliminar series respetando permisos.
 - **Entregable:** rutas `/series/new` y `/series/:id/edit` operativas; eliminar desde detalle con confirmación.
 - **Tareas:**
@@ -268,6 +269,20 @@ Zod 3.x requiere TLD en el validador de email. Los tests usan `test@example.com`
   - `imageService`: round-trip Blob → id → Blob.
 - **Hecho cuando:** flujo completo crear → ver en listado → editar → eliminar funciona para User (solo las suyas) y Admin (todas).
 - **Dependencias:** H3.
+
+### Notas de implementación
+
+**Preview de imagen sin `setState` síncrono en effect**
+El linter (`react-hooks/set-state-in-effect`) rechaza cualquier `setState` síncrono dentro del cuerpo de un `useEffect`. Para el preview de la imagen seleccionada (operación síncrona con `URL.createObjectURL`) se optó por manejar la URL directamente en el handler `handleFileChange`: se revoca la URL anterior vía `useRef`, se crea la nueva y se llama `setImagePreview` fuera de cualquier effect. Un `useEffect` de limpieza sin cuerpo se encarga de revocar la URL al desmontar. Para la imagen existente en modo edición (carga async desde `imageService.get`) se sigue el patrón establecido en H2/H3: `setState` dentro del callback `.then`.
+
+**`selectedOptions` no asignable en jsdom — usar `userEvent.selectOptions`**
+`fireEvent.change(select, { target: { selectedOptions: [...] } })` falla en jsdom porque `selectedOptions` es una propiedad de solo lectura. Para simular selección múltiple en el `<select>` de géneros se usa `userEvent.selectOptions(element, ['Drama'])`, que manipula el DOM de forma compatible con jsdom.
+
+**SeriesFormPage mocka `SeriesForm` en sus tests**
+Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para aislar la lógica de la página (carga de datos, llamadas a servicios, navegación) del comportamiento del formulario. Los tests del formulario en sí viven en `SeriesForm.test.tsx`.
+
+**Permisos en capa de página, no en ProtectedRoute**
+`ProtectedRoute` solo valida que el usuario tenga rol `user` o `admin`. La comprobación de propiedad (User solo puede editar sus series) se hace en `SeriesFormPage` llamando a `canEditSeries(user, series)`, coherente con cómo `SeriesDetailPage` muestra/oculta los botones de acción.
 
 ---
 

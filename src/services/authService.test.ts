@@ -19,7 +19,7 @@ import { authService } from './authService';
 
 const mockUser: User = {
   id: 'user-1',
-  email: 'admin@local',
+  email: 'admin@local.dev',
   password: 'hashed:admin',
   role: 'admin',
   createdAt: '2024-01-01T00:00:00.000Z',
@@ -35,7 +35,7 @@ beforeEach(() => {
 describe('authService.login', () => {
   it('devuelve el usuario y guarda la sesión si las credenciales son correctas', async () => {
     mockFirst.mockResolvedValue(mockUser);
-    const result = await authService.login('admin@local', 'admin');
+    const result = await authService.login('admin@local.dev', 'admin');
     expect(result).toEqual(mockUser);
     const stored = JSON.parse(localStorage.getItem('tv-shows:session')!);
     expect(stored.userId).toBe('user-1');
@@ -48,7 +48,7 @@ describe('authService.login', () => {
 
   it('lanza error si el hash no coincide', async () => {
     mockFirst.mockResolvedValue({ ...mockUser, password: 'hashed:otro' });
-    await expect(authService.login('admin@local', 'admin')).rejects.toThrow();
+    await expect(authService.login('admin@local.dev', 'admin')).rejects.toThrow();
   });
 });
 
