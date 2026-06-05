@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, AuthProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage } from '@/pages';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage } from '@/pages';
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/series" replace />} />
             <Route path="/series" element={<SeriesListPage />} />
             <Route path="/series/:id" element={<SeriesDetailPage />} />
-            <Route path="/dashboard" element={<p>Dashboard — próximamente (H5)</p>} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route element={<ProtectedRoute roles={['user', 'admin']} />}>
               <Route path="/series/new" element={<SeriesFormPage />} />
               <Route path="/series/:id/edit" element={<SeriesFormPage />} />
