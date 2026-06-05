@@ -286,7 +286,7 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ---
 
-## H5 — Dashboard · Complejidad: M
+## H5 — Dashboard · Complejidad: M ✅
 
 - **Objetivo:** 4 métricas en vivo.
 - **Entregable:** ruta `/dashboard` con los 4 widgets, reactivo a cambios en la BD.
@@ -307,6 +307,7 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
   - `useDashboardMetrics`: función pura sobre datos de prueba, todas las métricas.
   - Render de cada widget con datos de prueba.
 - **Hecho cuando:** crear/eliminar una serie actualiza el dashboard al volver; cambiar de tema cambia los colores de los gráficos.
+- **Estado:** ✅ Completado.
 - **Dependencias:** H4 (necesita CRUD para validar reactividad).
 
 ---
