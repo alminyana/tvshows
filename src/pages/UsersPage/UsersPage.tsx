@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { usersService } from '@/services';
-import { useAuth } from '@/hooks';
+import { useAuth, useNotification } from '@/hooks';
 import { MESSAGES } from '@/constants';
 import { Button, Modal, ConfirmDialog, Spinner } from '@/components/ui';
 import { UserList, UserForm } from '@/components/features';
@@ -10,6 +10,7 @@ import styles from './UsersPage.module.scss';
 
 export function UsersPage() {
   const { user: currentUser } = useAuth();
+  const { notify } = useNotification();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +55,7 @@ export function UsersPage() {
     try {
       await usersService.create({ email: data.email, password: data.password, role: data.role });
       setShowCreate(false);
+      notify(MESSAGES.users.created);
       reload();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : MESSAGES.errors.generic);
@@ -73,6 +75,7 @@ export function UsersPage() {
         ...(data.password ? { password: data.password } : {}),
       });
       setEditingUser(null);
+      notify(MESSAGES.users.updated);
       reload();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : MESSAGES.errors.generic);
@@ -86,6 +89,7 @@ export function UsersPage() {
     try {
       await usersService.remove(deletingUser.id, currentUser.id);
       setDeletingUser(null);
+      notify(MESSAGES.users.deleted);
       reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : MESSAGES.errors.generic);
@@ -93,13 +97,13 @@ export function UsersPage() {
     }
   }
 
-  if (loading) return <Spinner size="lg" />;
-  if (error) return <p className={styles.error}>{error}</p>;
+  if (loading) return <div className={styles.center}><Spinner size="lg" /></div>;
+  if (error) return <p className={styles.error} role="alert">{error}</p>;
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Usuarios</h1>
+        <h1 className={styles.title}>{MESSAGES.users.title}</h1>
         <Button variant="primary" onClick={() => { setFormError(null); setShowCreate(true); }}>
           {MESSAGES.users.newUser}
         </Button>

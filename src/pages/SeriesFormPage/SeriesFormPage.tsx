@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSeriesById, useAuth } from '@/hooks';
+import { useSeriesById, useAuth, useNotification } from '@/hooks';
 import { seriesService, imageService } from '@/services';
 import { canEditSeries } from '@/utils/permissions';
 import { SeriesForm } from '@/components/features';
@@ -13,6 +13,7 @@ export function SeriesFormPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { notify } = useNotification();
   const isEdit = Boolean(id);
 
   const { series, loading, notFound } = useSeriesById(id ?? '');
@@ -73,6 +74,7 @@ export function SeriesFormPage() {
           coverImage = await imageService.save(file);
         }
         await seriesService.update(series.id, { ...data, coverImage });
+        notify(MESSAGES.notifications.seriesUpdated);
         navigate(`/series/${series.id}`);
       } else {
         if (!file) {
@@ -86,6 +88,7 @@ export function SeriesFormPage() {
           coverImage,
           createdBy: user!.id,
         });
+        notify(MESSAGES.notifications.seriesCreated);
         navigate(`/series/${created.id}`);
       }
     } catch {

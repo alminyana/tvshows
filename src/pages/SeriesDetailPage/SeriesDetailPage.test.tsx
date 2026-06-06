@@ -9,6 +9,7 @@ vi.mock('@/hooks', () => ({
   useSeries: vi.fn(),
   useTheme: vi.fn(() => ({ theme: 'default', mode: 'light', setTheme: vi.fn(), setMode: vi.fn(), toggleMode: vi.fn() })),
   useAuth: vi.fn(() => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() })),
+  useNotification: vi.fn(() => ({ notify: vi.fn() })),
 }));
 
 vi.mock('@/services', () => ({
