@@ -10,6 +10,7 @@ vi.mock('@/hooks', async (importOriginal) => {
     useSeries: () => ({ series: [], loading: false, error: null, reload: vi.fn() }),
     useSeriesById: () => ({ series: null, loading: false, notFound: true, error: null }),
     useAuth: () => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() }),
+    useLandingImages: () => ({ images: [], loading: false, hasFallback: true }),
   };
 });
 
@@ -37,17 +38,17 @@ function renderApp(initialPath = '/series') {
 }
 
 describe('App', () => {
-  it('renderiza el layout sin explotar', async () => {
-    renderApp();
-    expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(screen.getByRole('main')).toBeInTheDocument();
-  });
-
-  it('ruta /series renderiza el listado', async () => {
+  it('ruta /series renderiza el header y el listado', async () => {
     renderApp('/series');
+    expect(screen.getByRole('banner')).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByPlaceholderText(/buscar por título/i)).toBeInTheDocument();
     });
+  });
+
+  it('ruta / renderiza la landing', () => {
+    renderApp('/');
+    expect(screen.getByRole('heading', { name: /tv shows/i })).toBeInTheDocument();
   });
 
   it('ruta desconocida renderiza la página 404', () => {
