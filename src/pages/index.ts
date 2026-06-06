@@ -4,3 +4,4 @@ export { SeriesDetailPage } from './SeriesDetailPage/SeriesDetailPage';
 export { SeriesFormPage } from './SeriesFormPage/SeriesFormPage';
 export { LoginPage } from './LoginPage/LoginPage';
 export { DashboardPage } from './DashboardPage/DashboardPage';
+export { UsersPage } from './UsersPage/UsersPage';
