@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, AuthProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage } from '@/pages';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage } from '@/pages';
 
 export default function App() {
   return (
@@ -19,7 +19,7 @@ export default function App() {
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route element={<ProtectedRoute roles={['admin']} />}>
-              <Route path="/users" element={<p>Usuarios — próximamente (H6)</p>} />
+              <Route path="/users" element={<UsersPage />} />
             </Route>
             {import.meta.env.DEV && (
               <Route path="/showcase" element={<ShowcasePage />} />

@@ -141,3 +141,9 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Project docs and AI context files
+docs/
+CLAUDE.md
+CONTEXT.md
+PROFILE.md

@@ -288,6 +288,7 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ## H5 — Dashboard · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** 4 métricas en vivo.
 - **Entregable:** ruta `/dashboard` con los 4 widgets, reactivo a cambios en la BD.
 - **Tareas:**
@@ -307,13 +308,13 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
   - `useDashboardMetrics`: función pura sobre datos de prueba, todas las métricas.
   - Render de cada widget con datos de prueba.
 - **Hecho cuando:** crear/eliminar una serie actualiza el dashboard al volver; cambiar de tema cambia los colores de los gráficos.
-- **Estado:** ✅ Completado.
 - **Dependencias:** H4 (necesita CRUD para validar reactividad).
 
 ---
 
-## H6 — Gestión de usuarios (Admin) · Complejidad: M
+## H6 — Gestión de usuarios (Admin) · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** Admin gestiona usuarios.
 - **Entregable:** ruta `/users` con listado, crear, editar (rol/password) y eliminar (con guard de no auto-eliminarse).
 - **Tareas:**
@@ -363,6 +364,56 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ---
 
+## H8 — Landing & entry flow · Complejidad: M
+
+- **Objetivo:** Punto de entrada visual de la app, público y sin autenticación.
+- **Entregable:** ruta `/` con landing fullscreen, slideshow de portadas y acceso al login via modal.
+- **Dependencias:** H7 (necesita el diseño pulido y todas las series con portadas del seed).
+
+### Tareas
+
+1. **`LandingPage`** en `src/pages/LandingPage/`:
+   - Fullscreen (`100dvh`), sin `Header` ni `Layout` — layout propio.
+   - Fondo: stack de imágenes absolutas, transición `opacity` con `transition: opacity 1.5s ease-in-out`, intervalo de 30s.
+   - Fallback: gradiente con tokens del tema activo si no hay imágenes en BD.
+   - Título y claim encima del fondo, con overlay oscuro para garantizar contraste legible en cualquier portada.
+   - Botón "Entrar" → abre `LoginModal`.
+
+2. **`useLandingImages`** en `src/hooks/`:
+   - Carga todas las portadas de series via `imageService`.
+   - Devuelve array de `ObjectURL` + estado `loading` + `hasFallback`.
+   - Revoca las `ObjectURL` al desmontar.
+
+3. **`LoginModal`** en `src/components/features/LoginModal/`:
+   - Reutiliza el `Modal` de UI kit y el formulario de `LoginPage` (extraer la lógica del form a un componente `LoginForm` compartido si no lo está ya).
+   - Post-login: cierra modal y redirige a `/series`.
+   - Cierre: tecla Escape + click fuera + botón ✕.
+
+4. **Redireccionamiento**:
+   - Si el usuario ya tiene sesión activa y navega a `/`, redirige directamente a `/series`.
+   - `/login` sigue existiendo como ruta directa (no romper flujo existente), pero en la práctica el entry point es la landing.
+
+5. **Ruta `/`** en `App.tsx`:
+   - Fuera del `Layout` existente (la landing tiene su propio layout).
+   - Pública, sin `ProtectedRoute`.
+
+### Archivos
+- `src/pages/LandingPage/`
+- `src/hooks/useLandingImages.ts`
+- `src/components/features/LoginModal/`
+- Extraer `src/components/features/LoginForm/` de `LoginPage` si hace falta
+- Modificar `src/App.tsx` para la ruta `/`
+
+### Tests
+- `useLandingImages`: carga imágenes, fallback si BD vacía, revocación de URLs al desmontar.
+- `LandingPage`: render con imágenes, render con fallback, botón "Entrar" abre modal.
+- `LoginModal`: abre/cierra, post-login redirige a `/series`, Escape cierra.
+
+### Hecho cuando
+Arrancas la app, ves el slideshow de portadas con transición suave, abres el modal, te logueas y aterrizas en `/series`. Sin sesión, `/` siempre muestra la landing.
+
+---
+
 ## Tabla resumen de dependencias
 
 | Hito | Depende de | Complejidad |
@@ -375,5 +426,6 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 | H5 Dashboard | H4 | M |
 | H6 Users (Admin) | H3 | M |
 | H7 Pulido + a11y + cobertura | H5, H6 | M |
+| H8 Landing & entry flow | H7 | M |
 
-> H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho.
+> H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho. H8 cierra el plan — depende de H7 para tener el diseño pulido y las portadas del seed completas.
