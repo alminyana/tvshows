@@ -1,12 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { ThemeProvider, AuthProvider } from '@/context';
+import { ThemeProvider, AuthProvider, NotificationProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage } from '@/pages';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage } from '@/pages';
 
 export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+        <NotificationProvider>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Navigate to="/series" replace />} />
@@ -24,9 +25,10 @@ export default function App() {
             {import.meta.env.DEV && (
               <Route path="/showcase" element={<ShowcasePage />} />
             )}
-            <Route path="*" element={<p>404 — próximamente (H7)</p>} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );

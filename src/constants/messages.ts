@@ -39,6 +39,13 @@ export const MESSAGES = {
     back: 'Volver',
   },
 
+  // Notificaciones
+  notifications: {
+    seriesCreated: 'Serie creada correctamente.',
+    seriesUpdated: 'Serie actualizada correctamente.',
+    seriesDeleted: 'Serie eliminada correctamente.',
+  },
+
   // Series
   series: {
     title: 'Título',
@@ -63,6 +70,7 @@ export const MESSAGES = {
 
   // Usuarios
   users: {
+    title: 'Usuarios',
     email: 'Email',
     password: 'Contraseña',
     role: 'Rol',
@@ -75,6 +83,11 @@ export const MESSAGES = {
     cannotDeleteSelf: 'No puedes eliminar tu propia cuenta.',
     newUser: 'Nuevo usuario',
     editUser: 'Editar usuario',
+    noUsers: 'No hay usuarios.',
+    listAriaLabel: 'Lista de usuarios',
+    created: 'Usuario creado correctamente.',
+    updated: 'Usuario actualizado correctamente.',
+    deleted: 'Usuario eliminado correctamente.',
   },
 
   // Login

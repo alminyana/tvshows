@@ -43,4 +43,19 @@ describe('Modal', () => {
     await userEvent.click(document.querySelector('._overlay_') ?? screen.getByRole('dialog').parentElement!);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('atrapa el foco al hacer Tab desde el último elemento', async () => {
+    render(
+      <Modal isOpen onClose={vi.fn()} title="Trap">
+        <button>Primero</button>
+        <button>Último</button>
+      </Modal>,
+    );
+    const buttons = screen.getAllByRole('button');
+    const lastFocusable = buttons[buttons.length - 1];
+    lastFocusable.focus();
+    await userEvent.tab();
+    // El foco vuelve al primer elemento focusable del modal
+    expect(document.activeElement).toBe(buttons[0]);
+  });
 });

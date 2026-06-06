@@ -10,8 +10,8 @@ export function DashboardPage() {
   const { totalSeries, featuredSeries, genreDistribution, ratingDistribution, loading, error } =
     useDashboardMetrics();
 
-  if (loading) return <Spinner size="lg" />;
-  if (error) return <p className={styles.error}>{error}</p>;
+  if (loading) return <div className={styles.center}><Spinner size="lg" /></div>;
+  if (error) return <p className={styles.error} role="alert">{error}</p>;
 
   return (
     <div className={styles.page}>

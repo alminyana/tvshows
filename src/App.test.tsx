@@ -50,8 +50,8 @@ describe('App', () => {
     });
   });
 
-  it('ruta desconocida renderiza el placeholder 404', () => {
+  it('ruta desconocida renderiza la página 404', () => {
     renderApp('/ruta-inexistente');
-    expect(screen.getByText(/404/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /página no encontrada/i })).toBeInTheDocument();
   });
 });
