@@ -286,8 +286,9 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ---
 
-## H5 — Dashboard · Complejidad: M
+## H5 — Dashboard · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** 4 métricas en vivo.
 - **Entregable:** ruta `/dashboard` con los 4 widgets, reactivo a cambios en la BD.
 - **Tareas:**
@@ -311,8 +312,9 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ---
 
-## H6 — Gestión de usuarios (Admin) · Complejidad: M
+## H6 — Gestión de usuarios (Admin) · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** Admin gestiona usuarios.
 - **Entregable:** ruta `/users` con listado, crear, editar (rol/password) y eliminar (con guard de no auto-eliminarse).
 - **Tareas:**
