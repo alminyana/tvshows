@@ -11,6 +11,7 @@ vi.mock('@/hooks', () => ({
     login: vi.fn(),
     logout: vi.fn(),
   })),
+  useNotification: vi.fn(() => ({ notify: vi.fn() })),
 }));
 
 vi.mock('@/services', () => ({

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSeriesById, useAuth } from '@/hooks';
+import { useSeriesById, useAuth, useNotification } from '@/hooks';
 import { seriesService, imageService } from '@/services';
 import { Rating, Tag, Spinner, Button, ConfirmDialog } from '@/components/ui';
 import { MESSAGES } from '@/constants';
@@ -11,6 +11,7 @@ export function SeriesDetailPage() {
   const navigate = useNavigate();
   const { series, loading, notFound, error } = useSeriesById(id!);
   const { user } = useAuth();
+  const { notify } = useNotification();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -22,6 +23,7 @@ export function SeriesDetailPage() {
     if (!series) return;
     await seriesService.remove(series.id);
     if (series.coverImage) await imageService.remove(series.coverImage);
+    notify(MESSAGES.notifications.seriesDeleted);
     navigate('/series');
   }
 
@@ -146,9 +148,9 @@ export function SeriesDetailPage() {
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         title={MESSAGES.series.deleteConfirm}
-        description={MESSAGES.series.deleteConfirmDetail}
+        message={MESSAGES.series.deleteConfirmDetail}
         onConfirm={handleDelete}
-        onCancel={() => setShowDeleteConfirm(false)}
+        onClose={() => setShowDeleteConfirm(false)}
       />
     </article>
   );

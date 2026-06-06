@@ -15,6 +15,7 @@ vi.mock('@/hooks', () => ({
   useSeriesById: vi.fn(() => ({ series: null, loading: false, notFound: false, error: null })),
   useTheme: vi.fn(() => ({ theme: 'default', mode: 'light' })),
   useSeries: vi.fn(() => ({ series: [], loading: false, reload: vi.fn() })),
+  useNotification: vi.fn(() => ({ notify: vi.fn() })),
 }));
 
 vi.mock('@/services', () => ({

@@ -12,11 +12,11 @@ interface UserListProps {
 
 export function UserList({ users, currentUserId, onEdit, onDelete }: UserListProps) {
   if (users.length === 0) {
-    return <p className={styles.empty}>No hay usuarios.</p>;
+    return <p className={styles.empty}>{MESSAGES.users.noUsers}</p>;
   }
 
   return (
-    <ul className={styles.list} aria-label="Lista de usuarios">
+    <ul className={styles.list} aria-label={MESSAGES.users.listAriaLabel}>
       {users.map((user) => {
         const isSelf = user.id === currentUserId;
         return (

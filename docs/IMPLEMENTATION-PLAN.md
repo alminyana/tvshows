@@ -340,8 +340,9 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 
 ---
 
-## H7 — Pulido, accesibilidad y cobertura · Complejidad: M
+## H7 — Pulido, accesibilidad y cobertura · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** App lista para uso real, todos los criterios de aceptación §12 verificados.
 - **Entregable:** los 9 checkboxes de §12 del PRD pasan.
 - **Tareas:**
@@ -361,6 +362,26 @@ Los tests de `SeriesFormPage` mockean el componente `SeriesForm` completo para a
 - **Tests:** los que falten para cubrir §9 del PRD.
 - **Hecho cuando:** los 9 criterios de §12 pasan.
 - **Dependencias:** H5, H6.
+
+### Notas de implementación
+
+**Bug ConfirmDialog en SeriesDetailPage**
+`SeriesDetailPage` pasaba `description`/`onCancel` a `ConfirmDialog`, que espera `message`/`onClose`. TypeScript no lo detectaba (probablemente por el tsBuildInfoFile cacheado). Corregido a los nombres correctos de la interfaz.
+
+**NotFoundPage**
+Componente nuevo en `src/pages/NotFoundPage/` que sustituye el placeholder `<p>404 — próximamente (H7)</p>`. Muestra código 404, título, descripción y botón de vuelta al inicio.
+
+**Sistema de notificaciones aria-live**
+`NotificationContext` + `NotificationProvider` con región `role="status" aria-live="polite"`. `useNotification().notify(msg)` disponible en cualquier componente bajo el proveedor. Auto-dismiss a los 4s. Integrado en `SeriesFormPage`, `SeriesDetailPage` y `UsersPage` para feedback de CRUD. El `NotificationProvider` vive dentro de `AuthProvider` en `App.tsx`.
+
+**Focus trap en Modal**
+Al abrir, el foco va al primer elemento focusable dentro del dialog (antes iba al contenedor, no al primer control). Tab/Shift+Tab ciclan dentro del modal sin escapar al DOM exterior.
+
+**Estados de carga centrados**
+`DashboardPage` y `UsersPage` envuelven el `<Spinner>` en un `div.center` con `display:flex; justify-content:center; align-items:center; min-height:200px`.
+
+**Strings hardcodeados corregidos**
+`UserList` usaba `'No hay usuarios.'` y `'Lista de usuarios'` literales. Ahora usa `MESSAGES.users.noUsers` y `MESSAGES.users.listAriaLabel`. `UsersPage` usaba `'Usuarios'` literal; ahora usa `MESSAGES.users.title`.
 
 ---
 
