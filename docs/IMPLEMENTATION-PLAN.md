@@ -385,8 +385,9 @@ Al abrir, el foco va al primer elemento focusable dentro del dialog (antes iba a
 
 ---
 
-## H8 — Landing & entry flow · Complejidad: M
+## H8 — Landing & entry flow · Complejidad: M ✅
 
+- **Estado:** ✅ Completado.
 - **Objetivo:** Punto de entrada visual de la app, público y sin autenticación.
 - **Entregable:** ruta `/` con landing fullscreen, slideshow de portadas y acceso al login via modal.
 - **Dependencias:** H7 (necesita el diseño pulido y todas las series con portadas del seed).
@@ -432,6 +433,26 @@ Al abrir, el foco va al primer elemento focusable dentro del dialog (antes iba a
 
 ### Hecho cuando
 Arrancas la app, ves el slideshow de portadas con transición suave, abres el modal, te logueas y aterrizas en `/series`. Sin sesión, `/` siempre muestra la landing.
+
+### Notas de implementación
+
+**Extracción de `LoginForm`**
+La lógica del formulario de login (schema Zod, RHF, handler de submit) se extrajo de `LoginPage` a `src/components/features/LoginForm/LoginForm.tsx`. La prop es `onSuccess: () => void`; el consumidor decide qué hacer tras el login. `LoginPage` navega a `from` (location state) o `/series`; `LoginModal` cierra el modal y navega a `/series`. El test de `LoginPage` no necesitó cambios de comportamiento.
+
+**`LoginModal` sin lógica de autenticación propia**
+`LoginModal` delega todo a `LoginForm`. Su única responsabilidad es abrir/cerrar el `Modal` y, en `onSuccess`, llamar a `onClose()` y luego `navigate('/series')`.
+
+**Import de `useLandingImages` desde el barrel `@/hooks`**
+Si `LandingPage.tsx` importa desde `@/hooks/useLandingImages` directamente, los tests que mockean `@/hooks` no interceptan el hook. Solución: importar siempre desde el barrel. Es el mismo patrón del resto de hooks del proyecto.
+
+**`vi.hoisted` en `useLandingImages.test.ts`**
+Las variables de mock declaradas con `const mockGetAll = vi.fn()` antes de `vi.mock(...)` fallan porque `vi.mock` se hiza al top del archivo. Mismo patrón que H2: usar `vi.hoisted(() => ({ mockGetAll: vi.fn(), mockGet: vi.fn() }))`.
+
+**`<img alt="">` tiene role "presentation", no "img"**
+Las imágenes del slideshow son decorativas (el padre tiene `aria-hidden="true"`), por lo que tienen `alt=""`. `getAllByRole('img', { hidden: true })` no las encuentra. Los tests usan `container.querySelectorAll('img')` para verificar su presencia en el DOM.
+
+**Ruta `/` fuera del `<Layout>`**
+`LandingPage` tiene su propio layout fullscreen sin `Header`. En `App.tsx` la ruta `/` se declara antes y fuera del `<Route element={<Layout />}>`. El resto de rutas (incluyendo `*` para 404) siguen dentro del Layout.
 
 ---
 

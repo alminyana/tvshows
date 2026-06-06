@@ -1,4 +1,11 @@
 export const MESSAGES = {
+  // Landing
+  landing: {
+    title: 'TV Shows',
+    claim: 'Tu colección personal de series favoritas',
+    enter: 'Entrar',
+  },
+
   // Navegación
   nav: {
     series: 'Series',
