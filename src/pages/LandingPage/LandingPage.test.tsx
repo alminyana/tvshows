@@ -65,6 +65,12 @@ describe('LandingPage', () => {
     expect(screen.getByTestId('login-modal')).toBeInTheDocument();
   });
 
+  it('no muestra nada mientras auth está cargando', () => {
+    vi.mocked(useAuth).mockReturnValue({ user: null, loading: true, login: vi.fn(), logout: vi.fn() });
+    const { container } = renderLanding();
+    expect(container.firstChild).toBeNull();
+  });
+
   it('redirige a /series si el usuario ya tiene sesión', () => {
     vi.mocked(useAuth).mockReturnValue({
       user: { id: 'u1', email: 'a@b.com', password: 'h', role: 'user', createdAt: '' },

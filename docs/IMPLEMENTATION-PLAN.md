@@ -452,7 +452,13 @@ Las variables de mock declaradas con `const mockGetAll = vi.fn()` antes de `vi.m
 Las imágenes del slideshow son decorativas (el padre tiene `aria-hidden="true"`), por lo que tienen `alt=""`. `getAllByRole('img', { hidden: true })` no las encuentra. Los tests usan `container.querySelectorAll('img')` para verificar su presencia en el DOM.
 
 **Ruta `/` fuera del `<Layout>`**
-`LandingPage` tiene su propio layout fullscreen sin `Header`. En `App.tsx` la ruta `/` se declara antes y fuera del `<Route element={<Layout />}>`. El resto de rutas (incluyendo `*` para 404) siguen dentro del Layout.
+`LandingPage` tiene su propio layout fullscreen sin `Header`. En `App.tsx` la ruta `/` se declara antes y fuera del `<Route element={<Layout />}>`. El resto de rutas (incluyendo `*` para 404) siguen dentro del Layout. El `Navigate to="/series"` que había en `/` se elimina al mismo tiempo — si queda, el navegador no llega nunca a renderizar `LandingPage`.
+
+**Guard `authLoading` en `LandingPage`**
+Si `useAuth` aún no ha resuelto su promesa de inicialización, `LandingPage` devuelve `null` para evitar el flash de contenido antes del redirect. El chequeo `if (authLoading) return null` debe ir antes de `if (user) return <Navigate>`, no después.
+
+**Tests de `App.test.tsx` con `waitFor`**
+Los tests sincrónicos de rutas `/` y `*` generan el warning `act(...)` porque `AuthProvider` actualiza estado de forma async. Solución: convertir esos tests en `async` y envolver el assert en `waitFor`.  El test de `/series` ya usaba `waitFor` y no necesita cambio.
 
 ---
 

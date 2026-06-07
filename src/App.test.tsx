@@ -46,13 +46,17 @@ describe('App', () => {
     });
   });
 
-  it('ruta / renderiza la landing', () => {
+  it('ruta / renderiza la landing', async () => {
     renderApp('/');
-    expect(screen.getByRole('heading', { name: /tv shows/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /tv shows/i })).toBeInTheDocument();
+    });
   });
 
-  it('ruta desconocida renderiza la página 404', () => {
+  it('ruta desconocida renderiza la página 404', async () => {
     renderApp('/ruta-inexistente');
-    expect(screen.getByRole('heading', { name: /página no encontrada/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /página no encontrada/i })).toBeInTheDocument();
+    });
   });
 });
