@@ -1,7 +1,7 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider, AuthProvider, NotificationProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage } from '@/pages';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage, LandingPage } from '@/pages';
 
 export default function App() {
   return (
@@ -9,8 +9,8 @@ export default function App() {
       <AuthProvider>
         <NotificationProvider>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<Navigate to="/series" replace />} />
             <Route path="/series" element={<SeriesListPage />} />
             <Route path="/series/:id" element={<SeriesDetailPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />

@@ -9,8 +9,8 @@ import styles from './LandingPage.module.scss';
 const SLIDE_INTERVAL_MS = 30_000;
 
 export function LandingPage() {
-  const { user } = useAuth();
-  const { images, loading, hasFallback } = useLandingImages();
+  const { user, loading: authLoading } = useAuth();
+  const { images, loading: imagesLoading, hasFallback } = useLandingImages();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loginOpen, setLoginOpen] = useState(false);
 
@@ -23,7 +23,11 @@ export function LandingPage() {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  // Esperar a que auth resuelva antes de redirigir — evita flash de contenido
+  if (authLoading) return null;
   if (user) return <Navigate to="/series" replace />;
+
+  const loading = imagesLoading;
 
   return (
     <main className={styles.page}>
