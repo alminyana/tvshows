@@ -12,3 +12,5 @@ export { IconButton } from './IconButton/IconButton';
 export { FormField } from './FormField/FormField';
 export { Spinner } from './Spinner/Spinner';
 export { Avatar } from './Avatar/Avatar';
+export { ThemeToggle } from './ThemeToggle/ThemeToggle';
+export { Collapsible } from './Collapsible/Collapsible';

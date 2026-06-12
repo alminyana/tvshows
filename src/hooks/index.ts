@@ -6,3 +6,4 @@ export { useDashboardMetrics } from './useDashboardMetrics';
 export type { DashboardMetrics, GenreCount, RatingCount } from './useDashboardMetrics';
 export { useNotification } from './useNotification';
 export { useLandingImages } from './useLandingImages';
+export { useSeriesViewMode } from './useSeriesViewMode';

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useSeries, useAuth } from '@/hooks';
-import { SeriesCard } from '@/components/features';
-import { Spinner, Select, Input, Button } from '@/components/ui';
+import { useSeries, useAuth, useSeriesViewMode } from '@/hooks';
+import { SeriesCard, SeriesRow } from '@/components/features';
+import { Spinner, Select, Input, Button, Collapsible } from '@/components/ui';
 import { canCreateSeries } from '@/utils/permissions';
 import { MESSAGES } from '@/constants';
 import { GENRES } from '@/types';
@@ -28,10 +28,13 @@ export function SeriesListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { series, loading, error } = useSeries();
+  const [viewMode, setViewMode] = useSeriesViewMode();
 
   const search = params.get('q') ?? '';
   const genre = (params.get('genre') ?? '') as Genre | '';
   const rating = params.get('rating') ?? '';
+
+  const activeFilterCount = [search, genre, rating].filter(Boolean).length;
 
   const filtered = useMemo(() => {
     return series.filter((s) => {
@@ -57,6 +60,36 @@ export function SeriesListPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
+        <div className={styles.viewToggle}>
+          <button
+            className={`${styles.viewButton} ${viewMode === 'cards' ? styles.viewButtonActive : ''}`}
+            onClick={() => setViewMode('cards')}
+            aria-label={MESSAGES.series.viewCards}
+            aria-pressed={viewMode === 'cards'}
+            title={MESSAGES.series.viewCards}
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor" width={14} height={14}>
+              <rect x="1" y="1" width="6" height="6" rx="1" />
+              <rect x="9" y="1" width="6" height="6" rx="1" />
+              <rect x="1" y="9" width="6" height="6" rx="1" />
+              <rect x="9" y="9" width="6" height="6" rx="1" />
+            </svg>
+          </button>
+          <button
+            className={`${styles.viewButton} ${viewMode === 'list' ? styles.viewButtonActive : ''}`}
+            onClick={() => setViewMode('list')}
+            aria-label={MESSAGES.series.viewList}
+            aria-pressed={viewMode === 'list'}
+            title={MESSAGES.series.viewList}
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor" width={14} height={14}>
+              <rect x="1" y="2" width="14" height="2.5" rx="1" />
+              <rect x="1" y="6.75" width="14" height="2.5" rx="1" />
+              <rect x="1" y="11.5" width="14" height="2.5" rx="1" />
+            </svg>
+          </button>
+        </div>
+
         {canCreateSeries(user) && (
           <Button variant="primary" size="sm" onClick={() => navigate('/series/new')}>
             {MESSAGES.series.newSeries}
@@ -64,28 +97,30 @@ export function SeriesListPage() {
         )}
       </div>
 
-      <div className={styles.filters}>
-        <Input
-          id="series-search"
-          placeholder={MESSAGES.series.searchPlaceholder}
-          value={search}
-          onChange={(e) => setParam('q', e.target.value)}
-          aria-label={MESSAGES.actions.search}
-        />
-        <Select
-          id="series-genre"
-          options={GENRE_OPTIONS}
-          value={genre}
-          onChange={(e) => setParam('genre', e.target.value)}
-          aria-label={MESSAGES.series.filterByGenre}
-        />
-        <Select
-          id="series-rating"
-          options={RATING_OPTIONS}
-          value={rating}
-          onChange={(e) => setParam('rating', e.target.value)}
-          aria-label={MESSAGES.series.filterByRating}
-        />
+      <div className={styles.filtersWrapper}>
+        <Collapsible header={MESSAGES.filters.title} activeCount={activeFilterCount}>
+          <Input
+            id="series-search"
+            placeholder={MESSAGES.series.searchPlaceholder}
+            value={search}
+            onChange={(e) => setParam('q', e.target.value)}
+            aria-label={MESSAGES.actions.search}
+          />
+          <Select
+            id="series-genre"
+            options={GENRE_OPTIONS}
+            value={genre}
+            onChange={(e) => setParam('genre', e.target.value)}
+            aria-label={MESSAGES.series.filterByGenre}
+          />
+          <Select
+            id="series-rating"
+            options={RATING_OPTIONS}
+            value={rating}
+            onChange={(e) => setParam('rating', e.target.value)}
+            aria-label={MESSAGES.series.filterByRating}
+          />
+        </Collapsible>
       </div>
 
       {loading && (
@@ -102,11 +137,21 @@ export function SeriesListPage() {
         <p className={styles.empty}>{MESSAGES.series.noResults}</p>
       )}
 
-      {!loading && !error && filtered.length > 0 && (
+      {!loading && !error && filtered.length > 0 && viewMode === 'cards' && (
         <ul className={styles.grid} aria-label="Listado de series">
           {filtered.map((s) => (
             <li key={s.id}>
               <SeriesCard series={s} />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {!loading && !error && filtered.length > 0 && viewMode === 'list' && (
+        <ul className={styles.list} aria-label="Listado de series">
+          {filtered.map((s) => (
+            <li key={s.id}>
+              <SeriesRow series={s} />
             </li>
           ))}
         </ul>
