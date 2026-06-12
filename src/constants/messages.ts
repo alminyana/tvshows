@@ -21,6 +21,8 @@ export const MESSAGES = {
     modeLight: 'Claro',
     modeDark: 'Oscuro',
     toggleMode: 'Cambiar modo',
+    toggleToLight: 'Cambiar a modo claro',
+    toggleToDark: 'Cambiar a modo oscuro',
     names: {
       default: 'Predeterminado',
       ocean: 'Océano',
@@ -53,6 +55,12 @@ export const MESSAGES = {
     seriesDeleted: 'Serie eliminada correctamente.',
   },
 
+  // Filtros
+  filters: {
+    title: 'Filtros',
+    titleWithCount: (n: number) => `Filtros (${n})`,
+  },
+
   // Series
   series: {
     title: 'Título',
@@ -73,6 +81,8 @@ export const MESSAGES = {
     deleteConfirmDetail: 'Esta acción no se puede deshacer.',
     newSeries: 'Nueva serie',
     editSeries: 'Editar serie',
+    viewCards: 'Vista en cuadrícula',
+    viewList: 'Vista en lista',
   },
 
   // Usuarios

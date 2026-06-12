@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks';
+import { ThemeToggle } from '@/components/ui';
 import { MESSAGES } from '@/constants';
 import type { Theme } from '@/types';
 import styles from './Header.module.scss';
@@ -14,7 +15,7 @@ const THEMES: { value: Theme; label: string }[] = [
 ];
 
 export function Header() {
-  const { theme, mode, setTheme, toggleMode } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +27,7 @@ export function Header() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/series');
+    navigate('/');
   };
 
   return (
@@ -62,14 +63,7 @@ export function Header() {
               ))}
             </select>
 
-            <button
-              className={styles.modeButton}
-              onClick={toggleMode}
-              aria-label={MESSAGES.theme.toggleMode}
-              title={mode === 'light' ? MESSAGES.theme.modeDark : MESSAGES.theme.modeLight}
-            >
-              {mode === 'light' ? '🌙' : '☀️'}
-            </button>
+            <ThemeToggle />
           </div>
 
           {user ? (
