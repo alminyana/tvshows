@@ -107,9 +107,7 @@ export function SeriesDetailPage() {
 
           <div className={styles.meta}>
             <span className={styles.year}>{series.year}</span>
-            <span className={styles.seasons}>
-              {series.seasons} {series.seasons === 1 ? 'temporada' : 'temporadas'}
-            </span>
+            <span className={styles.seasons}>{series.seasons}</span>
           </div>
 
           <Rating value={series.rating} readOnly label={MESSAGES.series.rating} />

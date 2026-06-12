@@ -11,17 +11,17 @@ vi.mock('./useSeries', () => ({
 
 const SERIES_MOCK: Series[] = [
   {
-    id: '1', title: 'S1', coverImage: 'img1', synopsis: 'Syn1', seasons: 3,
+    id: '1', title: 'S1', coverImage: 'img1', synopsis: 'Syn1', seasons: '3 temporadas',
     cast: ['A'], year: 2020, rating: 5, genres: ['Drama', 'Thriller'],
     createdBy: 'u1', createdAt: '2020-01-01', updatedAt: '2020-01-01',
   },
   {
-    id: '2', title: 'S2', coverImage: 'img2', synopsis: 'Syn2', seasons: 2,
+    id: '2', title: 'S2', coverImage: 'img2', synopsis: 'Syn2', seasons: '2 temporadas',
     cast: ['B'], year: 2021, rating: 4, genres: ['Drama'],
     createdBy: 'u1', createdAt: '2021-01-01', updatedAt: '2021-01-01',
   },
   {
-    id: '3', title: 'S3', coverImage: 'img3', synopsis: 'Syn3', seasons: 1,
+    id: '3', title: 'S3', coverImage: 'img3', synopsis: 'Syn3', seasons: '1 temporadas',
     cast: ['C'], year: 2022, rating: 2, genres: ['Comedia'],
     createdBy: 'u2', createdAt: '2022-01-01', updatedAt: '2022-01-01',
   },

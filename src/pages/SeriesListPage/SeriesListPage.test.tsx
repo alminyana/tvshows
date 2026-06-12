@@ -24,7 +24,7 @@ const makeSeries = (overrides: Partial<Series> = {}): Series => ({
   id: 'id-1',
   title: 'Breaking Bad',
   synopsis: 'Sinopsis',
-  seasons: 5,
+  seasons: '5 temporadas',
   cast: [],
   year: 2008,
   rating: 5,

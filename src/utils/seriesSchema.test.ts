@@ -4,7 +4,7 @@ import { seriesSchema } from './seriesSchema';
 const validData = {
   title: 'Breaking Bad',
   synopsis: 'Un profesor de química.',
-  seasons: 5,
+  seasons: '5 temporadas',
   year: 2008,
   rating: 5,
   genres: ['Drama', 'Thriller'],
@@ -36,10 +36,9 @@ describe('seriesSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('seasons debe ser entero >= 1', () => {
-    expect(seriesSchema.safeParse({ ...validData, seasons: 0 }).success).toBe(false);
-    expect(seriesSchema.safeParse({ ...validData, seasons: -1 }).success).toBe(false);
-    expect(seriesSchema.safeParse({ ...validData, seasons: 1.5 }).success).toBe(false);
+  it('seasons requerido (texto no vacío)', () => {
+    expect(seriesSchema.safeParse({ ...validData, seasons: '' }).success).toBe(false);
+    expect(seriesSchema.safeParse({ ...validData, seasons: 'Una temporada' }).success).toBe(true);
   });
 
   it('year mínimo 1900', () => {

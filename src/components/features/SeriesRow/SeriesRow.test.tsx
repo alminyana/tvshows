@@ -19,7 +19,7 @@ const series: Series = {
   id: 's1',
   title: 'Breaking Bad',
   synopsis: 'Química y crimen.',
-  seasons: 5,
+  seasons: '5 temporadas',
   cast: ['Bryan Cranston'],
   year: 2008,
   rating: 5,

@@ -21,7 +21,7 @@ const mockSeries: Series = {
   id: 'abc-1',
   title: 'Breaking Bad',
   synopsis: 'Sinopsis',
-  seasons: 5,
+  seasons: '5 temporadas',
   cast: ['Bryan Cranston'],
   year: 2008,
   rating: 5,

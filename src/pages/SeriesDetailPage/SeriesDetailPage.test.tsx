@@ -24,7 +24,7 @@ const mockSeries: Series = {
   id: 'abc-1',
   title: 'Breaking Bad',
   synopsis: 'Un profesor de química.',
-  seasons: 5,
+  seasons: '5 temporadas',
   cast: ['Bryan Cranston', 'Aaron Paul'],
   year: 2008,
   rating: 5,
@@ -84,15 +84,15 @@ describe('SeriesDetailPage', () => {
     expect(screen.queryByText('Mi opinión')).not.toBeInTheDocument();
   });
 
-  it('singular para 1 temporada', () => {
+  it('muestra el texto de temporadas tal cual', () => {
     vi.mocked(useSeriesById).mockReturnValue({
-      series: { ...mockSeries, seasons: 1 },
+      series: { ...mockSeries, seasons: 'Miniserie de 1 sola temporada' },
       loading: false,
       notFound: false,
       error: null,
     });
     renderPage();
-    expect(screen.getByText('1 temporada')).toBeInTheDocument();
+    expect(screen.getByText('Miniserie de 1 sola temporada')).toBeInTheDocument();
   });
 
   it('no muestra botones de editar/eliminar si no hay sesión', () => {
