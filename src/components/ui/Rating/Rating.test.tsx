@@ -27,4 +27,17 @@ describe('Rating — modo input', () => {
     await userEvent.click(screen.getAllByRole('radio')[1]);
     expect(onChange).toHaveBeenCalledWith(2);
   });
+
+  it('previsualiza el relleno hasta la estrella apuntada al hacer hover', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Rating value={0} onChange={() => undefined} />);
+    const labels = container.querySelectorAll('label');
+    const glyphs = container.querySelectorAll('label span[aria-hidden="true"]');
+
+    await user.hover(labels[2]); // tercera estrella
+    expect(glyphs[0].className).toMatch(/filled/);
+    expect(glyphs[1].className).toMatch(/filled/);
+    expect(glyphs[2].className).toMatch(/filled/);
+    expect(glyphs[3].className).toMatch(/empty/);
+  });
 });

@@ -22,7 +22,7 @@ const makeSeries = (id: string, coverImage: string): Series => ({
   id,
   title: `Serie ${id}`,
   synopsis: 'S',
-  seasons: 1,
+  seasons: '1 temporadas',
   cast: [],
   year: 2020,
   rating: 4,

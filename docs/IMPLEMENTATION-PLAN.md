@@ -78,7 +78,7 @@ React Router 6.28 advierte sobre dos cambios de comportamiento de v7 (`v7_startT
      - `Tag`/`Chip`.
      - `Card`.
      - `Modal`, `ConfirmDialog`.
-     - `Rating` (estrellas 1-5, modo read y modo input).
+     - `Rating` (estrellas 1-5, modo read y modo input; el modo input rellena de la 1 a la clicada y previsualiza en hover — ver nota en H9).
      - `IconButton`.
      - `FormField` (wrapper label + error).
      - `Spinner`.
@@ -248,7 +248,7 @@ Zod 3.x requiere TLD en el validador de email. Los tests usan `test@example.com`
      - `opinion`: opcional.
      - `rating`: entero entre 1 y 5.
      - `year`: entero entre 1900 y año actual.
-     - `seasons`: entero positivo.
+     - `seasons`: texto libre no vacío (ver nota en H9 — el campo dejó de ser numérico).
      - `coverImage`: MIME ∈ {jpeg, png, webp} + tamaño ≤ 2 MB.
   3. `SeriesForm` (`features/SeriesForm/`): RHF + `zodResolver`, file input con preview, multi-select de géneros, chips de cast (añadir/quitar).
   4. `SeriesFormPage` que monta el form en modo crear o editar (lee `:id` si existe).
@@ -550,6 +550,24 @@ La combinación de `aspect-ratio: 2/3` + `max-height: 140px` hacía que el conte
 
 **Thumbnail de `SeriesRow` ampliado a 64×96px**
 El tamaño original (48×72px) resultaba demasiado pequeño y hacía los ítems difíciles de distinguir. Se subió a 64×96px y el padding del `.row` pasó de `space-3` a `space-4` para dar más aire al contenido.
+
+**`Series.seasons` cambiado de `number` a `string`**
+El campo dejó de representar un recuento numérico de temporadas y pasó a ser un texto libre descriptivo (ej. "5 temporadas emitidas entre 2008 y 2013"). Cambios asociados:
+- `types/series.ts`: `seasons: number` → `seasons: string`.
+- `utils/seriesSchema.ts`: de `z.coerce.number().int().min(1)` a `z.string().min(1)`.
+- `SeriesForm`: el control pasó de `<Input type="number">` (en fila con `year`) a un `<Textarea>` a ancho completo, al ser ahora texto explicativo. `year` queda como campo propio.
+- `SeriesDetailPage`: se elimina la lógica singular/plural (`series.seasons === 1 ? 'temporada' : 'temporadas'`); ahora se muestra el texto tal cual.
+- Seed, mock del showcase y fixtures de tests migrados a string.
+- **Pendiente (no implementado):** migración de versión en Dexie para convertir los registros ya persistidos con `seasons` numérico. Las BD de usuarios existentes mantienen el valor antiguo hasta que se añada.
+
+**Preview en hover del `Rating` (modo input)**
+El `Rating` ya rellenaba de la estrella 1 a la clicada (`star <= value`). Se añadió previsualización en hover: un estado local `hovered` y `displayValue = hovered ?? value` hacen que, al pasar el ratón, las estrellas se pinten en amarillo hasta la apuntada antes de confirmar el clic; `onMouseLeave` del contenedor resetea a `null` para volver al valor real. Solo afecta al modo input — el modo `readOnly` no tiene estado de hover. Sin cambios en `SeriesForm`, que ya consumía el componente vía `Controller`. La accesibilidad (radios + labels `sr-only`) se mantiene intacta.
+
+**`.sr-only` no estaba definido — radios y números visibles en el `Rating`**
+El `Rating` (modo input) usa `<input type="radio" className="sr-only">` para la semántica de grupo y un `<span className="sr-only">{star}</span>` con el número, ambos pensados para quedar ocultos visualmente. La clase `.sr-only` no estaba definida en ningún `.scss` global, por lo que se veían los "topos" de los radios nativos y los números junto a cada estrella, dando un aspecto pobre. Solución: definir la utilidad `.sr-only` (patrón clip estándar) en `styles/global.scss`. Era el único consumidor de la clase, así que el cambio no afecta a nada más. Resultado: en el formulario solo se ven las 5 estrellas.
+
+**Mejora visual de las estrellas del `Rating`**
+Junto con el fix de `.sr-only`: estrellas más grandes (`--font-size-2xl`), `gap` por token (`--space-1`), transición de color suave en `.filled`/`.empty`, hover con `scale(1.2)` y feedback de `:active` con `scale(0.95)`, y el outline de foco usando `--radius-sm`. El amarillo pasó a `#f5b50a`. No se muestran números ni controles: solo las estrellas (el clic en la 5ª implica rating 5).
 
 ---
 

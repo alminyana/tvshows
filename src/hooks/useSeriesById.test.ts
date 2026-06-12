@@ -7,7 +7,7 @@ const mockSeries: Series = {
   id: 'abc-1',
   title: 'Severance',
   synopsis: 'Sinopsis',
-  seasons: 2,
+  seasons: '2 temporadas',
   cast: ['Adam Scott'],
   year: 2022,
   rating: 5,

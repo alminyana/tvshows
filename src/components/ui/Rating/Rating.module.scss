@@ -6,24 +6,31 @@
 
 .row {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--space-1);
 }
 
 .starLabel {
+  display: inline-flex;
   cursor: pointer;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   line-height: 1;
-  transition: transform 0.1s;
+  transition: transform 0.12s ease;
 
-  &:hover { transform: scale(1.15); }
+  &:hover { transform: scale(1.2); }
+  &:active { transform: scale(0.95); }
 
   &:has(input:focus-visible) .filled,
   &:has(input:focus-visible) .empty {
     outline: 2px solid var(--color-primary);
-    outline-offset: 1px;
-    border-radius: 2px;
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 }
 
-.filled { color: #f59e0b; }
+.filled,
+.empty {
+  transition: color 0.12s ease;
+}
+
+.filled { color: #f5b50a; }
 .empty  { color: var(--color-border); }

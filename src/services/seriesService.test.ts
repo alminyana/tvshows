@@ -19,7 +19,7 @@ const mockSeries: Series = {
   id: 'abc-123',
   title: 'Test Series',
   synopsis: 'Una sinopsis de prueba',
-  seasons: 2,
+  seasons: '2 temporadas',
   cast: ['Actor A'],
   year: 2020,
   rating: 4,

@@ -44,7 +44,7 @@ vi.mock('@/components/features', () => ({
           {
             title: 'Test',
             synopsis: 'Synopsis',
-            seasons: 1,
+            seasons: '1 temporadas',
             year: 2020,
             rating: 3,
             genres: ['Drama'],
@@ -66,7 +66,7 @@ const mockSeries: Series = {
   id: 'abc-1',
   title: 'Breaking Bad',
   synopsis: 'Sinopsis',
-  seasons: 5,
+  seasons: '5 temporadas',
   cast: ['Bryan Cranston'],
   year: 2008,
   rating: 5,
