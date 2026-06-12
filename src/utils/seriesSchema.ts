@@ -7,10 +7,7 @@ const currentYear = new Date().getFullYear();
 export const seriesSchema = z.object({
   title: z.string().min(1, 'Campo obligatorio.'),
   synopsis: z.string().min(1, 'Campo obligatorio.'),
-  seasons: z.coerce
-    .number({ invalid_type_error: 'Campo obligatorio.' })
-    .int()
-    .min(1, 'El valor mínimo es 1.'),
+  seasons: z.string().min(1, 'Campo obligatorio.'),
   year: z.coerce
     .number({ invalid_type_error: 'Campo obligatorio.' })
     .int()

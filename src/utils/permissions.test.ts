@@ -15,7 +15,7 @@ const makeSeries = (createdBy: string): Series => ({
   id: 's1',
   title: 'Serie',
   synopsis: 'Synopsis',
-  seasons: 1,
+  seasons: '1 temporadas',
   cast: [],
   year: 2020,
   rating: 3,

@@ -34,7 +34,7 @@ const DUMMY_RATINGS = [
 const MOCK_SERIES = {
   title: 'Breaking Bad',
   year: 2008,
-  seasons: 5,
+  seasons: '5 temporadas (2008–2013).',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   synopsis: 'Un profesor de química diagnosticado con cáncer terminal se convierte en fabricante de metanfetamina.',
@@ -168,7 +168,7 @@ export function ShowcasePage() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>SeriesCard (mockup)</h2>
         <div className={styles.cardGrid}>
-          {[MOCK_SERIES, { ...MOCK_SERIES, title: 'The Wire', year: 2002, rating: 5, seasons: 5 }].map((s) => (
+          {[MOCK_SERIES, { ...MOCK_SERIES, title: 'The Wire', year: 2002, rating: 5, seasons: '5 temporadas (2002–2008).' }].map((s) => (
             <Card key={s.title} hoverable className={styles.seriesCard}>
               <div className={styles.cardCover}>
                 <Avatar initials={s.title.substring(0, 2).toUpperCase()} size="lg" />

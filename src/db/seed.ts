@@ -68,7 +68,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Breaking Bad',
       synopsis: 'Un profesor de química con cáncer terminal se convierte en fabricante de metanfetamina para asegurar el futuro económico de su familia.',
-      seasons: 5,
+      seasons: '5 temporadas emitidas entre 2008 y 2013, con un total de 62 episodios.',
       cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn', 'Dean Norris'],
       year: 2008,
       rating: 5,
@@ -79,7 +79,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'The Wire',
       synopsis: 'Un retrato complejo del crimen organizado y las instituciones de Baltimore, desde la policía hasta los traficantes de droga.',
-      seasons: 5,
+      seasons: '5 temporadas, cada una centrada en una institución distinta de la ciudad.',
       cast: ['Dominic West', 'Idris Elba', 'Lance Reddick', 'Wendell Pierce'],
       year: 2002,
       rating: 5,
@@ -90,7 +90,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Stranger Things',
       synopsis: 'En un pequeño pueblo de Indiana, la desaparición de un niño desata misterios sobrenaturales y experimentos secretos del gobierno.',
-      seasons: 4,
+      seasons: '4 temporadas, con una quinta y última en producción.',
       cast: ['Millie Bobby Brown', 'Finn Wolfhard', 'Winona Ryder', 'David Harbour'],
       year: 2016,
       rating: 4,
@@ -100,7 +100,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Chernobyl',
       synopsis: 'La miniserie relata el catastrófico accidente nuclear de 1986 y la historia de quienes arriesgaron su vida para contenerlo.',
-      seasons: 1,
+      seasons: 'Miniserie de 1 temporada con 5 episodios autoconclusivos.',
       cast: ['Jared Harris', 'Stellan Skarsgård', 'Emily Watson'],
       year: 2019,
       rating: 5,
@@ -111,7 +111,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Black Mirror',
       synopsis: 'Antología de ciencia ficción que explora las consecuencias inesperadas y oscuras de la tecnología moderna.',
-      seasons: 6,
+      seasons: '6 temporadas de formato antológico, cada episodio es independiente.',
       cast: ['Daniel Kaluuya', 'Jon Hamm', 'Bryce Dallas Howard'],
       year: 2011,
       rating: 4,
@@ -121,7 +121,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Fargo',
       synopsis: 'Antología de crimen negro ambientada en el Medio Oeste americano, inspirada en el universo de los hermanos Coen.',
-      seasons: 5,
+      seasons: '5 temporadas independientes, cada una con su propia historia y reparto.',
       cast: ['Martin Freeman', 'Billy Bob Thornton', 'Kirsten Dunst'],
       year: 2014,
       rating: 4,
@@ -131,7 +131,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'Severance',
       synopsis: 'Empleados de Lumon Industries se someten a un procedimiento que separa quirúrgicamente sus recuerdos laborales de los personales.',
-      seasons: 2,
+      seasons: '2 temporadas estrenadas en 2022 y 2025.',
       cast: ['Adam Scott', 'Patricia Arquette', 'John Turturro', 'Christopher Walken'],
       year: 2022,
       rating: 5,
@@ -142,7 +142,7 @@ export async function seedDatabase(): Promise<void> {
     {
       title: 'The Bear',
       synopsis: 'Un joven chef de alta cocina regresa a Chicago para gestionar el restaurante de sándwiches de su familia tras la muerte de su hermano.',
-      seasons: 3,
+      seasons: '3 temporadas, con una cuarta confirmada.',
       cast: ['Jeremy Allen White', 'Ayo Edebiri', 'Ebon Moss-Bachrach'],
       year: 2022,
       rating: 5,

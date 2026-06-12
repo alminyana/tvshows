@@ -5,7 +5,7 @@ export interface Series {
   coverImage: string;
   title: string;
   synopsis: string;
-  seasons: number;
+  seasons: string;
   cast: string[];
   year: number;
   opinion?: string;

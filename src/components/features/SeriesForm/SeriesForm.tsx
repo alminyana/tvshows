@@ -102,15 +102,13 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         <Textarea id="synopsis" rows={4} {...register('synopsis')} hasError={!!errors.synopsis} />
       </FormField>
 
-      <div className={styles.row}>
-        <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message} required>
-          <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
-        </FormField>
+      <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message} required>
+        <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
+      </FormField>
 
-        <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message} required>
-          <Input id="seasons" type="number" {...register('seasons')} hasError={!!errors.seasons} />
-        </FormField>
-      </div>
+      <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message} required>
+        <Textarea id="seasons" rows={3} {...register('seasons')} hasError={!!errors.seasons} />
+      </FormField>
 
       <FormField label={MESSAGES.series.rating} error={errors.rating?.message} required>
         <Controller

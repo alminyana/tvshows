@@ -81,7 +81,7 @@ interface Series {
   coverImage: string;    // referencia al Blob en IndexedDB
   title: string;         // requerido
   synopsis: string;      // requerido
-  seasons: number;       // requerido, > 0
+  seasons: string;       // requerido, texto libre descriptivo de las temporadas
   cast: string[];        // array de strings (input tipo tags/chips)
   year: number;          // requerido, año válido (1900 - año actual)
   opinion?: string;      // opcional
@@ -150,7 +150,7 @@ interface User {
   - `opinion`: opcional.
   - `rating`: entero entre 1 y 5.
   - `year`: entero entre 1900 y el año actual.
-  - `seasons`: entero positivo.
+  - `seasons`: texto libre no vacío (descripción de las temporadas).
 - Input de imagen de portada:
   - En Fase 1: input file que acepta `image/jpeg`, `image/png`, `image/webp`. Se almacena como Blob en IndexedDB.
   - Tamaño máximo recomendado: 2 MB por imagen.
