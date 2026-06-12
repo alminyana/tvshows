@@ -45,12 +45,10 @@ beforeEach(() => {
 });
 
 describe('SeriesCard', () => {
-  it('muestra título, año y géneros', () => {
+  it('muestra título y año', () => {
     renderCard();
     expect(screen.getByText('Breaking Bad')).toBeInTheDocument();
     expect(screen.getByText('2008')).toBeInTheDocument();
-    expect(screen.getByText('Drama')).toBeInTheDocument();
-    expect(screen.getByText('Thriller')).toBeInTheDocument();
   });
 
   it('navega al detalle al hacer click', () => {

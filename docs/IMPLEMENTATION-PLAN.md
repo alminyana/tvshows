@@ -462,6 +462,97 @@ Los tests sincrónicos de rutas `/` y `*` generan el warning `act(...)` porque `
 
 ---
 
+## H9 — Mejoras de UX y refinamiento de la vista Series · Complejidad: M ✅
+
+- **Objetivo:** Pulir la experiencia de navegación pública, mejorar la densidad y usabilidad del listado de series, y consolidar el flujo de logout con la landing.
+- **Entregable:** toggle de tema con iconografía de bombilla, logout redirige a landing, dashboard accesible sin login, filtros del listado colapsables y enriquecidos, toggle cards/lista persistido, y cards más compactas tipo Netflix.
+- **Estado:** ✅ Completado.
+- **Dependencias:** H8 (logout → landing requiere que la landing exista).
+
+### Tareas
+
+1. **Iconografía del toggle de tema (bombilla):**
+   - Sustituir el icono actual del switch claro/oscuro por dos SVG inline: bombilla encendida (modo claro activo) y bombilla apagada (modo oscuro activo).
+   - SVG inline en `components/ui/ThemeToggle/` (o donde viva el toggle), sin librería de iconos.
+   - Accesibilidad: `aria-label` dinámico (`"Cambiar a modo oscuro"` / `"Cambiar a modo claro"`) y `title` reflejando el estado actual. El icono lleva `aria-hidden="true"` — el contenido accesible vive en el botón.
+   - Transición suave entre los dos estados (opacity o crossfade, 200ms).
+
+2. **Logout redirige a landing:**
+   - Modificar el handler de logout en `Header` (o donde se invoque `useAuth().logout`) para hacer `navigate('/')` tras el logout.
+   - Limpiar cualquier estado de UI que dependa de la sesión (filtros sensibles a usuario, si los hubiera — revisar).
+
+3. **Dashboard público sin login:**
+   - Verificar / mover `/dashboard` fuera de `<ProtectedRoute>` en `App.tsx`.
+   - Confirmar que `useDashboardMetrics` y los componentes de dashboard no asumen `user` definido. Si algún widget depende de auth (no debería), refactorizar.
+   - El header en modo Viewer ya muestra el botón "Entrar" (no logout) — sin cambios ahí.
+
+4. **Permisos para Viewer en el listado y detalle:**
+   - Auditar que `canCreateSeries`, `canEditSeries`, `canDeleteSeries` (definidas en H4) devuelven `false` para `user === null`. Añadir test explícito si falta.
+   - `SeriesListPage`: ocultar botón "Nueva serie" cuando no hay sesión.
+   - `SeriesDetailPage`: ocultar botones editar/eliminar cuando no hay sesión (ya gestionado por permisos, verificar).
+   - Las rutas `/series/new` y `/series/:id/edit` siguen protegidas — sin cambios.
+
+5. **Filtros colapsables y enriquecidos en `SeriesListPage`:**
+   - Nuevo componente `components/ui/Collapsible/` (reutilizable): cabecera clickable con chevron, contenido animado (`max-height` + `opacity`), `aria-expanded` correcto, navegable por teclado (Enter/Space).
+   - Envolver los filtros existentes (búsqueda por título, multi-select de géneros, filtro de rating) dentro del `Collapsible`.
+   - **Estado inicial: colapsado, no persistido entre sesiones.** Cada visita arranca colapsado.
+   - Cabecera del colapsable muestra un contador de filtros activos cuando los hay (ej. "Filtros (2)").
+   - Sincronización con URL querystring sigue intacta (los filtros se aplican aunque el panel esté colapsado).
+
+6. **Toggle vista cards / vista lista:**
+   - Nuevo control en `SeriesListPage` (botón segmentado con dos iconos: grid / list).
+   - Tipo `ViewMode = 'cards' | 'list'` en `types/`.
+   - Persistencia en `localStorage` bajo la clave `tv-shows:series-view-mode`. Lectura inicial vía hook custom `useSeriesViewMode` (devuelve `[mode, setMode]`, con guard para SSR / valor inválido).
+   - El toggle solo cambia el modo de render — filtros, búsqueda, datos en pantalla y URL no se tocan.
+   - **Vista lista:** nuevo componente `components/features/SeriesRow/` con thumbnail (≈48×72px), título, año, géneros (chips), rating (estrellas). Una fila por serie, click navega a `/series/:id` igual que la card.
+   - **Vista cards:** el componente existente `SeriesCard` se mantiene como render por defecto.
+
+7. **Compactar `SeriesCard` (tipo Netflix):**
+   - Reducir la altura total de la card a ≈140-160px.
+   - Portada con ratio horizontal o póster vertical muy compacto — ajuste fino visual al implementar.
+   - Mantener título y rating visibles; el resto de info (géneros, año) pasa a tooltip / hover o solo al detalle, según quede mejor visualmente.
+   - Grid responsive recalculado: más columnas por breakpoint (4-5 desktop, 3 tablet, 2 móvil) para aprovechar la densidad.
+
+### Archivos
+- `src/components/ui/ThemeToggle/` (modificar; los SVG pueden vivir inline o en archivo aparte si pesan).
+- `src/components/layout/Header/` (modificar logout handler).
+- `src/components/ui/Collapsible/` (nuevo).
+- `src/components/features/SeriesRow/` (nuevo).
+- `src/components/features/SeriesCard/` (modificar — compactar).
+- `src/pages/SeriesListPage/` (modificar — envolver filtros, añadir toggle de vista, render condicional).
+- `src/pages/DashboardPage/` o `src/App.tsx` (verificar / mover fuera de `ProtectedRoute`).
+- `src/hooks/useSeriesViewMode.ts` (nuevo).
+- `src/types/series.ts` (o nuevo `viewMode.ts`) — añadir `ViewMode`.
+- `src/utils/permissions.ts` — añadir tests si faltan para `user === null`.
+
+### Tests
+- `ThemeToggle`: render del icono correcto según modo, `aria-label` dinámico, click cambia tema.
+- Logout: tras `logout()`, navegación a `/`.
+- `Collapsible`: abre/cierra con click y teclado, `aria-expanded` correcto, contador de filtros activos.
+- `useSeriesViewMode`: lectura inicial desde localStorage, escritura persiste, fallback a `'cards'` si valor inválido o ausente.
+- `SeriesListPage`: toggle cambia entre cards y lista respetando filtros y URL; sin sesión, no aparece "Nueva serie".
+- `SeriesRow`: render de los 5 campos, click navega al detalle.
+- `permissions`: `canCreate/Edit/DeleteSeries(null, ...)` devuelven `false`.
+- Dashboard accesible sin sesión: render con `user === null` no rompe.
+
+### Hecho cuando
+- El toggle muestra bombilla encendida/apagada según el modo.
+- Logout te lleva a `/`.
+- Sin login, ves listado y dashboard pero no hay botones de crear/editar/borrar.
+- Los filtros aparecen colapsados al entrar y muestran contador cuando hay activos.
+- El toggle cards/lista cambia el render manteniendo filtros, y la preferencia persiste tras recarga.
+- Las cards ocupan menos espacio vertical y caben más series en pantalla.
+
+### Notas de implementación
+
+**`max-height` en `.cover` de `SeriesCard` eliminado**
+La combinación de `aspect-ratio: 2/3` + `max-height: 140px` hacía que el contenedor de la imagen se recortara antes de alcanzar el ancho de la columna, dejando franjas vacías a los lados. Solución: eliminar `max-height` y añadir `width: 100%`. Con solo `aspect-ratio`, el ancho de la columna del grid determina el ancho del cover, y la altura se calcula en proporción — la imagen ocupa el 100% sin distorsión gracias a `object-fit: cover`.
+
+**Thumbnail de `SeriesRow` ampliado a 64×96px**
+El tamaño original (48×72px) resultaba demasiado pequeño y hacía los ítems difíciles de distinguir. Se subió a 64×96px y el padding del `.row` pasó de `space-3` a `space-4` para dar más aire al contenido.
+
+---
+
 ## Tabla resumen de dependencias
 
 | Hito | Depende de | Complejidad |
@@ -475,5 +566,6 @@ Los tests sincrónicos de rutas `/` y `*` generan el warning `act(...)` porque `
 | H6 Users (Admin) | H3 | M |
 | H7 Pulido + a11y + cobertura | H5, H6 | M |
 | H8 Landing & entry flow | H7 | M |
+| H9 Mejoras UX vista Series | H8 | M |
 
 > H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho. H8 cierra el plan — depende de H7 para tener el diseño pulido y las portadas del seed completas.

@@ -4,3 +4,4 @@ export { UserForm } from './UserForm/UserForm';
 export { UserList } from './UserList/UserList';
 export { LoginForm } from './LoginForm/LoginForm';
 export { LoginModal } from './LoginModal/LoginModal';
+export { SeriesRow } from './SeriesRow/SeriesRow';
