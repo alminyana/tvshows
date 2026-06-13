@@ -8,7 +8,6 @@ const mockNavigate = vi.fn();
 
 vi.mock('@/hooks', () => ({
   useAuth: vi.fn(() => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() })),
-  useLandingImages: vi.fn(() => ({ images: [], loading: false, hasFallback: true })),
 }));
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -21,7 +20,7 @@ vi.mock('@/components/features/LoginModal/LoginModal', () => ({
     isOpen ? <div data-testid="login-modal">Modal</div> : null,
 }));
 
-import { useAuth, useLandingImages } from '@/hooks';
+import { useAuth } from '@/hooks';
 
 function renderLanding() {
   return render(
@@ -37,7 +36,6 @@ function renderLanding() {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useAuth).mockReturnValue({ user: null, loading: false, login: vi.fn(), logout: vi.fn() });
-  vi.mocked(useLandingImages).mockReturnValue({ images: [], loading: false, hasFallback: true });
 });
 
 describe('LandingPage', () => {
@@ -47,15 +45,9 @@ describe('LandingPage', () => {
     expect(screen.getByText(/tu colección personal/i)).toBeInTheDocument();
   });
 
-  it('muestra el botón "Entrar" cuando no está cargando', () => {
+  it('muestra el botón "Entrar"', () => {
     renderLanding();
     expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
-  });
-
-  it('no muestra el botón "Entrar" mientras carga', () => {
-    vi.mocked(useLandingImages).mockReturnValue({ images: [], loading: true, hasFallback: false });
-    renderLanding();
-    expect(screen.queryByRole('button', { name: /entrar/i })).not.toBeInTheDocument();
   });
 
   it('abre el LoginModal al pulsar "Entrar"', async () => {
@@ -80,23 +72,5 @@ describe('LandingPage', () => {
     });
     renderLanding();
     expect(screen.getByText('Series')).toBeInTheDocument();
-  });
-
-  it('renderiza el fallback cuando no hay imágenes', () => {
-    renderLanding();
-    // El botón "Entrar" confirma que la UI está en modo fallback (sin slideshow)
-    expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
-  });
-
-  it('renderiza imágenes cuando hay portadas', () => {
-    vi.mocked(useLandingImages).mockReturnValue({
-      images: ['blob:1', 'blob:2'],
-      loading: false,
-      hasFallback: false,
-    });
-    const { container } = renderLanding();
-    // Las imágenes son decorativas (alt=""), se buscan por tag
-    expect(container.querySelectorAll('img')).toHaveLength(2);
   });
 });

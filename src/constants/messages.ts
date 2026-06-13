@@ -139,6 +139,8 @@ export const MESSAGES = {
     featuredDetail: 'Con valoración ≥ 4',
     genreDistribution: 'Distribución por género',
     ratingDistribution: 'Distribución por valoración',
+    genrePieChart: 'Series por género',
+    noData: 'Sin datos disponibles.',
   },
 
   // Showcase

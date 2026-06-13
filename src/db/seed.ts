@@ -3,6 +3,59 @@ import { hashPassword } from '../utils/hashPassword';
 import type { User } from '../types/user';
 import type { Series } from '../types/series';
 import type { Genre } from '../types/genre';
+import rawSeedData from './seed.json';
+
+interface SeedEntry {
+  title: string;
+  synopsis?: string;
+  seasons: string;
+  cast?: unknown;
+  year?: number | string;
+  rating?: number;
+}
+
+function parseCast(cast: unknown): string[] {
+  if (!Array.isArray(cast)) return [];
+  return cast.filter((c): c is string => typeof c === 'string');
+}
+
+// Extrae el primer año de valores como "2001-2010" o números directos.
+function parseYear(year: unknown): number {
+  if (typeof year === 'number') return year;
+  if (typeof year === 'string') {
+    const match = year.match(/\d{4}/);
+    if (match) return parseInt(match[0], 10);
+  }
+  return new Date().getFullYear();
+}
+
+// Asigna géneros por palabras clave en título + sinopsis. Máximo 3.
+const GENRE_RULES: Array<[RegExp, Genre]> = [
+  [/dragon|trono|magia|reino|elfos|poniente|caballero|medieval/i,          'Fantasía'],
+  [/ciencia fic|sci-fi|extraterr|robot|futuro|hongo|apocali|espacio|androide/i, 'Ciencia ficción'],
+  [/animaci|anime|dibujos/i,                                                'Animación'],
+  [/terror|horror|pesadilla|monstruo|vampiro|zombi/i,                       'Terror'],
+  [/amor|romance|sentimental|enamorad|boda|pareja/i,                        'Romance'],
+  [/documental|biográfi|biopic|archivo personal/i,                          'Documental'],
+  [/narco|droga|cartel|mafia|contrabando|tráfico/i,                         'Thriller'],
+  [/polici|detective|fiscal|juicio|abogad|crimen|asesin|fbi|cia|espi|mossad|agente|terrorist|investig|secuestr/i, 'Thriller'],
+  [/soldado|militar|veterano|marines|ejército|batalla|guerra/i,              'Acción'],
+  [/hospital|médic|doctor|urgencia|enferm|cirujano/i,                        'Drama'],
+  [/chef|restaurante|cocina|cocinero/i,                                      'Comedia'],
+  [/humor|comedia|gracioso/i,                                                'Comedia'],
+  [/familia|sociedad|rivalidad|sucesi|herencia|política|historia|vida/i,     'Drama'],
+];
+
+function inferGenres(entry: SeedEntry): Genre[] {
+  const text = `${entry.title} ${entry.synopsis ?? ''}`;
+  const found = new Set<Genre>();
+  for (const [regex, genre] of GENRE_RULES) {
+    if (regex.test(text)) found.add(genre);
+    if (found.size >= 3) break;
+  }
+  if (found.size === 0) found.add('Drama');
+  return [...found];
+}
 
 function createPlaceholderBlob(color: string): Blob {
   const canvas = document.createElement('canvas');
@@ -25,6 +78,13 @@ async function saveImage(blob: Blob): Promise<string> {
   await db.images.add({ id, blob });
   return id;
 }
+
+const palette = [
+  '#1a1a2e', '#16213e', '#0f3460', '#533483',
+  '#2b2d42', '#8d99ae', '#ef233c', '#2d6a4f',
+  '#1b4332', '#6a0572', '#3d405b', '#81b29a',
+  '#f2cc8f', '#e07a5f', '#264653', '#2a9d8f',
+];
 
 export async function seedDatabase(): Promise<void> {
   const userCount = await db.users.count();
@@ -58,107 +118,24 @@ export async function seedDatabase(): Promise<void> {
 
   await db.users.bulkAdd(users);
 
-  const palette = [
-    '#1a1a2e', '#16213e', '#0f3460', '#533483',
-    '#2b2d42', '#8d99ae', '#ef233c', '#2d6a4f',
-    '#1b4332', '#6a0572',
-  ];
-
-  const seriesData: Array<Omit<Series, 'id' | 'coverImage' | 'createdAt' | 'updatedAt'>> = [
-    {
-      title: 'Breaking Bad',
-      synopsis: 'Un profesor de química con cáncer terminal se convierte en fabricante de metanfetamina para asegurar el futuro económico de su familia.',
-      seasons: '5 temporadas emitidas entre 2008 y 2013, con un total de 62 episodios.',
-      cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn', 'Dean Norris'],
-      year: 2008,
-      rating: 5,
-      genres: ['Drama', 'Thriller'] as Genre[],
-      opinion: 'Una de las mejores series de la historia. La evolución de Walter White es magistral.',
-      createdBy: adminId,
-    },
-    {
-      title: 'The Wire',
-      synopsis: 'Un retrato complejo del crimen organizado y las instituciones de Baltimore, desde la policía hasta los traficantes de droga.',
-      seasons: '5 temporadas, cada una centrada en una institución distinta de la ciudad.',
-      cast: ['Dominic West', 'Idris Elba', 'Lance Reddick', 'Wendell Pierce'],
-      year: 2002,
-      rating: 5,
-      genres: ['Drama', 'Thriller'] as Genre[],
-      opinion: 'La serie más inteligente jamás producida para televisión.',
-      createdBy: adminId,
-    },
-    {
-      title: 'Stranger Things',
-      synopsis: 'En un pequeño pueblo de Indiana, la desaparición de un niño desata misterios sobrenaturales y experimentos secretos del gobierno.',
-      seasons: '4 temporadas, con una quinta y última en producción.',
-      cast: ['Millie Bobby Brown', 'Finn Wolfhard', 'Winona Ryder', 'David Harbour'],
-      year: 2016,
-      rating: 4,
-      genres: ['Ciencia ficción', 'Terror', 'Drama'] as Genre[],
-      createdBy: adminId,
-    },
-    {
-      title: 'Chernobyl',
-      synopsis: 'La miniserie relata el catastrófico accidente nuclear de 1986 y la historia de quienes arriesgaron su vida para contenerlo.',
-      seasons: 'Miniserie de 1 temporada con 5 episodios autoconclusivos.',
-      cast: ['Jared Harris', 'Stellan Skarsgård', 'Emily Watson'],
-      year: 2019,
-      rating: 5,
-      genres: ['Drama', 'Thriller'] as Genre[],
-      opinion: 'Devastadora y absolutamente imprescindible.',
-      createdBy: adminId,
-    },
-    {
-      title: 'Black Mirror',
-      synopsis: 'Antología de ciencia ficción que explora las consecuencias inesperadas y oscuras de la tecnología moderna.',
-      seasons: '6 temporadas de formato antológico, cada episodio es independiente.',
-      cast: ['Daniel Kaluuya', 'Jon Hamm', 'Bryce Dallas Howard'],
-      year: 2011,
-      rating: 4,
-      genres: ['Ciencia ficción', 'Thriller', 'Drama'] as Genre[],
-      createdBy: adminId,
-    },
-    {
-      title: 'Fargo',
-      synopsis: 'Antología de crimen negro ambientada en el Medio Oeste americano, inspirada en el universo de los hermanos Coen.',
-      seasons: '5 temporadas independientes, cada una con su propia historia y reparto.',
-      cast: ['Martin Freeman', 'Billy Bob Thornton', 'Kirsten Dunst'],
-      year: 2014,
-      rating: 4,
-      genres: ['Drama', 'Thriller', 'Comedia'] as Genre[],
-      createdBy: adminId,
-    },
-    {
-      title: 'Severance',
-      synopsis: 'Empleados de Lumon Industries se someten a un procedimiento que separa quirúrgicamente sus recuerdos laborales de los personales.',
-      seasons: '2 temporadas estrenadas en 2022 y 2025.',
-      cast: ['Adam Scott', 'Patricia Arquette', 'John Turturro', 'Christopher Walken'],
-      year: 2022,
-      rating: 5,
-      genres: ['Ciencia ficción', 'Thriller', 'Drama'] as Genre[],
-      opinion: 'La serie más original de los últimos años. Inquietante y adictiva.',
-      createdBy: adminId,
-    },
-    {
-      title: 'The Bear',
-      synopsis: 'Un joven chef de alta cocina regresa a Chicago para gestionar el restaurante de sándwiches de su familia tras la muerte de su hermano.',
-      seasons: '3 temporadas, con una cuarta confirmada.',
-      cast: ['Jeremy Allen White', 'Ayo Edebiri', 'Ebon Moss-Bachrach'],
-      year: 2022,
-      rating: 5,
-      genres: ['Drama', 'Comedia'] as Genre[],
-      createdBy: userId,
-    },
-  ];
+  const entries = rawSeedData as SeedEntry[];
 
   const series: Series[] = await Promise.all(
-    seriesData.map(async (s, i) => {
+    entries.map(async (entry, i) => {
       const blob = createPlaceholderBlob(palette[i % palette.length]);
       const coverImage = await saveImage(blob);
       return {
-        ...s,
         id: crypto.randomUUID(),
         coverImage,
+        title: entry.title,
+        synopsis: entry.synopsis ?? '',
+        seasons: entry.seasons,
+        cast: parseCast(entry.cast),
+        year: parseYear(entry.year),
+        rating: entry.rating ?? 0,
+        genres: inferGenres(entry),
+        opinion: undefined,
+        createdBy: adminId,
         createdAt: now,
         updatedAt: now,
       };

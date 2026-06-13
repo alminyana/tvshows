@@ -551,6 +551,16 @@ La combinación de `aspect-ratio: 2/3` + `max-height: 140px` hacía que el conte
 **Thumbnail de `SeriesRow` ampliado a 64×96px**
 El tamaño original (48×72px) resultaba demasiado pequeño y hacía los ítems difíciles de distinguir. Se subió a 64×96px y el padding del `.row` pasó de `space-3` a `space-4` para dar más aire al contenido.
 
+**Seed extraído a `src/db/seed.json`**
+Los datos de series del seed se movieron a `src/db/seed.json` (importado con `resolveJsonModule`, ya activo en `tsconfig.app.json`). `seed.ts` importa el JSON, lo tipifica con la interfaz interna `SeedEntry` y normaliza los campos antes de insertar:
+- `cast`: si no es array o contiene no-strings, se trata como `[]` (había una entrada con un objeto Excel).
+- `year`: si es string tipo `"2001-2010"` se extrae el primer año con regex; si falta, se usa el año actual.
+- `rating`: si falta, defaul a `0`.
+- `synopsis`: si falta, default a `''`.
+- `genres`: default a `[]` (no está en el JSON; la validación del formulario requiere ≥1, pero el seed los bypasea).
+- `createdBy`: todos los registros se asignan al `adminId` generado en el momento del seed.
+El archivo `seed.json` es la única fuente de verdad para los datos de series; para añadir, quitar o editar mocks solo hay que editar ese archivo.
+
 **`Series.seasons` cambiado de `number` a `string`**
 El campo dejó de representar un recuento numérico de temporadas y pasó a ser un texto libre descriptivo (ej. "5 temporadas emitidas entre 2008 y 2013"). Cambios asociados:
 - `types/series.ts`: `seasons: number` → `seasons: string`.
@@ -568,6 +578,28 @@ El `Rating` (modo input) usa `<input type="radio" className="sr-only">` para la 
 
 **Mejora visual de las estrellas del `Rating`**
 Junto con el fix de `.sr-only`: estrellas más grandes (`--font-size-2xl`), `gap` por token (`--space-1`), transición de color suave en `.filled`/`.empty`, hover con `scale(1.2)` y feedback de `:active` con `scale(0.95)`, y el outline de foco usando `--radius-sm`. El amarillo pasó a `#f5b50a`. No se muestran números ni controles: solo las estrellas (el clic en la 5ª implica rating 5).
+
+**Fix layout grid de `SeriesListPage` (cards de altura uniforme)**
+Con 120 series y títulos de longitud variable, las cards de una misma fila tenían alturas distintas y algunas quedaban cortadas u ocultas. Causas y solución:
+- `<li>` no transfería su altura al `SeriesCard` interior: se añadió `li { display: flex }` dentro de `.grid`.
+- `grid-auto-rows: 1fr` en `.grid` iguala la altura de todas las filas.
+- `.card` pasó a `display: flex; flex-direction: column; width: 100%` para distribuir portada e info verticalmente.
+- `.cover` recibió `flex-shrink: 0` para no encogerse al ser la card más alta que lo que pide su `aspect-ratio`.
+- `.info` recibió `flex: 1` para ocupar el espacio restante; `.year` usa `margin-top: auto` para anclarse al fondo.
+- `.title` pasó de `white-space: nowrap + text-overflow: ellipsis` (una sola línea) a `-webkit-line-clamp: 2` (dos líneas máximo), evitando que títulos largos rompan la alineación del grid.
+- Breakpoints de columnas ajustados: 2 móvil / 3 tablet / 4 desde 1024px / 5 desde 1280px (antes saltaba directo a 5 en desktop, demasiado estrecho para títulos largos).
+
+**Fixes y mejoras del Dashboard (post H9)**
+
+1. **Géneros en el seed inferidos por palabras clave.** `seed.ts` añade la función `inferGenres(entry)` que analiza título + sinopsis con 13 reglas regex y asigna hasta 3 géneros del union `Genre`. Si ninguna regla encaja, la serie cae en `'Drama'`. La función usa un `Set` para evitar duplicados y hace break al llegar a 3. Esto resuelve el `genreDistribution` vacío que hacía el gráfico invisible.
+
+2. **Tooltip de Recharts tematizado.** Ambos `BarChart` (`GenreDistributionChart` y `RatingDistributionChart`) usaban `<Tooltip />` sin props, lo que renderizaba un popup con fondo blanco duro que chocaba con cualquier tema oscuro. Se añade `contentStyle`, `cursor`, `itemStyle` y `labelStyle` usando CSS variables (`--color-surface`, `--color-border`, `--color-text`, `--color-text-muted`). Los valores se pasan como objetos inline — Recharts no consume CSS vars directamente sin este puente.
+
+3. **Nuevo gráfico de quesito `GenrePieChart`.** Componente `src/components/features/dashboard/GenrePieChart/` con `PieChart`, `Pie` (donut: `innerRadius=40`, `outerRadius=90`), `Cell` (paleta de 10 colores fijos), `Tooltip` tematizado y `Legend`. Consume los mismos datos `GenreCount[]` que `GenreDistributionChart`. Añadido a `DashboardPage` en tercer lugar del `chartGrid`.
+
+4. **Estado vacío en `GenreDistributionChart`.** Si `data.length === 0` renderiza el mensaje `MESSAGES.dashboard.noData` en lugar del `BarChart` (evita un gráfico de ejes vacíos).
+
+5. **Nuevas claves en `MESSAGES.dashboard`:** `genrePieChart` y `noData`.
 
 ---
 
