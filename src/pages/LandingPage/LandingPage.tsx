@@ -12,7 +12,7 @@ import bg5 from '@/assets/meñique.webp';
 import styles from './LandingPage.module.scss';
 
 const BACKGROUNDS = [bg1, bg2, bg3, bg4, bg5];
-const SLIDE_INTERVAL_MS = 20_000;
+const SLIDE_INTERVAL_MS = 5_000;
 
 export function LandingPage() {
   const { user, loading: authLoading } = useAuth();
