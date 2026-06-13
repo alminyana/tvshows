@@ -460,6 +460,30 @@ Si `useAuth` aún no ha resuelto su promesa de inicialización, `LandingPage` de
 **Tests de `App.test.tsx` con `waitFor`**
 Los tests sincrónicos de rutas `/` y `*` generan el warning `act(...)` porque `AuthProvider` actualiza estado de forma async. Solución: convertir esos tests en `async` y envolver el assert en `waitFor`.  El test de `/series` ya usaba `waitFor` y no necesita cambio.
 
+### Refactor del fondo de la landing (post H9): imágenes estáticas + slideshow animado
+
+El slideshow original tomaba las portadas de las series desde IndexedDB vía `useLandingImages`. Se sustituyó por un set fijo de imágenes estáticas servidas como assets de Vite, con animación de crossfade + Ken Burns. Motivos: las portadas del seed no tienen relación temática con la landing y el primer slide (índice 0) se pintaba sobre cualquier fondo base tapándolo; además, cargar Blobs desde Dexie para algo puramente decorativo era innecesario.
+
+**Imágenes como assets importados (no `background-image` de SCSS ni Blobs de BD)**
+Las imágenes viven en `src/assets/*.webp` y se importan directamente en `LandingPage.tsx` (`import bg1 from '@/assets/...webp'`). Vite las procesa (hash + URL correcta en dev y build). Se descartó `background-image: url(...)` en el `.module.scss` porque la ruta relativa no resolvía de forma fiable; el import en TS es el patrón robusto. La declaración de tipos para `*.webp` la aporta `vite/client` (ya referenciada en `vite-env.d.ts`).
+
+**Slideshow con crossfade + Ken Burns**
+- `BACKGROUNDS` es un array con las 5 imágenes; `currentIndex` avanza con `setInterval` y wrap-around (`(i + 1) % length`) cada `SLIDE_INTERVAL_MS` (5 s actualmente).
+- Cada imagen es un `<img className={slide + (activa ? slideActive : '')}>` apilado en absoluto dentro de `.background`.
+- `.slide`: `opacity: 0` + `transform: scale(1.05)`; `.slideActive`: `opacity: 1` + `scale(1)`. La transición (`opacity 2s ease-in-out, transform 20s ease-out`) produce el fundido suave de 2 s y un zoom-out lento tipo Ken Burns mientras la imagen está visible, en lugar de un fade plano.
+
+**Velo oscuro sobre todas las imágenes**
+`.overlay` es un degradado `rgba(0,0,0,0.55)` → `rgba(0,0,0,0.8)` (top→bottom) por encima del stack de slides, garantizando contraste del título/claim/botón sobre cualquier imagen. Se oscureció respecto al original de H8 (`0.35`→`0.6`).
+
+**Más espacio entre título, claim y botón**
+`.content` subió su `gap` de `--space-4` a `--space-7`.
+
+**`useLandingImages` eliminado**
+Al dejar de consumir portadas de BD, el hook quedó huérfano. Se borró `useLandingImages.ts` + su test, el export del barrel `hooks/index.ts` y el mock en `App.test.tsx`. Los tests de `LandingPage` se simplificaron: ya no mockean el hook ni distinguen estados de carga/fallback (la landing siempre tiene fondo). Las notas de H8 sobre `useLandingImages` (import desde barrel, `vi.hoisted`, role "presentation") quedan como contexto histórico — el hook ya no existe.
+
+**`baseUrl` eliminado de `tsconfig.app.json`**
+Con `moduleResolution: "bundler"` (TS 5.x), `paths` ya no necesita `baseUrl`; tsserver lo marcaba como innecesario. Se quitó `"baseUrl": "."` y `paths` pasó a ruta relativa autocontenida (`"@/*": ["./src/*"]`). El `tsconfig.json` raíz mantiene su propio par `baseUrl`+`paths` sin tocar.
+
 ---
 
 ## H9 — Mejoras de UX y refinamiento de la vista Series · Complejidad: M ✅

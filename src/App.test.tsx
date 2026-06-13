@@ -10,7 +10,6 @@ vi.mock('@/hooks', async (importOriginal) => {
     useSeries: () => ({ series: [], loading: false, error: null, reload: vi.fn() }),
     useSeriesById: () => ({ series: null, loading: false, notFound: true, error: null }),
     useAuth: () => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() }),
-    useLandingImages: () => ({ images: [], loading: false, hasFallback: true }),
   };
 });
 
