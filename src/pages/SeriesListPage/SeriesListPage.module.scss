@@ -65,6 +65,8 @@
   margin: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr; // todas las filas igual de altas
+  align-items: stretch;
   gap: var(--space-3);
 
   @include tablet {
@@ -72,7 +74,16 @@
   }
 
   @include desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (min-width: 1280px) {
     grid-template-columns: repeat(5, 1fr);
+  }
+
+  // el li pasa la altura al card interior
+  li {
+    display: flex;
   }
 }
 

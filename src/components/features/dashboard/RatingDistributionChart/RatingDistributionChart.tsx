@@ -18,7 +18,18 @@ export function RatingDistributionChart({ data }: RatingDistributionChartProps) 
         <BarChart data={chartData} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
           <XAxis dataKey="name" tick={{ fontSize: 11 }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-          <Tooltip />
+          <Tooltip
+            contentStyle={{
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '6px',
+              color: 'var(--color-text)',
+              fontSize: '12px',
+            }}
+            cursor={{ fill: 'var(--color-border)', opacity: 0.3 }}
+            itemStyle={{ color: 'var(--color-text)' }}
+            labelStyle={{ color: 'var(--color-text-muted)' }}
+          />
           <Bar dataKey="count" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
