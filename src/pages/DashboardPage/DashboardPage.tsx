@@ -4,6 +4,7 @@ import { Spinner } from '@/components/ui';
 import { KPICard } from '@/components/features/dashboard/KPICard/KPICard';
 import { GenreDistributionChart } from '@/components/features/dashboard/GenreDistributionChart/GenreDistributionChart';
 import { RatingDistributionChart } from '@/components/features/dashboard/RatingDistributionChart/RatingDistributionChart';
+import { GenrePieChart } from '@/components/features/dashboard/GenrePieChart/GenrePieChart';
 import styles from './DashboardPage.module.scss';
 
 export function DashboardPage() {
@@ -29,6 +30,7 @@ export function DashboardPage() {
       <div className={styles.chartGrid}>
         <GenreDistributionChart data={genreDistribution} />
         <RatingDistributionChart data={ratingDistribution} />
+        <GenrePieChart data={genreDistribution} />
       </div>
     </div>
   );

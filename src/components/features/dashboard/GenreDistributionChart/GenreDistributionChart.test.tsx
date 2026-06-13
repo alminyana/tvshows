@@ -30,8 +30,8 @@ describe('GenreDistributionChart', () => {
     expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
   });
 
-  it('no falla con datos vacíos', () => {
+  it('muestra estado vacío cuando no hay datos', () => {
     render(<GenreDistributionChart data={[]} />);
-    expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
+    expect(screen.getByText(/sin datos disponibles/i)).toBeInTheDocument();
   });
 });

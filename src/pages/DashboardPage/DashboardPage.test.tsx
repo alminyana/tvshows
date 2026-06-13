@@ -7,6 +7,12 @@ vi.mock('recharts', () => ({
   BarChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
+  PieChart: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="pie-chart">{children}</div>
+  ),
+  Pie: () => null,
+  Cell: () => null,
+  Legend: () => null,
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
@@ -59,9 +65,10 @@ describe('DashboardPage', () => {
     expect(screen.getByText(/series destacadas/i)).toBeInTheDocument();
   });
 
-  it('muestra los dos gráficos', () => {
+  it('muestra los gráficos de barras y el quesito', () => {
     render(<DashboardPage />);
     expect(screen.getAllByTestId('bar-chart')).toHaveLength(2);
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
   });
 
   it('muestra spinner mientras carga', () => {
