@@ -1,26 +1,26 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card } from '@/components/ui';
 import { MESSAGES } from '@/constants';
-import type { GenreCount } from '@/hooks/useDashboardMetrics';
-import { ChartPieIcon } from '../icons';
-import styles from './GenrePieChart.module.scss';
+import type { DurationCount } from '@/hooks';
+import type { SeasonsType } from '@/utils/classifySeasons';
+import { ClockIcon } from '../icons';
+import styles from './DurationDistributionChart.module.scss';
 
-interface GenrePieChartProps {
-  data: GenreCount[];
+interface DurationDistributionChartProps {
+  data: DurationCount[];
 }
 
-const header = (
-  <div className={styles.header}>
-    <ChartPieIcon className={styles.icon} />
-    <p className={styles.title}>{MESSAGES.dashboard.genrePieChart}</p>
-  </div>
-);
+const COLORS: Record<SeasonsType, string> = {
+  miniserie: '#8b5cf6',
+  single: '#3b82f6',
+  multi: '#10b981',
+};
 
-const PIE_COLORS = [
-  '#6366f1', '#f59e0b', '#10b981', '#ef4444',
-  '#3b82f6', '#8b5cf6', '#f97316', '#14b8a6',
-  '#ec4899', '#84cc16',
-];
+const LABELS: Record<SeasonsType, string> = {
+  miniserie: MESSAGES.dashboard.durationMiniserie,
+  single: MESSAGES.dashboard.durationSingle,
+  multi: MESSAGES.dashboard.durationMulti,
+};
 
 const TOOLTIP_STYLE = {
   background: 'var(--color-surface)',
@@ -30,8 +30,16 @@ const TOOLTIP_STYLE = {
   fontSize: '12px',
 };
 
-export function GenrePieChart({ data }: GenrePieChartProps) {
-  if (data.length === 0) {
+export function DurationDistributionChart({ data }: DurationDistributionChartProps) {
+  const header = (
+    <div className={styles.header}>
+      <ClockIcon className={styles.icon} />
+      <p className={styles.title}>{MESSAGES.dashboard.durationDistribution}</p>
+    </div>
+  );
+
+  const hasData = data.some((d) => d.count > 0);
+  if (!hasData) {
     return (
       <Card className={styles.card}>
         {header}
@@ -40,7 +48,11 @@ export function GenrePieChart({ data }: GenrePieChartProps) {
     );
   }
 
-  const chartData = data.map((d) => ({ name: d.genre, value: d.count }));
+  const chartData = data.map((d) => ({
+    name: LABELS[d.type],
+    value: d.count,
+    fill: COLORS[d.type],
+  }));
 
   return (
     <Card className={styles.card}>
@@ -56,8 +68,8 @@ export function GenrePieChart({ data }: GenrePieChartProps) {
             outerRadius={90}
             innerRadius={40}
           >
-            {chartData.map((_, i) => (
-              <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+            {chartData.map((d) => (
+              <Cell key={d.name} fill={d.fill} />
             ))}
           </Pie>
           <Tooltip

@@ -3,8 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { seriesSchema } from '@/utils/seriesSchema';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
-import { GENRES } from '@/types/genre';
-import type { Genre } from '@/types/genre';
+import { getAllGenres, addCustomGenre } from '@/utils/genresCatalog';
 import { imageService } from '@/services';
 import { Button, FormField, Input, Textarea, Select, Rating, Tag } from '@/components/ui';
 import { MESSAGES } from '@/constants';
@@ -16,8 +15,6 @@ interface SeriesFormProps {
   onSubmit: (data: SeriesFormValues, file?: File) => Promise<void>;
   isSubmitting?: boolean;
 }
-
-const genreOptions = GENRES.map((g) => ({ value: g, label: g }));
 
 export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitting }: SeriesFormProps) {
   const {
@@ -42,7 +39,11 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [castInput, setCastInput] = useState('');
+  const [genreCatalog, setGenreCatalog] = useState<string[]>(() => getAllGenres());
+  const [genreInput, setGenreInput] = useState('');
   const filePreviewUrlRef = useRef<string | null>(null);
+
+  const genreOptions = genreCatalog.map((g) => ({ value: g, label: g }));
 
   useEffect(() => {
     if (!existingImageId) return;
@@ -124,16 +125,53 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         <Controller
           name="genres"
           control={control}
-          render={({ field }) => (
-            <Select
-              id="genres"
-              multiple
-              options={genreOptions}
-              value={field.value as string[]}
-              onChange={(vals) => field.onChange(vals as Genre[])}
-              hasError={!!errors.genres}
-            />
-          )}
+          render={({ field }) => {
+            const selected = (field.value ?? []) as string[];
+            const addGenre = () => {
+              const canonical = addCustomGenre(genreInput);
+              if (!canonical) return;
+              setGenreCatalog(getAllGenres());
+              if (!selected.some((g) => g.toLowerCase() === canonical.toLowerCase())) {
+                field.onChange([...selected, canonical]);
+              }
+              setGenreInput('');
+            };
+            return (
+              <div className={styles.chips}>
+                <Select
+                  id="genres"
+                  multiple
+                  options={genreOptions}
+                  value={selected}
+                  onChange={(vals) => field.onChange(vals)}
+                  hasError={!!errors.genres}
+                />
+                <div className={styles.chipInput}>
+                  <Input
+                    value={genreInput}
+                    onChange={(e) => setGenreInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addGenre();
+                      }
+                    }}
+                    placeholder="Nuevo género y Enter para añadir"
+                    aria-label="Añadir nuevo género"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    aria-label="Añadir género"
+                    onClick={addGenre}
+                  >
+                    {MESSAGES.actions.add}
+                  </Button>
+                </div>
+              </div>
+            );
+          }}
         />
       </FormField>
 
@@ -173,6 +211,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
                     type="button"
                     variant="secondary"
                     size="sm"
+                    aria-label="Añadir reparto"
                     onClick={() => addCastMember(castInput, cast, field.onChange)}
                   >
                     {MESSAGES.actions.add}

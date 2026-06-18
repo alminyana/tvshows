@@ -63,8 +63,12 @@ describe('seriesSchema', () => {
     expect(seriesSchema.safeParse({ ...validData, genres: [] }).success).toBe(false);
   });
 
-  it('genres rechaza valores no válidos', () => {
-    expect(seriesSchema.safeParse({ ...validData, genres: ['Inexistente'] }).success).toBe(false);
+  it('genres acepta géneros personalizados (texto libre no vacío)', () => {
+    expect(seriesSchema.safeParse({ ...validData, genres: ['Western'] }).success).toBe(true);
+  });
+
+  it('genres rechaza strings vacíos', () => {
+    expect(seriesSchema.safeParse({ ...validData, genres: [''] }).success).toBe(false);
   });
 
   it('cast puede ser array vacío si se omite', () => {
