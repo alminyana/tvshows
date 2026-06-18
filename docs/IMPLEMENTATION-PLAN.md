@@ -794,6 +794,9 @@ La zona de pegado es un `<div role="button" tabIndex={0}>` con `onPaste`; el pas
 **Mock de `URL.createObjectURL` en el test**
 jsdom no implementa `createObjectURL`/`revokeObjectURL`. Los tests previos no los disparaban (rechazaban archivos inválidos antes de crear la URL); el test de paste válido sí llega a crear preview, así que se mockean ambos en el `beforeEach` del archivo. Helper `clipboardWith()` construye un `clipboardData` falso (`items` con `getAsFile`) para `fireEvent.paste`. +3 tests (paste válido, paste sin imagen, paste con MIME no válido). Suite en verde (308), lint y `tsc -b` limpios.
 
+**Reubicación y layout del campo de portada (ajuste posterior)**
+A petición, el `FormField` de portada se movió al principio del formulario, **por encima del título**. El layout de `.imageField` pasó de columna a fila (`flex-direction: row`): el preview (o un placeholder `dashed` 160×220 cuando aún no hay imagen) queda a la izquierda y los controles (zona de paste + hint + input file) en una columna `.imageControls` a la derecha, ocupando el espacio restante (`flex: 1`). La zona de paste crece para igualar la altura del preview (`flex: 1`). En móvil (`max-width: 600px`) vuelve a apilarse en columna. El preview se renderiza siempre (placeholder cuando `imagePreview` es null) para mantener estable la composición lado a lado.
+
 ---
 
 ## Tabla resumen de dependencias

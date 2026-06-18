@@ -110,6 +110,39 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
 
   return (
     <form onSubmit={handleSubmit((data) => onSubmit(data, imageFile))} className={styles.form} noValidate>
+      <FormField
+        label={MESSAGES.series.cover}
+        error={imageError ?? undefined}
+        required={!existingImageId}
+      >
+        <div className={styles.imageField}>
+          {imagePreview ? (
+            <img src={imagePreview} alt="Previsualización de portada" className={styles.imagePreview} />
+          ) : (
+            <div className={styles.imagePlaceholder} aria-hidden="true" />
+          )}
+          <div className={styles.imageControls}>
+            <div
+              className={styles.pasteZone}
+              tabIndex={0}
+              role="button"
+              aria-label={MESSAGES.series.coverPaste}
+              onPaste={handlePaste}
+            >
+              {MESSAGES.series.coverPaste}
+            </div>
+            <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+              aria-label={MESSAGES.series.cover}
+            />
+          </div>
+        </div>
+      </FormField>
+
       <FormField label={MESSAGES.series.title} htmlFor="title" error={errors.title?.message} required>
         <Input id="title" {...register('title')} hasError={!!errors.title} />
       </FormField>
@@ -240,35 +273,6 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
 
       <FormField label={MESSAGES.series.opinion} htmlFor="opinion" error={errors.opinion?.message}>
         <Textarea id="opinion" rows={3} {...register('opinion')} hasError={!!errors.opinion} />
-      </FormField>
-
-      <FormField
-        label={MESSAGES.series.cover}
-        error={imageError ?? undefined}
-        required={!existingImageId}
-      >
-        <div className={styles.imageField}>
-          {imagePreview && (
-            <img src={imagePreview} alt="Previsualización de portada" className={styles.imagePreview} />
-          )}
-          <div
-            className={styles.pasteZone}
-            tabIndex={0}
-            role="button"
-            aria-label={MESSAGES.series.coverPaste}
-            onPaste={handlePaste}
-          >
-            {MESSAGES.series.coverPaste}
-          </div>
-          <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleFileChange}
-            className={styles.fileInput}
-            aria-label={MESSAGES.series.cover}
-          />
-        </div>
       </FormField>
 
       <div className={styles.formActions}>
