@@ -65,9 +65,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
     };
   }, []);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  function processImageFile(file: File) {
     const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
       setImageError(MESSAGES.errors.imageType);
@@ -83,6 +81,23 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
     filePreviewUrlRef.current = url;
     setImageFile(file);
     setImagePreview(url);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processImageFile(file);
+  }
+
+  function handlePaste(e: React.ClipboardEvent<HTMLDivElement>) {
+    const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith('image/'));
+    const file = item?.getAsFile();
+    if (!file) {
+      setImageError(MESSAGES.errors.clipboardNoImage);
+      return;
+    }
+    e.preventDefault();
+    processImageFile(file);
   }
 
   function addCastMember(value: string, currentCast: string[], onChange: (v: string[]) => void) {
@@ -236,6 +251,16 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           {imagePreview && (
             <img src={imagePreview} alt="Previsualización de portada" className={styles.imagePreview} />
           )}
+          <div
+            className={styles.pasteZone}
+            tabIndex={0}
+            role="button"
+            aria-label={MESSAGES.series.coverPaste}
+            onPaste={handlePaste}
+          >
+            {MESSAGES.series.coverPaste}
+          </div>
+          <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"

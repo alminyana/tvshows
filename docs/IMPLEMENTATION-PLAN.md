@@ -739,6 +739,63 @@ Las dos bombillas casi idénticas se sustituyeron por **sol** (modo claro) y **l
 
 ---
 
+## H11 — Pegar portada desde el portapapeles · Complejidad: S ✅
+
+- **Estado:** ✅ Completado.
+- **Objetivo:** Permitir adjuntar la portada de una serie pegando una imagen copiada de otra web (clic derecho → "Copiar imagen"), sin necesidad de descargarla a disco primero.
+- **Entregable:** en el `SeriesForm`, una zona dedicada donde pegar (`Ctrl/Cmd+V`) una imagen del portapapeles; el `<input type="file">` actual se mantiene como método alternativo.
+- **Dependencias:** H4 (`SeriesForm`, validación de imagen y `imageService`).
+
+### Decisiones tomadas (acordadas antes de implementar)
+
+1. **Solo bitmap del portapapeles.** Se soporta únicamente el caso en que el `ClipboardEvent` trae los bytes de la imagen (`clipboardData.items` con un item de tipo `image/*` → `getAsFile()` devuelve un `File`/`Blob`). **No** se soporta pegar una URL de imagen como texto: evita el `fetch` remoto y todos los problemas de CORS, y reutiliza tal cual la validación y el almacenamiento de Blob existentes.
+2. **El input file se mantiene como fallback.** El paste es el método nuevo y principal, pero el `<input type="file">` actual sigue presente para los casos sin imagen en el portapapeles (móvil, subida desde disco, etc.).
+3. **Captura en zona dedicada (dropzone), no a nivel de documento.** Un área visible y enfocable (`tabIndex={0}`) con `onPaste`. Pegar solo surte efecto dentro de esa zona, evitando interferir con el pegado de texto en otros campos del formulario (sinopsis, opinión, etc.).
+
+### Tareas
+
+1. **Zona de pegado en `SeriesForm`:**
+   - Nuevo elemento enfocable (`tabIndex={0}`, `role="button"` o equivalente) dentro del `FormField` de portada, con copy tipo "Pega aquí una imagen (Ctrl/Cmd+V)".
+   - Handler `onPaste` que recorre `e.clipboardData.items`, localiza el primer item con `type` que empiece por `image/` y obtiene el `File` vía `getAsFile()`.
+   - Si no hay imagen en el paste (p. ej. se pegó texto), mostrar el mensaje de error correspondiente sin romper.
+2. **Reutilizar la validación existente:**
+   - Extraer la lógica de `handleFileChange` (validación de MIME ∈ {jpeg, png, webp} + tamaño ≤ 2 MB + creación/revocación de `ObjectURL` + `setImageFile`/`setImagePreview`) a un helper común (`processImageFile(file)`), consumido tanto por el input file como por el paste. El Blob pegado pasa exactamente por las mismas reglas; la persistencia vía `imageService` no cambia.
+3. **Mantener el input file como fallback** debajo o junto a la dropzone, sin cambios de comportamiento.
+4. **Mensajería centralizada:** añadir a `constants/messages.ts` las claves nuevas (instrucción de pegar, error "el portapapeles no contiene una imagen"). Reutilizar `errors.imageType`/`errors.imageSize` para las validaciones ya existentes.
+5. **Accesibilidad:** la dropzone es operable por teclado (enfocable + pegar con `Ctrl/Cmd+V`); preview con `alt` ya existente; sin perder el `aria-label` del input file.
+
+### Archivos
+- `src/components/features/SeriesForm/SeriesForm.tsx` (modificar — dropzone + handler `onPaste` + extracción de `processImageFile`).
+- `src/components/features/SeriesForm/SeriesForm.module.scss` (estilos de la dropzone).
+- `src/constants/messages.ts` (copy de la zona de pegado + error de portapapeles sin imagen).
+
+### Tests
+- `SeriesForm`: pegar un `ClipboardEvent` con un item `image/png` válido genera preview y deja el archivo listo para submit.
+- `SeriesForm`: pegar contenido sin imagen (solo texto) muestra el error de "portapapeles sin imagen" y no toca el preview.
+- `SeriesForm`: una imagen pegada que excede 2 MB o con MIME no permitido dispara `errors.imageSize` / `errors.imageType` (misma ruta que el input file).
+- `SeriesForm`: el input file sigue funcionando como antes (no regresión).
+
+### Hecho cuando
+- En crear/editar serie puedes copiar una imagen de otra web y pegarla en la zona dedicada del formulario, ver el preview y guardar la serie con esa portada.
+- Pegar algo que no es una imagen muestra un error claro sin romper el formulario.
+- El input file sigue disponible como alternativa.
+
+### Notas de implementación
+
+**`processImageFile` compartido entre input file y paste**
+La lógica de `handleFileChange` (validación MIME + tamaño, revocación/creación de `ObjectURL`, `setImageFile`/`setImagePreview`) se extrajo a `processImageFile(file: File)`. Tanto `handleFileChange` como el nuevo `handlePaste` la invocan, así que el Blob pegado pasa por exactamente las mismas reglas que un archivo subido y la persistencia vía `imageService` no cambia.
+
+**`handlePaste` solo bitmap**
+Recorre `e.clipboardData.items`, busca el primer item con `type` que empiece por `image/` y obtiene el `File` con `getAsFile()`. Si no hay imagen (p. ej. se pegó texto) muestra `errors.clipboardNoImage` y no toca el preview. `e.preventDefault()` solo se llama cuando hay imagen, para no bloquear el pegado de texto en otros contextos.
+
+**Dropzone enfocable, no listener global**
+La zona de pegado es un `<div role="button" tabIndex={0}>` con `onPaste`; el paste solo surte efecto dentro de ella. Estilo `dashed` con feedback en `:hover`/`:focus-visible` vía tokens. El `<input type="file">` se mantiene debajo como fallback sin cambios.
+
+**Mock de `URL.createObjectURL` en el test**
+jsdom no implementa `createObjectURL`/`revokeObjectURL`. Los tests previos no los disparaban (rechazaban archivos inválidos antes de crear la URL); el test de paste válido sí llega a crear preview, así que se mockean ambos en el `beforeEach` del archivo. Helper `clipboardWith()` construye un `clipboardData` falso (`items` con `getAsFile`) para `fireEvent.paste`. +3 tests (paste válido, paste sin imagen, paste con MIME no válido). Suite en verde (308), lint y `tsc -b` limpios.
+
+---
+
 ## Tabla resumen de dependencias
 
 | Hito | Depende de | Complejidad |
@@ -754,5 +811,6 @@ Las dos bombillas casi idénticas se sustituyeron por **sol** (modo claro) y **l
 | H8 Landing & entry flow | H7 | M |
 | H9 Mejoras UX vista Series | H8 | M |
 | H10 Métricas duración + géneros editables | H5, H9, H4 | M |
+| H11 Pegar portada desde el portapapeles | H4 | S |
 
 > H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho. H8 cierra el plan — depende de H7 para tener el diseño pulido y las portadas del seed completas.
