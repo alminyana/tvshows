@@ -460,7 +460,9 @@ Si `useAuth` aún no ha resuelto su promesa de inicialización, `LandingPage` de
 **Tests de `App.test.tsx` con `waitFor`**
 Los tests sincrónicos de rutas `/` y `*` generan el warning `act(...)` porque `AuthProvider` actualiza estado de forma async. Solución: convertir esos tests en `async` y envolver el assert en `waitFor`.  El test de `/series` ya usaba `waitFor` y no necesita cambio.
 
-### Refactor del fondo de la landing (post H9): imágenes estáticas + slideshow animado
+### Refactor del fondo de la landing (post H9): imágenes estáticas + slideshow animado ✅
+
+- **Estado:** ✅ Implementado.
 
 El slideshow original tomaba las portadas de las series desde IndexedDB vía `useLandingImages`. Se sustituyó por un set fijo de imágenes estáticas servidas como assets de Vite, con animación de crossfade + Ken Burns. Motivos: las portadas del seed no tienen relación temática con la landing y el primer slide (índice 0) se pintaba sobre cualquier fondo base tapándolo; además, cargar Blobs desde Dexie para algo puramente decorativo era innecesario.
 
@@ -592,7 +594,7 @@ El campo dejó de representar un recuento numérico de temporadas y pasó a ser 
 - `SeriesForm`: el control pasó de `<Input type="number">` (en fila con `year`) a un `<Textarea>` a ancho completo, al ser ahora texto explicativo. `year` queda como campo propio.
 - `SeriesDetailPage`: se elimina la lógica singular/plural (`series.seasons === 1 ? 'temporada' : 'temporadas'`); ahora se muestra el texto tal cual.
 - Seed, mock del showcase y fixtures de tests migrados a string.
-- **Pendiente (no implementado):** migración de versión en Dexie para convertir los registros ya persistidos con `seasons` numérico. Las BD de usuarios existentes mantienen el valor antiguo hasta que se añada.
+- **Migración Dexie (implementada post-H10):** `database.ts` añade `version(2).upgrade()` que recorre la tabla `series` con `.modify()` y normaliza el campo vía el helper puro `utils/migrateSeasons.ts` (número → `"N temporada"`/`"N temporadas"`, replicando la antigua lógica singular/plural de `SeriesDetailPage`; los strings ya existentes pasan sin cambios). El schema no cambia, así que v2 hereda el `stores` de v1 y solo ejecuta el upgrade. Es idempotente: en instalaciones nuevas el seed ya escribe strings y el helper los devuelve tal cual. Tests puros en `migrateSeasons.test.ts` (singular, plural, string intacto, tipos no válidos) — coherente con la decisión de H2 de no usar `fake-indexeddb`.
 
 **Preview en hover del `Rating` (modo input)**
 El `Rating` ya rellenaba de la estrella 1 a la clicada (`star <= value`). Se añadió previsualización en hover: un estado local `hovered` y `displayValue = hovered ?? value` hacen que, al pasar el ratón, las estrellas se pinten en amarillo hasta la apuntada antes de confirmar el clic; `onMouseLeave` del contenedor resetea a `null` para volver al valor real. Solo afecta al modo input — el modo `readOnly` no tiene estado de hover. Sin cambios en `SeriesForm`, que ya consumía el componente vía `Controller`. La accesibilidad (radios + labels `sr-only`) se mantiene intacta.
@@ -627,6 +629,116 @@ Con 120 series y títulos de longitud variable, las cards de una misma fila ten�
 
 ---
 
+## H10 — Métricas de duración + géneros editables · Complejidad: M ✅
+
+- **Estado:** ✅ Completado.
+- **Objetivo:** Enriquecer el dashboard con la dimensión "tipo de serie por duración" (miniserie vs. serie multi-temporada) y permitir ampliar el catálogo de géneros desde el formulario de alta/edición.
+- **Entregable:** dashboard con 2 KPI cards nuevas (miniseries / multi-temporada) y un gráfico de la distribución por tipo de duración; input de géneros del `SeriesForm` capaz de añadir géneros nuevos a la lista seleccionable; rediseño visual de todas las cards del dashboard con iconos y estilo más atractivo.
+- **Dependencias:** H5 (dashboard), H9 (`seasons` es texto libre), H4 (`SeriesForm` + `seriesSchema`).
+
+### Decisiones a confirmar antes de implementar
+
+1. **Clasificación de "miniserie" desde `seasons` (texto libre).** `Series.seasons` es `string` desde H9, sin recuento numérico fiable. Propuesta: helper puro `classifySeasons(seasons: string): 'miniserie' | 'single' | 'multi'` en `utils/`:
+   - `miniserie` si el texto matchea `/miniserie/i`.
+   - en otro caso, extraer el primer número del texto: `=== 1` → `single` (una temporada), `> 1` → `multi`.
+   - sin número ni match → fallback a confirmar (`single` o "desconocido").
+   *Pendiente de validar contra los datos reales de `seed.json`.*
+2. **"Más de una temporada"** = `classifySeasons() === 'multi'`. Confirmar si las miniseries cuentan aparte (propuesta: sí, las tres categorías son excluyentes).
+3. **Géneros editables (punto 3).** `Genre` es hoy un *union* cerrado de TS. Permitir añadir géneros nuevos exige una decisión:
+   - **(A)** Aflojar el tipo a `string[]` y persistir los géneros conocidos en una fuente dinámica (tabla Dexie `genres` o `localStorage`), alimentando el multi-select.
+   - **(B)** Mantener el union para los predefinidos y permitir solo "custom genres" por serie (string libre), sin catálogo global.
+   - Propuesta: **(A)** con `localStorage` (`tv-shows:custom-genres`) en Fase 1, migrable a tabla Dexie en Fase 2. Confirmar.
+
+### Tareas
+
+1. **Métricas de duración en `useDashboardMetrics`:**
+   - Añadir al hook el cálculo de `miniseriesCount`, `multiSeasonCount` y `singleSeasonCount` usando `classifySeasons` sobre `series[].seasons`.
+   - Exponer también el array `durationDistribution: { type, count }[]` para el gráfico.
+
+2. **2 KPI cards nuevas (parte superior del dashboard):**
+   - Reutilizar `KPICard` (de H5). Una card "Miniseries" (`miniseriesCount`) y otra "Multi-temporada" (`multiSeasonCount`).
+   - Colocarlas junto a las KPI existentes (Total / Destacadas) en la fila superior.
+
+3. **Gráfico nuevo de distribución por duración:**
+   - Nuevo componente `features/dashboard/DurationDistributionChart/` con Recharts (tipo a confirmar: `BarChart` o `PieChart` donut, coherente con los existentes).
+   - Tooltip tematizado con CSS vars (mismo puente que `GenreDistributionChart`/`GenrePieChart`).
+   - Estado vacío (`MESSAGES.dashboard.noData`) si no hay datos.
+   - Montar en `DashboardPage` dentro del `chartGrid`.
+
+4. **Géneros editables en `SeriesForm` (punto 3):**
+   - Convertir el multi-select de géneros en un control "creatable": permitir escribir un género nuevo y añadirlo a la lista de opciones seleccionables además de seleccionarlo.
+   - Según decisión 3: persistir el nuevo género (catálogo dinámico) y normalizar (trim, evitar duplicados case-insensitive).
+   - Ajustar `seriesSchema.ts` si cambia el tipo de `genres` (de union a `string[]` validado no vacío).
+   - Sin librería nueva sin aprobación previa (regla del proyecto).
+
+5. **Rediseño visual de las cards del dashboard (iconos + estilo más atractivo):**
+   - Añadir un icono representativo a cada KPI card (total, destacadas, miniseries, multi-temporada). SVG inline, sin librería de iconos (coherente con el criterio de H9 para el toggle de tema).
+   - Modificar `KPICard` para aceptar una prop opcional de icono y renderizarlo junto al valor/label, manteniendo la API actual retrocompatible.
+   - Mejorar el estilo de **todas** las cards del dashboard (las KPI superiores y los contenedores de los gráficos): jerarquía visual del número vs. label, color de acento del icono por card (vía tokens de tema), `box-shadow`/`border-radius`/`padding` consistentes, hover sutil, y buen contraste en los 8 combos de tema.
+   - Las cards de gráficos (`GenreDistributionChart`, `RatingDistributionChart`, `GenrePieChart`, `DurationDistributionChart`) comparten el mismo contenedor visual: añadir un encabezado con icono + título coherente entre ellas.
+   - Mantener la accesibilidad: iconos decorativos con `aria-hidden="true"`; el texto de la card sigue siendo el contenido accesible.
+   - Sin romper el layout responsive de `DashboardPage`.
+
+### Archivos
+- `src/hooks/useDashboardMetrics.ts` (ampliar).
+- `src/utils/classifySeasons.ts` (nuevo) + `classifySeasons.test.ts`.
+- `src/components/features/dashboard/DurationDistributionChart/` (nuevo).
+- `src/components/features/dashboard/KPICard/` (modificar — prop de icono + estilo).
+- `src/components/features/dashboard/{GenreDistributionChart,RatingDistributionChart,GenrePieChart}/` (modificar — encabezado con icono + contenedor visual común).
+- `src/pages/DashboardPage/` (montar cards + gráfico; ajustar estilos del grid).
+- `src/components/features/SeriesForm/` (input de géneros creatable).
+- `src/utils/seriesSchema.ts` (si cambia el tipo de `genres`).
+- `src/types/series.ts` / `src/types/genre.ts` (si se afloja el union `Genre`).
+- `src/constants/messages.ts` (labels de las cards, título del gráfico).
+- Fuente del catálogo de géneros (decisión 3): `localStorage` helper o tabla Dexie.
+
+### Tests
+- `classifySeasons`: tabla de casos (miniserie, "1 temporada", "5 temporadas", texto sin número, vacío).
+- `useDashboardMetrics`: nuevos counts y `durationDistribution` sobre datos de prueba.
+- `DurationDistributionChart`: render con datos y estado vacío.
+- `DashboardPage`: aparecen las 2 KPI nuevas con los valores correctos.
+- `SeriesForm`: añadir un género nuevo lo agrega a las opciones y queda seleccionado; submit lo incluye en `genres`; no se duplica.
+- `KPICard`: renderiza el icono cuando se pasa la prop y mantiene el render previo cuando no (retrocompatibilidad); el icono es decorativo (`aria-hidden`).
+
+### Hecho cuando
+- El dashboard muestra, arriba, las cards "Miniseries" y "Multi-temporada" con los recuentos correctos.
+- Hay un gráfico nuevo con la distribución por tipo de duración, reactivo a cambios en la BD.
+- En crear/editar serie puedes escribir un género que no existía, añadirlo y guardarlo en la serie.
+- Todas las cards del dashboard (KPI y gráficos) muestran icono y un estilo renovado, coherente y atractivo en los 8 combos de tema, sin romper el responsive.
+
+### Notas de implementación
+
+**Decisiones tomadas (las 3 abiertas + el tipo de gráfico)**
+- **Géneros: opción A.** `Genre` pasó de union cerrado a `type Genre = string`. Catálogo dinámico en `localStorage` (`tv-shows:custom-genres`) vía `utils/genresCatalog.ts` (`getAllGenres`, `getCustomGenres`, `addCustomGenre`), que fusiona predefinidos + personalizados sin duplicados case-insensitive. `seriesSchema` cambió de `z.enum(GENRES)` a `z.array(z.string().min(1)).min(1)`.
+- **Iconos: SVG inline propios** en `components/features/dashboard/icons.tsx` (sin librería). `currentColor` + `aria-hidden`.
+- **Gráfico de duración: donut** (`PieChart` con `innerRadius`, mismo patrón que `GenrePieChart`). `components/features/dashboard/DurationDistributionChart/`. (Inicialmente un `RadialBarChart`; cambiado a donut a petición.)
+
+**Heurística `classifySeasons` (`utils/classifySeasons.ts`)**
+`miniserie | single | multi` sobre el texto libre `seasons`. Orden: si contiene "miniserie" → `miniserie`; si hay un número asociado a "season/temporada" (`/(\d+)\s*ª?\s*(?:season|temporada)/`) → `multi` si >1, `single` si =1; resto → `single`. El regex ancla el número a la palabra de temporada para no contar episodios (ej. "Primera temporada - 8 episodios" → `single`, no cuenta el 8). Validado contra los valores reales de `seed.json`.
+
+**`KPICard` retrocompatible**
+Props nuevas opcionales `icon?: ReactNode` y `accent?: string` (color de acento vía CSS var `--kpi-accent` + `color-mix` para el fondo del icono). Sin icono, el render previo se mantiene. Restyle: layout en fila icono+texto, franja de acento, hover con `translateY`/`shadow`.
+
+**Cards de gráficos con encabezado de icono**
+`GenreDistributionChart`, `RatingDistributionChart`, `GenrePieChart` y `DurationDistributionChart` comparten un `.header` (icono + título) con estilo coherente.
+
+**`aria-label` distintos en los botones "Añadir" del `SeriesForm`**
+Al añadir el botón de crear género (texto "Añadir", igual que el de reparto), `getByRole('button', { name: /añadir/i })` se volvía ambiguo. Solución: `aria-label="Añadir reparto"` y `aria-label="Añadir género"`; el input de reparto mantiene `"Añadir miembro del reparto"` (distinto del botón para no romper `getByLabelText`).
+
+**Filtro de género del listado**
+`SeriesListPage` construye sus opciones con `getAllGenres()` (en `useMemo`), de modo que los géneros personalizados también son filtrables.
+
+**Orden del `chartGrid`**
+A petición, el orden final de los gráficos es: 1) Distribución por género (barras), 2) **Series por género (donut)**, 3) Distribución por valoración (barras), 4) Distribución por duración (donut). Solo cambia el orden de render en `DashboardPage`.
+
+**Mejora del `ThemeToggle` (icono claro/oscuro)**
+Las dos bombillas casi idénticas se sustituyeron por **sol** (modo claro) y **luna** (modo oscuro), con color propio fijo e independiente del tema (sol `#f5b50a`, luna `#818cf8`) para diferenciarlos al máximo. La transición pasó de un simple fundido a rotación (−90°→0) + escala (0.3→1) con easing tipo spring (`cubic-bezier(0.34, 1.56, 0.64, 1)`). Accesibilidad intacta: SVG `aria-hidden`, `aria-label`/`title` dinámicos en el botón. Los SVG son inline (sin librería), coherente con el criterio de iconos del proyecto.
+
+**Tests**
++10 tests nuevos (classifySeasons, genresCatalog, métricas de duración, KPICard con icono, DurationDistributionChart, género nuevo en SeriesForm). Suite completa en verde (301), lint y `tsc -b` limpios, `pnpm build` OK.
+
+---
+
 ## Tabla resumen de dependencias
 
 | Hito | Depende de | Complejidad |
@@ -641,5 +753,6 @@ Con 120 series y títulos de longitud variable, las cards de una misma fila ten�
 | H7 Pulido + a11y + cobertura | H5, H6 | M |
 | H8 Landing & entry flow | H7 | M |
 | H9 Mejoras UX vista Series | H8 | M |
+| H10 Métricas duración + géneros editables | H5, H9, H4 | M |
 
 > H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho. H8 cierra el plan — depende de H7 para tener el diseño pulido y las portadas del seed completas.

@@ -92,6 +92,16 @@ describe('useDashboardMetrics', () => {
     expect(result.current.ratingDistribution.every((r) => r.count === 0)).toBe(true);
   });
 
+  it('calcula métricas de duración (miniserie/single/multi)', () => {
+    const { result } = renderHook(() => useDashboardMetrics());
+    // SERIES_MOCK: '3 temporadas' (multi), '2 temporadas' (multi), '1 temporadas' (single)
+    expect(result.current.miniseriesCount).toBe(0);
+    expect(result.current.multiSeasonCount).toBe(2);
+    expect(result.current.singleSeasonCount).toBe(1);
+    const multi = result.current.durationDistribution.find((d) => d.type === 'multi');
+    expect(multi?.count).toBe(2);
+  });
+
   it('propaga loading y error de useSeries', () => {
     mockUseSeries.mockReturnValue({ series: [], loading: true, error: 'fallo', reload: vi.fn() });
     const { result } = renderHook(() => useDashboardMetrics());

@@ -66,8 +66,20 @@ describe('SeriesForm', () => {
     renderForm();
     const input = screen.getByLabelText(/añadir miembro del reparto/i);
     await user.type(input, 'Anna Gunn');
-    await user.click(screen.getByRole('button', { name: /añadir/i }));
+    await user.click(screen.getByRole('button', { name: /añadir reparto/i }));
     expect(screen.getByText('Anna Gunn')).toBeInTheDocument();
+  });
+
+  it('permite crear un género nuevo y lo selecciona', async () => {
+    const user = userEvent.setup();
+    localStorage.clear();
+    renderForm();
+    const input = screen.getByLabelText(/añadir nuevo género/i);
+    await user.type(input, 'Western');
+    await user.click(screen.getByRole('button', { name: /añadir género/i }));
+    // El género nuevo aparece como opción seleccionable
+    expect(screen.getByRole('option', { name: 'Western' })).toBeInTheDocument();
+    expect((screen.getByRole('option', { name: 'Western' }) as HTMLOptionElement).selected).toBe(true);
   });
 
   it('quita un chip del reparto', async () => {
