@@ -27,7 +27,16 @@ function renderForm(props: Partial<React.ComponentProps<typeof SeriesForm>> = {}
 
 beforeEach(() => {
   vi.clearAllMocks();
+  URL.createObjectURL = vi.fn(() => 'blob:mock');
+  URL.revokeObjectURL = vi.fn();
 });
+
+// Construye un clipboardData falso con los items indicados para fireEvent.paste
+function clipboardWith(items: Array<{ type: string; file: File | null }>) {
+  return {
+    items: items.map(({ type, file }) => ({ type, getAsFile: () => file })),
+  };
+}
 
 describe('SeriesForm', () => {
   it('renderiza todos los campos', () => {
@@ -146,6 +155,37 @@ describe('SeriesForm', () => {
     fireEvent.change(input, { target: { files: [file] } });
     await waitFor(() => {
       expect(screen.getByText(/no puede superar 2 mb/i)).toBeInTheDocument();
+    });
+  });
+
+  it('pega una imagen válida del portapapeles y muestra el preview', async () => {
+    renderForm();
+    const zone = screen.getByRole('button', { name: /pega aquí una imagen/i });
+    const file = new File(['img'], 'pegada.png', { type: 'image/png' });
+    fireEvent.paste(zone, { clipboardData: clipboardWith([{ type: 'image/png', file }]) });
+    await waitFor(() => {
+      expect(screen.getByAltText(/previsualización de portada/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/no contiene ninguna imagen/i)).not.toBeInTheDocument();
+  });
+
+  it('muestra error al pegar contenido sin imagen', async () => {
+    renderForm();
+    const zone = screen.getByRole('button', { name: /pega aquí una imagen/i });
+    fireEvent.paste(zone, { clipboardData: clipboardWith([{ type: 'text/plain', file: null }]) });
+    await waitFor(() => {
+      expect(screen.getByText(/no contiene ninguna imagen/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByAltText(/previsualización de portada/i)).not.toBeInTheDocument();
+  });
+
+  it('rechaza imagen pegada con tipo no válido', async () => {
+    renderForm();
+    const zone = screen.getByRole('button', { name: /pega aquí una imagen/i });
+    const file = new File(['img'], 'foto.gif', { type: 'image/gif' });
+    fireEvent.paste(zone, { clipboardData: clipboardWith([{ type: 'image/gif', file }]) });
+    await waitFor(() => {
+      expect(screen.getByText(/solo se aceptan imágenes/i)).toBeInTheDocument();
     });
   });
 });
