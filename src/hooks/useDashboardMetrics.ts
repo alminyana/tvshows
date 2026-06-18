@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useSeries } from './useSeries';
 import type { Genre } from '../types/genre';
+import { classifySeasons } from '../utils/classifySeasons';
+import type { SeasonsType } from '../utils/classifySeasons';
 
 export interface GenreCount {
   genre: Genre;
@@ -12,11 +14,20 @@ export interface RatingCount {
   count: number;
 }
 
+export interface DurationCount {
+  type: SeasonsType;
+  count: number;
+}
+
 export interface DashboardMetrics {
   totalSeries: number;
   featuredSeries: number;
+  miniseriesCount: number;
+  singleSeasonCount: number;
+  multiSeasonCount: number;
   genreDistribution: GenreCount[];
   ratingDistribution: RatingCount[];
+  durationDistribution: DurationCount[];
   loading: boolean;
   error: string | null;
 }
@@ -47,7 +58,26 @@ export function useDashboardMetrics(): DashboardMetrics {
       .map(([rating, count]) => ({ rating, count }))
       .sort((a, b) => a.rating - b.rating);
 
-    return { totalSeries, featuredSeries, genreDistribution, ratingDistribution };
+    const durationMap: Record<SeasonsType, number> = { miniserie: 0, single: 0, multi: 0 };
+    for (const s of series) {
+      durationMap[classifySeasons(s.seasons)] += 1;
+    }
+    const durationDistribution: DurationCount[] = [
+      { type: 'miniserie', count: durationMap.miniserie },
+      { type: 'single', count: durationMap.single },
+      { type: 'multi', count: durationMap.multi },
+    ];
+
+    return {
+      totalSeries,
+      featuredSeries,
+      miniseriesCount: durationMap.miniserie,
+      singleSeasonCount: durationMap.single,
+      multiSeasonCount: durationMap.multi,
+      genreDistribution,
+      ratingDistribution,
+      durationDistribution,
+    };
   }, [series]);
 
   return { ...metrics, loading, error };

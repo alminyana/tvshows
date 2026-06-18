@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { Series } from '../types/series';
 import type { User } from '../types/user';
+import { migrateSeasons } from '../utils/migrateSeasons';
 
 interface ImageRecord {
   id: string;
@@ -19,6 +20,17 @@ export class AppDatabase extends Dexie {
       users: 'id, &email, role',
       images: 'id',
     });
+
+    // v2: `Series.seasons` pasó de number (recuento) a string (texto libre) en H9.
+    // El schema no cambia; solo se normalizan los registros legacy ya persistidos.
+    this.version(2).upgrade((tx) =>
+      tx
+        .table('series')
+        .toCollection()
+        .modify((series: { seasons: unknown }) => {
+          series.seasons = migrateSeasons(series.seasons);
+        }),
+    );
   }
 }
 

@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import { GENRES } from '@/types/genre';
-import type { Genre } from '@/types/genre';
 
 const currentYear = new Date().getFullYear();
 
@@ -19,7 +17,7 @@ export const seriesSchema = z.object({
     .min(1, 'Selecciona una valoración.')
     .max(5),
   genres: z
-    .array(z.enum(GENRES as [Genre, ...Genre[]]))
+    .array(z.string().min(1))
     .min(1, 'Selecciona al menos un género.'),
   cast: z.array(z.string().min(1)).optional(),
   opinion: z.string().optional(),

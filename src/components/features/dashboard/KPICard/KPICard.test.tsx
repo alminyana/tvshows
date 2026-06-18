@@ -23,4 +23,17 @@ describe('KPICard', () => {
     render(<KPICard label="Sin series" value={0} />);
     expect(screen.getByText('0')).toBeInTheDocument();
   });
+
+  it('renderiza el icono cuando se proporciona (decorativo)', () => {
+    const { container } = render(
+      <KPICard label="Con icono" value={3} icon={<svg data-testid="kpi-icon" />} />,
+    );
+    expect(screen.getByTestId('kpi-icon')).toBeInTheDocument();
+    expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument();
+  });
+
+  it('no renderiza wrapper de icono cuando se omite', () => {
+    const { container } = render(<KPICard label="Sin icono" value={1} />);
+    expect(container.querySelector('[aria-hidden="true"]')).not.toBeInTheDocument();
+  });
 });

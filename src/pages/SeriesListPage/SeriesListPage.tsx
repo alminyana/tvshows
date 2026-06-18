@@ -4,9 +4,8 @@ import { useSeries, useAuth, useSeriesViewMode } from '@/hooks';
 import { SeriesCard, SeriesRow } from '@/components/features';
 import { Spinner, Select, Input, Button, Collapsible } from '@/components/ui';
 import { canCreateSeries } from '@/utils/permissions';
+import { getAllGenres } from '@/utils/genresCatalog';
 import { MESSAGES } from '@/constants';
-import { GENRES } from '@/types';
-import type { Genre } from '@/types';
 import styles from './SeriesListPage.module.scss';
 
 const RATING_OPTIONS = [
@@ -18,11 +17,6 @@ const RATING_OPTIONS = [
   { value: '1', label: '★ o más' },
 ];
 
-const GENRE_OPTIONS = [
-  { value: '', label: 'Todos los géneros' },
-  ...GENRES.map((g) => ({ value: g, label: g })),
-];
-
 export function SeriesListPage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
@@ -30,8 +24,13 @@ export function SeriesListPage() {
   const { series, loading, error } = useSeries();
   const [viewMode, setViewMode] = useSeriesViewMode();
 
+  const genreOptions = useMemo(
+    () => [{ value: '', label: 'Todos los géneros' }, ...getAllGenres().map((g) => ({ value: g, label: g }))],
+    [],
+  );
+
   const search = params.get('q') ?? '';
-  const genre = (params.get('genre') ?? '') as Genre | '';
+  const genre = params.get('genre') ?? '';
   const rating = params.get('rating') ?? '';
 
   const activeFilterCount = [search, genre, rating].filter(Boolean).length;
@@ -108,7 +107,7 @@ export function SeriesListPage() {
           />
           <Select
             id="series-genre"
-            options={GENRE_OPTIONS}
+            options={genreOptions}
             value={genre}
             onChange={(e) => setParam('genre', e.target.value)}
             aria-label={MESSAGES.series.filterByGenre}

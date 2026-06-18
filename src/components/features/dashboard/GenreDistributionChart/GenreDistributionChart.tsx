@@ -2,11 +2,19 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 import { Card } from '@/components/ui';
 import { MESSAGES } from '@/constants';
 import type { GenreCount } from '@/hooks/useDashboardMetrics';
+import { ChartBarIcon } from '../icons';
 import styles from './GenreDistributionChart.module.scss';
 
 interface GenreDistributionChartProps {
   data: GenreCount[];
 }
+
+const header = (
+  <div className={styles.header}>
+    <ChartBarIcon className={styles.icon} />
+    <p className={styles.title}>{MESSAGES.dashboard.genreDistribution}</p>
+  </div>
+);
 
 const TOOLTIP_STYLE = {
   background: 'var(--color-surface)',
@@ -20,7 +28,7 @@ export function GenreDistributionChart({ data }: GenreDistributionChartProps) {
   if (data.length === 0) {
     return (
       <Card className={styles.card}>
-        <p className={styles.title}>{MESSAGES.dashboard.genreDistribution}</p>
+        {header}
         <p className={styles.empty}>{MESSAGES.dashboard.noData}</p>
       </Card>
     );
@@ -30,7 +38,7 @@ export function GenreDistributionChart({ data }: GenreDistributionChartProps) {
 
   return (
     <Card className={styles.card}>
-      <p className={styles.title}>{MESSAGES.dashboard.genreDistribution}</p>
+      {header}
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={chartData} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
           <XAxis dataKey="name" tick={{ fontSize: 11 }} />

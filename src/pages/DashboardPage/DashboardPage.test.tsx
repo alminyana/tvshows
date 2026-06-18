@@ -28,6 +28,9 @@ vi.mock('@/hooks', () => ({
 const DEFAULT_METRICS = {
   totalSeries: 10,
   featuredSeries: 4,
+  miniseriesCount: 7,
+  singleSeasonCount: 1,
+  multiSeasonCount: 6,
   genreDistribution: [
     { genre: 'Drama' as const, count: 5 },
     { genre: 'Thriller' as const, count: 3 },
@@ -38,6 +41,11 @@ const DEFAULT_METRICS = {
     { rating: 3, count: 2 },
     { rating: 4, count: 3 },
     { rating: 5, count: 4 },
+  ],
+  durationDistribution: [
+    { type: 'miniserie' as const, count: 7 },
+    { type: 'single' as const, count: 1 },
+    { type: 'multi' as const, count: 6 },
   ],
   loading: false,
   error: null,
@@ -57,18 +65,22 @@ describe('DashboardPage', () => {
     render(<DashboardPage />);
     expect(screen.getByText('10')).toBeInTheDocument();
     expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText('7')).toBeInTheDocument();
+    expect(screen.getByText('6')).toBeInTheDocument();
   });
 
   it('muestra los labels de las KPI cards', () => {
     render(<DashboardPage />);
     expect(screen.getByText(/total de series/i)).toBeInTheDocument();
     expect(screen.getByText(/series destacadas/i)).toBeInTheDocument();
+    expect(screen.getByText(/^miniseries$/i)).toBeInTheDocument();
+    expect(screen.getByText(/multi-temporada/i)).toBeInTheDocument();
   });
 
-  it('muestra los gráficos de barras y el quesito', () => {
+  it('muestra los gráficos de barras y los dos quesitos (género y duración)', () => {
     render(<DashboardPage />);
     expect(screen.getAllByTestId('bar-chart')).toHaveLength(2);
-    expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
+    expect(screen.getAllByTestId('pie-chart')).toHaveLength(2);
   });
 
   it('muestra spinner mientras carga', () => {
