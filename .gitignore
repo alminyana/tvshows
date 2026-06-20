@@ -148,3 +148,6 @@ PROFILE.md
 #env
 .env.local
 .env.example
+
+#mocks
+tvshows-export.json
