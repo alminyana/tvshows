@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@supabase/supabase-js": "^2.108.2",
     "dexie": "^4.0.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -35,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "jsdom": "^25.0.1",
     "sass": "1.83.1",
+    "supabase": "^2.107.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.59.4",
     "vite": "^6.0.7",
