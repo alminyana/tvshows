@@ -113,7 +113,6 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
       <FormField
         label={MESSAGES.series.cover}
         error={imageError ?? undefined}
-        required={!existingImageId}
       >
         <div className={styles.imageField}>
           {imagePreview ? (
@@ -147,19 +146,19 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         <Input id="title" {...register('title')} hasError={!!errors.title} />
       </FormField>
 
-      <FormField label={MESSAGES.series.synopsis} htmlFor="synopsis" error={errors.synopsis?.message} required>
+      <FormField label={MESSAGES.series.synopsis} htmlFor="synopsis" error={errors.synopsis?.message}>
         <Textarea id="synopsis" rows={4} {...register('synopsis')} hasError={!!errors.synopsis} />
       </FormField>
 
-      <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message} required>
+      <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message}>
         <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
       </FormField>
 
-      <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message} required>
+      <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message}>
         <Textarea id="seasons" rows={3} {...register('seasons')} hasError={!!errors.seasons} />
       </FormField>
 
-      <FormField label={MESSAGES.series.rating} error={errors.rating?.message} required>
+      <FormField label={MESSAGES.series.rating} error={errors.rating?.message}>
         <Controller
           name="rating"
           control={control}
@@ -169,7 +168,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         />
       </FormField>
 
-      <FormField label={MESSAGES.series.genres} htmlFor="genres" error={errors.genres?.message} required>
+      <FormField label={MESSAGES.series.genres} htmlFor="genres" error={errors.genres?.message}>
         <Controller
           name="genres"
           control={control}

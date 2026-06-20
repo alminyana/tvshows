@@ -8,7 +8,7 @@ vi.mock('@/services', () => ({
   imageService: { get: vi.fn().mockResolvedValue(undefined) },
 }));
 
-const validValues: SeriesFormValues = {
+const validValues = {
   title: 'Breaking Bad',
   synopsis: 'Un profesor de química.',
   seasons: '5 temporadas',
@@ -17,7 +17,7 @@ const validValues: SeriesFormValues = {
   genres: ['Drama', 'Thriller'],
   cast: ['Bryan Cranston'],
   opinion: 'Magistral.',
-};
+} satisfies SeriesFormValues;
 
 function renderForm(props: Partial<React.ComponentProps<typeof SeriesForm>> = {}) {
   const onSubmit = vi.fn().mockResolvedValue(undefined);

@@ -63,28 +63,37 @@ export function SeriesFormPage() {
       }
     : undefined;
 
+  function normalizeFormData(data: SeriesFormValues) {
+    return {
+      title: data.title,
+      synopsis: data.synopsis ?? '',
+      seasons: data.seasons ?? '',
+      year: data.year ?? 0,
+      rating: data.rating ?? 0,
+      genres: data.genres ?? [],
+      cast: data.cast ?? [],
+      opinion: data.opinion,
+    };
+  }
+
   async function handleSubmit(data: SeriesFormValues, file?: File) {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
+      const payload = normalizeFormData(data);
       if (isEdit && series) {
         let coverImage = series.coverImage;
         if (file) {
           if (coverImage) await imageService.remove(coverImage);
           coverImage = await imageService.save(file);
         }
-        await seriesService.update(series.id, { ...data, coverImage });
+        await seriesService.update(series.id, { ...payload, coverImage });
         notify(MESSAGES.notifications.seriesUpdated);
         navigate(`/series/${series.id}`);
       } else {
-        if (!file) {
-          setSubmitError('Selecciona una imagen de portada.');
-          return;
-        }
-        const coverImage = await imageService.save(file);
+        const coverImage = file ? await imageService.save(file) : '';
         const created = await seriesService.create({
-          ...data,
-          cast: data.cast ?? [],
+          ...payload,
           coverImage,
           createdBy: user!.id,
         });

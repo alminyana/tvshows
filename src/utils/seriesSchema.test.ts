@@ -17,10 +17,8 @@ describe('seriesSchema', () => {
     expect(seriesSchema.safeParse(validData).success).toBe(true);
   });
 
-  it('valida datos mínimos (sin cast ni opinion)', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { cast: _cast, opinion: _opinion, ...minimal } = validData;
-    expect(seriesSchema.safeParse(minimal).success).toBe(true);
+  it('valida datos mínimos (solo title)', () => {
+    expect(seriesSchema.safeParse({ title: 'Breaking Bad' }).success).toBe(true);
   });
 
   it('title requerido', () => {
@@ -31,47 +29,67 @@ describe('seriesSchema', () => {
     }
   });
 
-  it('synopsis requerida', () => {
-    const result = seriesSchema.safeParse({ ...validData, synopsis: '' });
-    expect(result.success).toBe(false);
+  it('synopsis opcional (acepta vacío y ausente)', () => {
+    expect(seriesSchema.safeParse({ ...validData, synopsis: '' }).success).toBe(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { synopsis: _s, ...rest } = validData;
+    expect(seriesSchema.safeParse(rest).success).toBe(true);
   });
 
-  it('seasons requerido (texto no vacío)', () => {
-    expect(seriesSchema.safeParse({ ...validData, seasons: '' }).success).toBe(false);
-    expect(seriesSchema.safeParse({ ...validData, seasons: 'Una temporada' }).success).toBe(true);
+  it('seasons opcional (acepta vacío y ausente)', () => {
+    expect(seriesSchema.safeParse({ ...validData, seasons: '' }).success).toBe(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { seasons: _s, ...rest } = validData;
+    expect(seriesSchema.safeParse(rest).success).toBe(true);
   });
 
-  it('year mínimo 1900', () => {
+  it('year mínimo 1900 cuando se proporciona', () => {
     expect(seriesSchema.safeParse({ ...validData, year: 1899 }).success).toBe(false);
     expect(seriesSchema.safeParse({ ...validData, year: 1900 }).success).toBe(true);
   });
 
-  it('year máximo año actual', () => {
+  it('year máximo año actual cuando se proporciona', () => {
     const futureYear = new Date().getFullYear() + 1;
     expect(seriesSchema.safeParse({ ...validData, year: futureYear }).success).toBe(false);
   });
 
-  it('rating entero entre 1 y 5', () => {
-    expect(seriesSchema.safeParse({ ...validData, rating: 0 }).success).toBe(false);
+  it('year opcional (acepta ausente o string vacío)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { year: _y, ...rest } = validData;
+    expect(seriesSchema.safeParse(rest).success).toBe(true);
+    expect(seriesSchema.safeParse({ ...validData, year: '' }).success).toBe(true);
+  });
+
+  it('rating entero entre 0 y 5 (0 = sin valorar)', () => {
+    expect(seriesSchema.safeParse({ ...validData, rating: 0 }).success).toBe(true);
     expect(seriesSchema.safeParse({ ...validData, rating: 6 }).success).toBe(false);
     expect(seriesSchema.safeParse({ ...validData, rating: 1.5 }).success).toBe(false);
     expect(seriesSchema.safeParse({ ...validData, rating: 1 }).success).toBe(true);
     expect(seriesSchema.safeParse({ ...validData, rating: 5 }).success).toBe(true);
   });
 
-  it('genres requiere al menos uno', () => {
-    expect(seriesSchema.safeParse({ ...validData, genres: [] }).success).toBe(false);
+  it('rating opcional (acepta ausente)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rating: _r, ...rest } = validData;
+    expect(seriesSchema.safeParse(rest).success).toBe(true);
+  });
+
+  it('genres opcional (acepta array vacío y ausente)', () => {
+    expect(seriesSchema.safeParse({ ...validData, genres: [] }).success).toBe(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { genres: _g, ...rest } = validData;
+    expect(seriesSchema.safeParse(rest).success).toBe(true);
   });
 
   it('genres acepta géneros personalizados (texto libre no vacío)', () => {
     expect(seriesSchema.safeParse({ ...validData, genres: ['Western'] }).success).toBe(true);
   });
 
-  it('genres rechaza strings vacíos', () => {
+  it('genres rechaza strings vacíos dentro del array', () => {
     expect(seriesSchema.safeParse({ ...validData, genres: [''] }).success).toBe(false);
   });
 
-  it('cast puede ser array vacío si se omite', () => {
+  it('cast puede omitirse o ser array vacío', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { cast: _cast, ...rest } = validData;
     expect(seriesSchema.safeParse(rest).success).toBe(true);

@@ -799,6 +799,36 @@ A petición, el `FormField` de portada se movió al principio del formulario, **
 
 ---
 
+---
+
+## H12 — Campos opcionales en el formulario de serie · Complejidad: S ✅
+
+- **Estado:** ✅ Completado.
+- **Objetivo:** Reducir la fricción de alta de series: solo el título es obligatorio; el resto de campos se pueden rellenar después.
+- **Entregable:** formulario de crear/editar serie con un único campo required (`title`). Los demás campos siguen validándose cuando se rellenan pero no bloquean el submit si están vacíos.
+- **Dependencias:** H4 (SeriesForm, seriesSchema).
+
+### Cambios realizados
+
+1. **`utils/seriesSchema.ts`** — todos los campos excepto `title` pasan a opcionales:
+   - `synopsis`, `seasons`, `opinion`: `z.string().optional()`.
+   - `year`: `z.preprocess()` convierte string vacío/null/undefined a `undefined`, luego validación de rango (1900–año actual) solo cuando hay valor.
+   - `rating`: `z.number().int().min(0).max(5).optional()` (0 = sin valorar, ya no es error).
+   - `genres`: `z.array(z.string().min(1)).optional()` (array vacío permitido).
+   - `cast`, `opinion`: ya eran opcionales.
+
+2. **`components/features/SeriesForm/SeriesForm.tsx`** — se elimina la prop `required` de todos los `<FormField>` excepto el de título. También se elimina `required={!existingImageId}` del campo de portada.
+
+3. **`pages/SeriesFormPage/SeriesFormPage.tsx`** — función `normalizeFormData()` aplica defaults antes de llamar al servicio:
+   - `synopsis ?? ''`, `seasons ?? ''`, `year ?? 0`, `rating ?? 0`, `genres ?? []`, `cast ?? []`.
+   - En crear serie sin imagen se guarda `coverImage: ''` en lugar de abortar el submit.
+
+4. **`utils/seriesSchema.test.ts`** — tests actualizados para reflejar las nuevas reglas: campos que antes eran required ahora se testean como opcionales; `rating: 0` pasa; `genres: []` pasa.
+
+5. **`components/features/SeriesForm/SeriesForm.test.tsx`** — `validValues` pasa de `const validValues: SeriesFormValues` a `const validValues = { ... } satisfies SeriesFormValues` para que TS infiera el tipo concreto y evitar `string | undefined` en llamadas a `userEvent.type`.
+
+---
+
 ## Tabla resumen de dependencias
 
 | Hito | Depende de | Complejidad |
@@ -815,5 +845,6 @@ A petición, el `FormField` de portada se movió al principio del formulario, **
 | H9 Mejoras UX vista Series | H8 | M |
 | H10 Métricas duración + géneros editables | H5, H9, H4 | M |
 | H11 Pegar portada desde el portapapeles | H4 | S |
+| H12 Campos opcionales en el formulario de serie | H4 | S |
 
 > H5 y H6 son paralelizables entre sí (ambos dependen solo de H3/H4), pero H5 necesita H4 para validar reactividad. H6 puede empezarse en cuanto H3 esté hecho. H8 cierra el plan — depende de H7 para tener el diseño pulido y las portadas del seed completas.
