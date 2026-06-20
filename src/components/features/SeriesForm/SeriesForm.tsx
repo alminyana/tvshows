@@ -163,7 +163,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           name="rating"
           control={control}
           render={({ field }) => (
-            <Rating value={field.value} onChange={field.onChange} label={MESSAGES.series.rating} />
+            <Rating value={field.value ?? 0} onChange={field.onChange} label={MESSAGES.series.rating} />
           )}
         />
       </FormField>

@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 
 # Project docs and AI context files
 PROFILE.md
+
+#env
+.env.local
+.env.example
