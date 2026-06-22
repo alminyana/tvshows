@@ -20,13 +20,13 @@ const mockSeries: Series[] = [
   },
 ];
 
-vi.mock('../services/seriesService', () => ({
+vi.mock('@/services', () => ({
   seriesService: {
     getAll: vi.fn(),
   },
 }));
 
-import { seriesService } from '../services/seriesService';
+import { seriesService } from '@/services';
 
 beforeEach(() => {
   vi.clearAllMocks();

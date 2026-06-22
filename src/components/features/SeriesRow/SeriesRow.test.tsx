@@ -12,7 +12,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 vi.mock('@/services', () => ({
-  imageService: { get: vi.fn().mockResolvedValue(null) },
+  imageService: { getSrc: vi.fn().mockResolvedValue(undefined) },
 }));
 
 const series: Series = {

@@ -15,4 +15,10 @@ export const imageService = {
   async remove(id: string): Promise<void> {
     await db.images.delete(id);
   },
+
+  async getSrc(id: string): Promise<string | undefined> {
+    if (!id) return undefined;
+    const blob = await this.get(id);
+    return blob ? URL.createObjectURL(blob) : undefined;
+  },
 };

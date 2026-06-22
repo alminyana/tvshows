@@ -204,7 +204,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 
 - **Objetivo:** que crear/editar serie suba la portada a Storage.
 - **Entregable:** el `SeriesForm` sube la imagen a Storage y guarda el path; listado y detalle la consumen.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada.
 - **Dependencias:** F1 (bucket), F3 (servicios).
 
 ### Tareas

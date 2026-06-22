@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { seriesService } from '../services/seriesService';
+import { seriesService } from '@/services';
 import type { Series } from '../types/series';
 
 interface UseSeriesResult {
