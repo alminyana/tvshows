@@ -1,7 +1,8 @@
 import { seriesService as seriesServiceMock } from './seriesService';
 import { imageService as imageServiceMock } from './imageService';
-import { authService } from './authService';
+import { authService as authServiceMock } from './authService';
 import { usersService as usersServiceMock } from './usersService';
+import { authServiceSupabase } from './authService.supabase';
 import { seriesServiceSupabase } from './seriesService.supabase';
 import { usersServiceSupabase } from './usersService.supabase';
 import { imageServiceSupabase } from './imageService.supabase';
@@ -26,4 +27,4 @@ export const imageService = isSupabase ? imageServiceSupabase : imageServiceMock
 export const genresService: IGenresService = isSupabase
   ? genresServiceSupabase
   : genresServiceMock;
-export { authService };
+export const authService = isSupabase ? authServiceSupabase : authServiceMock;
