@@ -107,7 +107,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 
 - **Objetivo:** trasladar las series y portadas reales del navegador a Supabase, y crear los usuarios reales.
 - **Entregable:** utilidad dev de export que produce un JSON autocontenido; script Node que importa series, sube portadas a Storage y crea usuarios + profiles.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada.
 - **Dependencias:** F1 (el import necesita el schema; el export puede prepararse en paralelo).
 
 ### Tareas
@@ -142,7 +142,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 
 - **Objetivo:** que la app lea/escriba contra Supabase sin romper el mock.
 - **Entregable:** implementación Supabase de los servicios detrás de la interfaz actual, conmutable por `VITE_DATA_BACKEND`.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada.
 - **Dependencias:** F1, F2 (necesita datos reales para validar).
 
 ### Tareas
