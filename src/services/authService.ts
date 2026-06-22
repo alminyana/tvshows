@@ -18,6 +18,11 @@ export const authService = {
     localStorage.removeItem(SESSION_KEY);
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  subscribe(_callback: (user: User | null) => void): () => void {
+    return () => {};
+  },
+
   async getCurrentUser(): Promise<User | null> {
     const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return null;
