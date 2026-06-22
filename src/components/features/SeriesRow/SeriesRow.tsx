@@ -14,15 +14,13 @@ export function SeriesRow({ series }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    let url: string | null = null;
-    imageService.get(series.coverImage).then((blob) => {
-      if (blob) {
-        url = URL.createObjectURL(blob);
-        setImageUrl(url);
-      }
+    let src: string | undefined;
+    imageService.getSrc(series.coverImage).then((s) => {
+      src = s;
+      if (s) setImageUrl(s);
     });
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (src) URL.revokeObjectURL(src);
     };
   }, [series.coverImage]);
 

@@ -13,7 +13,7 @@ vi.mock('@/hooks', () => ({
 }));
 
 vi.mock('@/services', () => ({
-  imageService: { get: vi.fn().mockResolvedValue(undefined), remove: vi.fn().mockResolvedValue(undefined) },
+  imageService: { getSrc: vi.fn().mockResolvedValue(undefined), remove: vi.fn().mockResolvedValue(undefined) },
   seriesService: { remove: vi.fn().mockResolvedValue(undefined) },
 }));
 

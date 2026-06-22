@@ -13,7 +13,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 
 vi.mock('@/services', () => ({
   imageService: {
-    get: vi.fn().mockResolvedValue(undefined),
+    getSrc: vi.fn().mockResolvedValue(undefined),
   },
 }));
 

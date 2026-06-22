@@ -22,6 +22,7 @@ export interface IUsersService {
 export interface IImageService {
   save(input: Blob | File): Promise<string>;
   remove(idOrPath: string): Promise<void>;
+  getSrc(idOrPath: string): Promise<string | undefined>;
 }
 
 export interface IGenresService {

@@ -51,6 +51,21 @@ describe('imageServiceSupabase.getUrl', () => {
   });
 });
 
+describe('imageServiceSupabase.getSrc', () => {
+  it('devuelve la URL pública como src', async () => {
+    mockStorage.getPublicUrl.mockReturnValue({
+      data: { publicUrl: 'https://supabase.co/storage/v1/covers/abc.jpg' },
+    });
+    const src = await imageServiceSupabase.getSrc('abc.jpg');
+    expect(src).toBe('https://supabase.co/storage/v1/covers/abc.jpg');
+  });
+
+  it('devuelve undefined si el path está vacío', async () => {
+    const src = await imageServiceSupabase.getSrc('');
+    expect(src).toBeUndefined();
+  });
+});
+
 describe('imageServiceSupabase.remove', () => {
   it('elimina el fichero del bucket', async () => {
     mockStorage.remove.mockResolvedValue({ error: null });

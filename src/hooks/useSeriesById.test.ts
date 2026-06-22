@@ -18,13 +18,13 @@ const mockSeries: Series = {
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
 
-vi.mock('../services/seriesService', () => ({
+vi.mock('@/services', () => ({
   seriesService: {
     getById: vi.fn(),
   },
 }));
 
-import { seriesService } from '../services/seriesService';
+import { seriesService } from '@/services';
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -28,7 +28,7 @@ vi.mock('@/services', () => ({
   },
   imageService: {
     save: vi.fn().mockResolvedValue('img-new'),
-    get: vi.fn().mockResolvedValue(undefined),
+    getSrc: vi.fn().mockResolvedValue(undefined),
     remove: vi.fn().mockResolvedValue(undefined),
   },
   authService: { getCurrentUser: vi.fn().mockResolvedValue(null) },

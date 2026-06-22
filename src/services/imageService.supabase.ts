@@ -18,6 +18,11 @@ export const imageServiceSupabase: IImageService & { getUrl(path: string): strin
     return data.publicUrl;
   },
 
+  async getSrc(path: string): Promise<string | undefined> {
+    if (!path) return undefined;
+    return this.getUrl(path);
+  },
+
   async remove(path: string): Promise<void> {
     const { error } = await supabase.storage.from(BUCKET).remove([path]);
     if (error) throw error;

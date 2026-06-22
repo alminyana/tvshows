@@ -47,15 +47,13 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
 
   useEffect(() => {
     if (!existingImageId) return;
-    let url: string | null = null;
-    imageService.get(existingImageId).then((blob) => {
-      if (blob) {
-        url = URL.createObjectURL(blob);
-        setImagePreview(url);
-      }
+    let src: string | undefined;
+    imageService.getSrc(existingImageId).then((s) => {
+      src = s;
+      if (s) setImagePreview(s);
     });
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (src) URL.revokeObjectURL(src);
     };
   }, [existingImageId]);
 
