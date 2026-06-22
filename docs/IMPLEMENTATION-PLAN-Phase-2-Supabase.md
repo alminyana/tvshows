@@ -174,7 +174,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 
 - **Objetivo:** sesión y roles reales gestionados por Supabase.
 - **Entregable:** login/logout reales, sesión persistida por `supabase-js`, roles desde `profiles`, `ProtectedRoute` operativo.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada.
 - **Dependencias:** F1 (profiles), F2 (usuarios), F3 (servicios).
 
 ### Tareas

@@ -19,6 +19,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(u);
       setLoading(false);
     });
+
+    // En modo Supabase reacciona a cambios de sesión (token refresh, otra pestaña).
+    // En modo mock, subscribe devuelve un noop.
+    const unsubscribe = authService.subscribe((u) => {
+      setUser(u);
+      setLoading(false);
+    });
+
+    return unsubscribe;
   }, []);
 
   const login = async (email: string, password: string) => {

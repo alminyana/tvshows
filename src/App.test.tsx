@@ -21,6 +21,7 @@ vi.mock('@/services', async (importOriginal) => {
       getCurrentUser: vi.fn().mockResolvedValue(null),
       login: vi.fn(),
       logout: vi.fn(),
+      subscribe: vi.fn().mockReturnValue(() => {}),
     },
   };
 });
