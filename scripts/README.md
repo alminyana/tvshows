@@ -60,6 +60,30 @@ Tras ejecutar, comprueba en el dashboard de Supabase:
 - Table Editor → `series`, `genres`, `series_genres`, `profiles`
 - Storage → bucket `covers`
 
+## create-user.ts
+
+Crea un usuario nuevo en Supabase Auth y su fila en `profiles` con el rol
+indicado. Es la vía para añadir usuarios mientras no exista la gestión desde el
+panel Admin (Edge Function `admin-create-user`, pospuesta en F4).
+
+### Variables de entorno
+
+Usa `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`.
+
+### Ejecución
+
+```bash
+# Rol "user" (por defecto si se omite el tercer argumento)
+pnpm tsx --env-file=.env.local scripts/create-user.ts nuevo@ejemplo.com 'contraseña-segura'
+
+# Rol "admin"
+pnpm tsx --env-file=.env.local scripts/create-user.ts admin2@ejemplo.com 'contraseña-segura' admin
+```
+
+El usuario se crea ya confirmado (`email_confirm: true`), porque la confirmación
+por email está desactivada en Fase 1. Es **idempotente**: si el email ya existe,
+no lo recrea; solo ajusta el rol si difiere.
+
 ## heartbeat.ts
 
 Actualiza la fila única de la tabla `heartbeat` con un `upsert`. Genera
