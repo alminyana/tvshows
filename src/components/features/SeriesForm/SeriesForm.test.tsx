@@ -5,8 +5,39 @@ import { SeriesForm } from './SeriesForm';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
 
 vi.mock('@/services', () => ({
-  imageService: { get: vi.fn().mockResolvedValue(undefined) },
+  imageService: { getSrc: vi.fn().mockResolvedValue(undefined) },
 }));
+
+// useGenres con estado real para cubrir el alta de un género nuevo en el form.
+vi.mock('@/hooks', async () => {
+  const React = await vi.importActual<typeof import('react')>('react');
+  const SEED = [
+    'Drama',
+    'Comedia',
+    'Thriller',
+    'Ciencia ficción',
+    'Fantasía',
+    'Documental',
+    'Animación',
+    'Acción',
+    'Romance',
+    'Terror',
+  ];
+  return {
+    useGenres: () => {
+      const [genres, setGenres] = React.useState<string[]>(SEED);
+      const add = async (name: string) => {
+        const trimmed = name.trim();
+        if (!trimmed) return null;
+        const existing = genres.find((g) => g.toLowerCase() === trimmed.toLowerCase());
+        if (existing) return existing;
+        setGenres((prev) => [...prev, trimmed]);
+        return trimmed;
+      };
+      return { genres, loading: false, error: null, add };
+    },
+  };
+});
 
 const validValues = {
   title: 'Breaking Bad',

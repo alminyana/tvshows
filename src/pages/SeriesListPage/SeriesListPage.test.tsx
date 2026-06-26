@@ -8,6 +8,7 @@ import type { Series } from '@/types';
 vi.mock('@/hooks', () => ({
   useSeries: vi.fn(),
   useSeriesById: vi.fn(),
+  useGenres: vi.fn(() => ({ genres: ['Drama', 'Ciencia ficción'], loading: false, error: null, add: vi.fn() })),
   useTheme: vi.fn(() => ({ theme: 'default', mode: 'light', setTheme: vi.fn(), setMode: vi.fn(), toggleMode: vi.fn() })),
   useAuth: vi.fn(() => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() })),
   useSeriesViewMode: vi.fn(() => ['cards', vi.fn()]),

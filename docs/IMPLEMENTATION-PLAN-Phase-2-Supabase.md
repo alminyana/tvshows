@@ -231,7 +231,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 
 - **Objetivo:** app 100% sobre Supabase, sin IndexedDB ni flag dual.
 - **Entregable:** eliminados Dexie, seed local, mocks y el selector de backend; suite en verde.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada.
 - **Dependencias:** F3, F4, F5.
 
 ### Tareas
