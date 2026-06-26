@@ -1,0 +1,32 @@
+name: Supabase heartbeat
+
+# Evita la pausa del free tier de Supabase generando actividad real de BD.
+# "*/3" dispara los días 1,4,7,... del mes (gap máx. ~3 días, holgado frente
+# a los ~7 de inactividad que provocan la pausa). Ejecutable también a mano.
+on:
+  schedule:
+    - cron: '0 6 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Ping heartbeat
+        run: pnpm tsx scripts/heartbeat.ts
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

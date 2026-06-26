@@ -3,6 +3,8 @@
 > Documento de requisitos para la Fase 1 del proyecto. Frontend-only con persistencia local.
 > Las fases posteriores cubrirán backend, base de datos remota, hosting, upload de imágenes desde dispositivo, comentarios de Viewers, autenticación real, internacionalización y métricas adicionales.
 
+> **⚠️ Estado actual (Fase 2 — Supabase).** Este PRD describe el diseño original de Fase 1 (frontend-only con Dexie/IndexedDB y auth simulada). **La Fase 2 ya está implementada** y reemplaza esa capa: la persistencia, la autenticación y el almacenamiento de imágenes ahora corren sobre **Supabase** (Postgres + Auth + Storage + RLS); Dexie se ha retirado. Los **requisitos funcionales** (roles, funcionalidades, rutas, temas, validaciones, dashboard) siguen siendo válidos; lo que cambió es la **implementación técnica**, anotada en las secciones afectadas más abajo. Ver `IMPLEMENTATION-PLAN-Phase-2-Supabase.md` para el detalle de la migración.
+
 ---
 
 ## 1. Resumen
@@ -26,7 +28,7 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 | Estilos | SASS scoped por componente + CSS variables para theming |
 | Formularios | React Hook Form + Zod |
 | Gráficos | Recharts |
-| Persistencia | IndexedDB (Dexie) para datos de negocio + localStorage para preferencias UI |
+| Persistencia | ~~IndexedDB (Dexie)~~ → **Supabase** (Postgres + Auth + Storage + RLS) para datos de negocio; localStorage solo para preferencias UI (tema, modo de vista) |
 | Testing | Vitest + React Testing Library |
 
 > Todos los comandos de instalación, ejecución y scripts deben usar `pnpm`. El repositorio debe incluir `pnpm-lock.yaml` (no `package-lock.json` ni `yarn.lock`).
@@ -59,15 +61,16 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 - Sin registro público. Solo el Admin da de alta nuevos usuarios (rol User o Admin).
 - Acceso por defecto a la app como Viewer (sin login).
 - Login accesible desde un botón en el header.
-- Rutas protegidas mediante guard (`<ProtectedRoute>`), preparado para integrar auth real en Fase 2/3.
-- La sesión activa se persiste en localStorage (token simulado + datos del user logueado).
+- Rutas protegidas mediante guard (`<ProtectedRoute>`).
+- La sesión activa se persiste y refresca vía **Supabase Auth** (`supabase-js`); el rol se lee de la tabla `profiles`. El acceso del Viewer público se resuelve con políticas RLS de lectura abierta sobre `series`.
+
+> **Fase 1 (histórico):** el guard se preparó para auth real y la sesión se simulaba con un token en localStorage. **Fase 2** sustituyó esto por Supabase Auth (email/password con emails reales).
 
 ### Seed inicial de usuarios
 
-Al primer arranque, si la BD está vacía, se cargan:
-
-- 1 usuario **Admin**: `admin@local` / `admin`
-- 1 usuario **User**: `user@local` / `user`
+> **Fase 1 (histórico).** Al primer arranque, si la BD estaba vacía, se cargaban un Admin (`admin@local`/`admin`) y un User (`user@local`/`user`).
+>
+> **Fase 2:** ya no hay seed en cliente. Los usuarios reales se crearon vía el script de migración (`scripts/migrate-to-supabase.ts`) con la Admin API de Supabase (`email_confirm: true`), y su fila en `profiles` con el rol.
 
 ---
 
@@ -78,7 +81,7 @@ Al primer arranque, si la BD está vacía, se cargan:
 ```ts
 interface Series {
   id: string;            // uuid
-  coverImage: string;    // referencia al Blob en IndexedDB
+  coverImage: string;    // Fase 2: path del objeto en el bucket `covers` (antes: id del Blob en IndexedDB)
   title: string;         // requerido
   synopsis: string;      // requerido
   seasons: string;       // requerido, texto libre descriptivo de las temporadas
@@ -115,13 +118,15 @@ type Genre =
 interface User {
   id: string;
   email: string;        // único
-  password: string;     // hash simulado en Fase 1
+  password: string;     // Fase 1: hash simulado. Fase 2: las gestiona Supabase Auth; no se almacena en `profiles`
   role: 'admin' | 'user';
   createdAt: string;
 }
 ```
 
 > Nota: el rol Viewer no se almacena. Es el estado por defecto cuando no hay sesión activa.
+>
+> **Fase 2:** en BD, `User` se corresponde con la tabla `profiles` (1:1 con `auth.users`, columnas `id`/`email`/`role`/`created_at`); la contraseña vive en `auth.users`, gestionada por Supabase. Los nombres de columna van en snake_case y una capa de mappers los traduce a camelCase para la app. El campo `cast: string[]` aún no tiene columna en BD (deuda técnica conocida de la migración).
 
 ---
 
@@ -152,7 +157,8 @@ interface User {
   - `year`: entero entre 1900 y el año actual.
   - `seasons`: texto libre no vacío (descripción de las temporadas).
 - Input de imagen de portada:
-  - En Fase 1: input file que acepta `image/jpeg`, `image/png`, `image/webp`. Se almacena como Blob en IndexedDB.
+  - Acepta `image/jpeg`, `image/png`, `image/webp` vía input file o pegado (`ClipboardEvent`).
+  - Fase 1: se almacenaba como Blob en IndexedDB. **Fase 2:** se sube al bucket `covers` de Supabase Storage y en BD se guarda el path.
   - Tamaño máximo recomendado: 2 MB por imagen.
 - Componente de selección de géneros: multi-select sobre la lista cerrada.
 - Input de reparto: tags/chips (añadir/quitar nombres).
@@ -209,8 +215,10 @@ src/
   utils/
   constants/         # Textos UI en castellano, listas (géneros, temas)
   styles/            # Reset, variables base, mixins, themes/
-  db/                # Dexie schema + seed inicial
+  lib/               # Cliente singleton de Supabase
 ```
+
+> **Fase 2:** se retiró `src/db/` (Dexie schema + seed). El schema vive ahora en `supabase/migrations/` (versionado) y las utilidades Node (migración de datos, heartbeat) en `scripts/`.
 
 ---
 
@@ -232,16 +240,17 @@ src/
 
 ## 8. Capa de servicios
 
-Toda comunicación con la persistencia pasa por `/src/services/`. En Fase 1 estos servicios leen/escriben en Dexie. En Fase 2 se sustituye la implementación interna por llamadas HTTP, manteniendo la misma firma pública.
+Toda comunicación con la persistencia pasa por `/src/services/`. En Fase 1 estos servicios leían/escribían en Dexie. **En Fase 2 la implementación interna pasó a Supabase** (`*.supabase.ts` + capa de mappers snake_case ↔ camelCase), manteniendo la firma pública estable para no tocar consumidores.
 
-Servicios mínimos:
+Servicios:
 
 - `seriesService`: `getAll`, `getById`, `create`, `update`, `remove`.
-- `usersService`: `getAll`, `getById`, `create`, `update`, `remove`.
-- `authService`: `login`, `logout`, `getCurrentUser`.
-- `imageService`: `save(blob) → id`, `get(id) → blob`, `remove(id)`. (Wrap sobre Dexie para imágenes.)
+- `usersService`: `getAll`, `getById` (desde `profiles`).
+- `authService`: sobre `supabase.auth` (`signInWithPassword`, `signOut`, `getSession`, `onAuthStateChange`).
+- `imageService`: `save(file) → path`, `getSrc(idOrPath) → URL`, `remove(path)` contra el bucket `covers` de Storage.
+- `genresService`: `getAll`, `add` contra la tabla `genres`.
 
-Todos los métodos devuelven `Promise<T>` (aunque la operación sea síncrona) para que la migración a HTTP no requiera cambios en consumidores.
+Todos los métodos devuelven `Promise<T>` (aunque la operación sea síncrona) para mantener la firma estable entre implementaciones.
 
 ---
 
@@ -265,9 +274,9 @@ Todos los métodos devuelven `Promise<T>` (aunque la operación sea síncrona) p
 
 Se documenta explícitamente para evitar scope creep:
 
-- Backend real, BD remota, hosting.
-- Autenticación real (JWT/OAuth).
-- Hash real de passwords.
+- ~~Backend real, BD remota~~ → **hecho en Fase 2** (Supabase). Hosting/deploy sigue pendiente (fase posterior).
+- ~~Autenticación real (JWT/OAuth)~~ → **hecho en Fase 2** (Supabase Auth).
+- ~~Hash real de passwords~~ → **hecho en Fase 2** (gestionado por Supabase).
 - Comentarios de Viewers sobre series.
 - Métricas adicionales (peor valoradas, series por año, etc.).
 - Upload de imagen desde URL externa.
@@ -282,7 +291,7 @@ Se documenta explícitamente para evitar scope creep:
 - [ ] Un User puede loguearse, crear series, editar/eliminar las suyas y no las ajenas.
 - [ ] Un Admin puede hacer todo lo anterior + editar/eliminar cualquier serie + gestionar usuarios.
 - [ ] El formulario de serie valida correctamente con Zod y muestra errores comprensibles.
-- [ ] Las imágenes se almacenan en IndexedDB y se recuperan correctamente al recargar.
+- [ ] Las imágenes se almacenan en el bucket `covers` de Supabase Storage y se recuperan correctamente al recargar (Fase 1: IndexedDB).
 - [ ] El dashboard refleja las 4 métricas en tiempo real al añadir/quitar series.
 - [ ] El selector de tema cambia los 4 temas × 2 modos sin recarga, persistiendo la selección.
 - [ ] La app es navegable y usable en móvil, tablet y desktop.
