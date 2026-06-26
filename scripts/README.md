@@ -59,3 +59,27 @@ El script es **idempotente**: si un usuario o serie ya existe, lo omite sin erro
 Tras ejecutar, comprueba en el dashboard de Supabase:
 - Table Editor → `series`, `genres`, `series_genres`, `profiles`
 - Storage → bucket `covers`
+
+## heartbeat.ts
+
+Actualiza la fila única de la tabla `heartbeat` con un `upsert`. Genera
+actividad real de BD para evitar la pausa del free tier de Supabase por
+inactividad. Lo dispara la GitHub Action `.github/workflows/heartbeat.yml`
+(cada 3 días), pero se puede ejecutar a mano:
+
+```bash
+pnpm tsx --env-file=.env.local scripts/heartbeat.ts
+```
+
+### Variables / secrets
+
+Usa `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` (la tabla `heartbeat`
+tiene RLS sin políticas de escritura; solo el `service_role` la escribe).
+
+Para que la Action funcione, añade ambos como **secrets del repo** en
+GitHub → Settings → Secrets and variables → Actions:
+
+```
+VITE_SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
