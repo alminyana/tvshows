@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { seriesSchema } from '@/utils/seriesSchema';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
-import { getAllGenres, addCustomGenre } from '@/utils/genresCatalog';
+import { useGenres } from '@/hooks';
 import { imageService } from '@/services';
 import { Button, FormField, Input, Textarea, Select, Rating, Tag } from '@/components/ui';
 import { MESSAGES } from '@/constants';
@@ -39,9 +39,9 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [castInput, setCastInput] = useState('');
-  const [genreCatalog, setGenreCatalog] = useState<string[]>(() => getAllGenres());
   const [genreInput, setGenreInput] = useState('');
   const filePreviewUrlRef = useRef<string | null>(null);
+  const { genres: genreCatalog, add: addGenreToCatalog } = useGenres();
 
   const genreOptions = genreCatalog.map((g) => ({ value: g, label: g }));
 
@@ -172,10 +172,9 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           control={control}
           render={({ field }) => {
             const selected = (field.value ?? []) as string[];
-            const addGenre = () => {
-              const canonical = addCustomGenre(genreInput);
+            const addGenre = async () => {
+              const canonical = await addGenreToCatalog(genreInput);
               if (!canonical) return;
-              setGenreCatalog(getAllGenres());
               if (!selected.some((g) => g.toLowerCase() === canonical.toLowerCase())) {
                 field.onChange([...selected, canonical]);
               }

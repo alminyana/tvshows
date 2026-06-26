@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useSeries, useAuth, useSeriesViewMode } from '@/hooks';
+import { useSeries, useAuth, useSeriesViewMode, useGenres } from '@/hooks';
 import { SeriesCard, SeriesRow } from '@/components/features';
 import { Spinner, Select, Input, Button, Collapsible } from '@/components/ui';
 import { canCreateSeries } from '@/utils/permissions';
-import { getAllGenres } from '@/utils/genresCatalog';
 import { MESSAGES } from '@/constants';
 import styles from './SeriesListPage.module.scss';
 
@@ -23,10 +22,11 @@ export function SeriesListPage() {
   const { user } = useAuth();
   const { series, loading, error } = useSeries();
   const [viewMode, setViewMode] = useSeriesViewMode();
+  const { genres } = useGenres();
 
   const genreOptions = useMemo(
-    () => [{ value: '', label: 'Todos los géneros' }, ...getAllGenres().map((g) => ({ value: g, label: g }))],
-    [],
+    () => [{ value: '', label: 'Todos los géneros' }, ...genres.map((g) => ({ value: g, label: g }))],
+    [genres],
   );
 
   const search = params.get('q') ?? '';
