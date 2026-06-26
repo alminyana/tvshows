@@ -1,5 +1,6 @@
 export { useTheme } from './useTheme';
 export { useSeries } from './useSeries';
+export { useGenres } from './useGenres';
 export { useSeriesById } from './useSeriesById';
 export { useAuth } from './useAuth';
 export { useDashboardMetrics } from './useDashboardMetrics';

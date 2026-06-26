@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider, AuthProvider, NotificationProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, ExportPage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage, LandingPage } from '@/pages';
+import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage, LandingPage } from '@/pages';
 
 export default function App() {
   return (
@@ -24,9 +24,6 @@ export default function App() {
             </Route>
             {import.meta.env.DEV && (
               <Route path="/showcase" element={<ShowcasePage />} />
-            )}
-            {import.meta.env.DEV && (
-              <Route path="/export" element={<ExportPage />} />
             )}
             <Route path="*" element={<NotFoundPage />} />
           </Route>
