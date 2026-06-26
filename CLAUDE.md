@@ -7,8 +7,9 @@ Always read PROFILE.md, CONTEXT.md, and PRD-Phase-1.md before proposing any chan
 
 ## Project Documentation
 - Specification: docs/PRD-Phase-1.md
-- Implementation plan: docs/IMPLEMENTATION-PLAN.md
-- Read both before proposing any change.
+- Phase 1 implementation plan: docs/IMPLEMENTATION-PLAN.md
+- Phase 2 (Supabase migration) plan: docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md
+- Read the relevant ones before proposing any change.
 
 ## Communication
 
@@ -20,7 +21,7 @@ Always read PROFILE.md, CONTEXT.md, and PRD-Phase-1.md before proposing any chan
 
 ## Project status
 
-Phase 1 of a personal SPA to manage favorite TV shows. Currently the repo contains only documentation (`CONTEXT.md`, `PROFILE.md`, `PRD-Phase-1.md`) — the React app has **not been scaffolded yet**. Confirm with the user before scaffolding.
+Personal SPA to manage favorite TV shows. The app is scaffolded and functional. **Phase 2 (Supabase migration) is essentially complete**: Dexie/IndexedDB has been removed and all persistence now goes through Supabase (Postgres + Auth + Storage + RLS). Only the optional F7 tasks remain (heartbeat is implemented; periodic backups and deploy are deferred to a later phase). See `docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md`.
 
 ## Stack (locked — do not swap without asking)
 
@@ -30,19 +31,20 @@ Phase 1 of a personal SPA to manage favorite TV shows. Currently the repo contai
 - SASS scoped per component + CSS variables for theming
 - React Hook Form + Zod
 - Recharts
-- Dexie (IndexedDB) for business data + localStorage for UI preferences
+- Supabase (`@supabase/supabase-js` v2) for business data: Postgres + Auth + Storage + RLS. localStorage only for UI preferences (theme, view mode)
 - Vitest + React Testing Library
 
 ## Architecture essentials
 
 Read `PRD-Phase-1.md` for the full spec. Key invariants:
 
-- **Services layer is the only path to persistence.** Components/hooks never touch Dexie directly. Service signatures (`seriesService`, `usersService`, `authService`, `imageService`) must stay stable so Phase 2 can swap the Dexie implementation for HTTP without touching consumers. All service methods return `Promise<T>` even when the underlying op is sync.
-- **Three roles** — Viewer (no login, read-only, default), User (CRUD own series), Admin (CRUD all series + user management). Route protection via `<ProtectedRoute>` guard; session persisted in localStorage as a simulated token.
-- **Theming** uses CSS variables with semantic tokens (`--color-bg`, `--color-primary`, …) selected via `[data-theme="..."][data-mode="..."]`. 4 themes × light/dark = 8 combinations. `ThemeContext` owns `{ theme, mode }`; first render respects `prefers-color-scheme`.
-- **Images** are stored as Blobs in IndexedDB through `imageService`; `Series.coverImage` holds the blob id, not the binary.
+- **Services layer is the only path to persistence.** Components/hooks never touch Supabase directly. They go through `seriesService`, `usersService`, `authService`, `imageService`, `genresService`. All methods return `Promise<T>`. A **mappers** layer (`services/mappers/`) translates snake_case (DB) ↔ camelCase (app) so column names never leak to consumers.
+- **Three roles** — Viewer (no login, read-only, default; resolved with public-read RLS on `series`), User (CRUD own series), Admin (CRUD all series + user management). Route protection via `<ProtectedRoute>` guard; session and roles handled by **Supabase Auth** + a `profiles` table.
+- **Theming** uses CSS variables with semantic tokens (`--color-bg`, `--color-primary`, …) selected via `[data-theme="..."][data-mode="..."]`. 4 themes × light/dark = 8 combinations. `ThemeContext` owns `{ theme, mode }`; first render respects `prefers-color-scheme`. UI preferences are the only thing persisted in localStorage.
+- **Cover images** live in the `covers` Storage bucket; the DB stores the path (`cover_image_path`), not the binary. `imageService` resolves `path → URL` for the `<img>`.
+- **Genres** are a single catalog in the `genres` table, with an N:M relation to `series` via the `series_genres` join table.
 - **UI copy in Spanish, centralized in `/src/constants`** (e.g. `messages.ts`) to prepare for i18n migration. Variables/functions/components in English.
-- **Seed on first run**: if DB is empty, insert admin (`admin@local`/`admin`) and user (`user@local`/`user`).
+- **Initial data** is created via the migration script (`scripts/migrate-to-supabase.ts`) + Supabase Auth admin API; there is no client-side seed.
 
 ## Folder layout (target)
 
@@ -51,11 +53,13 @@ src/
   components/{ui,features,layout}/   # ui = presentational only; features = with logic
   pages/                              # one per route
   hooks/                              # prefix `use`
-  services/                           # stable public API, Dexie impl in Phase 1
+  services/                           # stable public API, Supabase impl + mappers/
   context/                            # AuthContext, ThemeContext
+  lib/                                # Supabase singleton client
   types/  utils/  constants/
   styles/                             # reset, variables, mixins, themes/
-  db/                                 # Dexie schema + seed
+supabase/migrations/                  # versioned schema + RLS + Storage
+scripts/                              # Node utilities (data migration, heartbeat)
 ```
 
 ## Code conventions

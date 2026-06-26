@@ -59,3 +59,51 @@ El script es **idempotente**: si un usuario o serie ya existe, lo omite sin erro
 Tras ejecutar, comprueba en el dashboard de Supabase:
 - Table Editor → `series`, `genres`, `series_genres`, `profiles`
 - Storage → bucket `covers`
+
+## create-user.ts
+
+Crea un usuario nuevo en Supabase Auth y su fila en `profiles` con el rol
+indicado. Es la vía para añadir usuarios mientras no exista la gestión desde el
+panel Admin (Edge Function `admin-create-user`, pospuesta en F4).
+
+### Variables de entorno
+
+Usa `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`.
+
+### Ejecución
+
+```bash
+# Rol "user" (por defecto si se omite el tercer argumento)
+pnpm tsx --env-file=.env.local scripts/create-user.ts nuevo@ejemplo.com 'contraseña-segura'
+
+# Rol "admin"
+pnpm tsx --env-file=.env.local scripts/create-user.ts admin2@ejemplo.com 'contraseña-segura' admin
+```
+
+El usuario se crea ya confirmado (`email_confirm: true`), porque la confirmación
+por email está desactivada en Fase 1. Es **idempotente**: si el email ya existe,
+no lo recrea; solo ajusta el rol si difiere.
+
+## heartbeat.ts
+
+Actualiza la fila única de la tabla `heartbeat` con un `upsert`. Genera
+actividad real de BD para evitar la pausa del free tier de Supabase por
+inactividad. Lo dispara la GitHub Action `.github/workflows/heartbeat.yml`
+(cada 3 días), pero se puede ejecutar a mano:
+
+```bash
+pnpm tsx --env-file=.env.local scripts/heartbeat.ts
+```
+
+### Variables / secrets
+
+Usa `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` (la tabla `heartbeat`
+tiene RLS sin políticas de escritura; solo el `service_role` la escribe).
+
+Para que la Action funcione, añade ambos como **secrets del repo** en
+GitHub → Settings → Secrets and variables → Actions:
+
+```
+VITE_SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
