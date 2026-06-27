@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Theme, ThemeMode } from '@/types';
+import { VALID_THEMES } from '@/constants';
 import { ThemeContext } from './themeContextInstance';
 
 export { ThemeContext } from './themeContextInstance';
@@ -15,9 +16,7 @@ const getInitialMode = (): ThemeMode => {
 
 const getInitialTheme = (): Theme => {
   const stored = localStorage.getItem(STORAGE_KEY_THEME) as Theme | null;
-  if (stored === 'default' || stored === 'ocean' || stored === 'sunset' || stored === 'forest') {
-    return stored;
-  }
+  if (stored && (VALID_THEMES as ReadonlyArray<string>).includes(stored)) return stored;
   return 'default';
 };
 

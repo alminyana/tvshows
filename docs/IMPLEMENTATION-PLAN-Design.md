@@ -51,7 +51,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 |---|---|---|---|
 | D0 Skill design-system | — | — | S · ✅ |
 | D1 Mockup de validación | — | D0 | M · ✅ |
-| D2 Tokens + temas | Hito 3 | D1 | L |
+| D2 Tokens + temas | Hito 3 | D1 | L · ✅ |
 | D3 Primitives UI | Hito 1 (base) | D2 | L |
 | D4 Vistas | Hito 1 | D3 | L |
 | D5 Formulario de serie | Hito 2 | D3 | M |
@@ -106,7 +106,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 - **Objetivo:** capa de tokens con elevación real, escala tipográfica con jerarquía, sombras que funcionen en dark, y los 8 temas (16 combos).
 - **Entregable:** `_tokens.scss` reestructurado + 4 temas nuevos + los 4 actuales retocados; `/showcase` muestra los 16 combos correctos.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada — `_tokens.scss` reestructurado con los 16 bloques (8 temas × 2 modos), tokens nuevos (`--color-surface-elevated`, `--color-accent`, `--color-tertiary`, sus contrasts, `--focus-ring`, `--shadow-lg`), 4 temas nuevos multi-hue registrados en `ThemeContext`/`VALID_THEMES`/`messages.ts`/`Header`. `/showcase` muestra 16 combos. Suite en verde.
 - **Dependencias:** D1.
 
 ### Tareas

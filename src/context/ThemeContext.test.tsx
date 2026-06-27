@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, ThemeContext } from './ThemeContext';
+import { VALID_THEMES } from '@/constants';
+import type { Theme } from '@/types';
 import { use } from 'react';
 
 function ThemeDisplay() {
@@ -66,6 +68,17 @@ describe('ThemeContext', () => {
     renderWithProvider();
     expect(screen.getByTestId('theme').textContent).toBe('sunset');
     expect(screen.getByTestId('mode').textContent).toBe('dark');
+  });
+
+  it('acepta los 8 temas válidos desde localStorage', () => {
+    const allThemes: Theme[] = [...VALID_THEMES];
+    allThemes.forEach((t) => {
+      localStorage.setItem('tv-shows:theme', t);
+      const { unmount } = renderWithProvider();
+      expect(screen.getByTestId('theme').textContent).toBe(t);
+      unmount();
+      localStorage.clear();
+    });
   });
 
   it('respeta prefers-color-scheme cuando no hay valor en localStorage', () => {

@@ -28,6 +28,10 @@ export const MESSAGES = {
       ocean: 'Océano',
       sunset: 'Atardecer',
       forest: 'Bosque',
+      amatista: 'Amatista',
+      carmesi: 'Carmesí',
+      cian: 'Cian-Turquesa',
+      crepusculo: 'Crepúsculo',
     },
   },
 

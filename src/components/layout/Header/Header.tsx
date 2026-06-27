@@ -3,16 +3,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks';
 import { ThemeToggle } from '@/components/ui';
-import { MESSAGES } from '@/constants';
+import { MESSAGES, VALID_THEMES } from '@/constants';
 import type { Theme } from '@/types';
 import styles from './Header.module.scss';
 
-const THEMES: { value: Theme; label: string }[] = [
-  { value: 'default', label: MESSAGES.theme.names.default },
-  { value: 'ocean', label: MESSAGES.theme.names.ocean },
-  { value: 'sunset', label: MESSAGES.theme.names.sunset },
-  { value: 'forest', label: MESSAGES.theme.names.forest },
-];
+const THEMES: { value: Theme; label: string }[] = VALID_THEMES.map((value) => ({
+  value,
+  label: MESSAGES.theme.names[value],
+}));
 
 export function Header() {
   const { theme, setTheme } = useTheme();
