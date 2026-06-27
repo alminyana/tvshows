@@ -1,4 +1,5 @@
-export type Theme = 'default' | 'ocean' | 'sunset' | 'forest';
+export type Theme = 'default' | 'ocean' | 'sunset' | 'forest'
+  | 'amatista' | 'carmesi' | 'cian' | 'crepusculo';
 export type ThemeMode = 'light' | 'dark';
 
 export interface ThemeContextValue {
