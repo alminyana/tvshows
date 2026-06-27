@@ -5,6 +5,8 @@ import { Rating } from '@/components/ui';
 import type { Series } from '@/types';
 import styles from './SeriesRow.module.scss';
 
+const MAX_GENRES = 3;
+
 interface Props {
   series: Series;
 }
@@ -12,6 +14,9 @@ interface Props {
 export function SeriesRow({ series }: Props) {
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const visibleGenres = series.genres.slice(0, MAX_GENRES);
+  const extraGenres = series.genres.length - visibleGenres.length;
 
   useEffect(() => {
     let src: string | undefined;
@@ -41,13 +46,17 @@ export function SeriesRow({ series }: Props) {
         )}
       </div>
 
-      <div className={styles.info}>
-        <h3 className={styles.title}>{series.title}</h3>
-        <span className={styles.year}>{series.year}</span>
+      <div className={styles.content}>
+        <div className={styles.main}>
+          <h3 className={styles.title}>{series.title}</h3>
+          <span className={styles.year}>{series.year}</span>
+        </div>
+        <span className={styles.seasons}>{series.seasons}</span>
         <div className={styles.genres}>
-          {series.genres.slice(0, 3).map((g) => (
+          {visibleGenres.map((g) => (
             <span key={g} className={styles.genre}>{g}</span>
           ))}
+          {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
         </div>
       </div>
 
