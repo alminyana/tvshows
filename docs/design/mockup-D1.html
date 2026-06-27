@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup D1 — tvshows_site · validación visual</title>
+<style>
+/* ════════════════════════════════════════════════════════════════════════
+   TOKENS NO CROMÁTICOS (compartidos · :root)
+   Portables tal cual a _tokens.scss
+   ════════════════════════════════════════════════════════════════════════ */
+:root{
+  /* Radios */
+  --radius-sm:6px; --radius-md:10px; --radius-lg:16px;
+  /* Espaciado (escala 4px) */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+  /* Tipografía */
+  --font-sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --font-size-xs:.75rem; --font-size-sm:.875rem; --font-size-md:1rem;
+  --font-size-lg:1.125rem; --font-size-xl:1.25rem; --font-size-2xl:1.5rem;
+  --font-size-3xl:1.875rem;
+  --fw-normal:400; --fw-medium:500; --fw-semibold:600; --fw-bold:700;
+  --lh-tight:1.25; --lh-normal:1.5; --lh-relaxed:1.75;
+  /* Sombras (claro). En oscuro la elevación se apoya en borde+surface) */
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow-md:0 4px 12px rgba(15,23,42,.10),0 1px 3px rgba(15,23,42,.06);
+  --shadow-lg:0 12px 28px rgba(15,23,42,.16),0 4px 10px rgba(15,23,42,.08);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   TOKENS CROMÁTICOS POR TEMA × MODO
+   Contrato: bg surface surface-elevated text text-muted primary
+   primary-contrast accent accent-contrast border danger success warning focus-ring
+   --color-accent = primary en los 4 actuales (mono-hue); diverge en los nuevos
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── default · azul neutro ───────────────────────────────── */
+[data-theme=default][data-mode=light]{
+  --color-bg:#f3f4f6; --color-surface:#ffffff; --color-surface-elevated:#ffffff;
+  --color-text:#1a1a2e; --color-text-muted:#6b7280;
+  --color-primary:#2563eb; --color-primary-contrast:#ffffff;
+  --color-accent:#2563eb; --color-accent-contrast:#ffffff;
+  --color-border:#e5e7eb; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(37,99,235,.4);
+}
+[data-theme=default][data-mode=dark]{
+  --color-bg:#0f0f10; --color-surface:#1a1a1d; --color-surface-elevated:#26262b;
+  --color-text:#f1f5f9; --color-text-muted:#94a3b8;
+  --color-primary:#60a5fa; --color-primary-contrast:#0f0f10;
+  --color-accent:#60a5fa; --color-accent-contrast:#0f0f10;
+  --color-border:#34343a; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(96,165,250,.5);
+}
+
+/* ── ocean · azul-cian ───────────────────────────────────── */
+[data-theme=ocean][data-mode=light]{
+  --color-bg:#eaf6fd; --color-surface:#ffffff; --color-surface-elevated:#ffffff;
+  --color-text:#0c1a2e; --color-text-muted:#4e7fa8;
+  --color-primary:#0284c7; --color-primary-contrast:#ffffff;
+  --color-accent:#0284c7; --color-accent-contrast:#ffffff;
+  --color-border:#c3e6f7; --color-danger:#dc2626; --color-success:#059669; --color-warning:#d97706;
+  --focus-ring:rgba(2,132,199,.4);
+}
+[data-theme=ocean][data-mode=dark]{
+  --color-bg:#071828; --color-surface:#0d2540; --color-surface-elevated:#133456;
+  --color-text:#e0f2fe; --color-text-muted:#7ab8d4;
+  --color-primary:#38bdf8; --color-primary-contrast:#071828;
+  --color-accent:#38bdf8; --color-accent-contrast:#071828;
+  --color-border:#21557e; --color-danger:#f87171; --color-success:#34d399; --color-warning:#fbbf24;
+  --focus-ring:rgba(56,189,248,.5);
+}
+
+/* ── sunset · naranja cálido ─────────────────────────────── */
+[data-theme=sunset][data-mode=light]{
+  --color-bg:#fff6ec; --color-surface:#ffffff; --color-surface-elevated:#ffffff;
+  --color-text:#1a0a00; --color-text-muted:#8b5e3c;
+  --color-primary:#ea580c; --color-primary-contrast:#ffffff;
+  --color-accent:#ea580c; --color-accent-contrast:#ffffff;
+  --color-border:#fcdcc0; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(234,88,12,.4);
+}
+[data-theme=sunset][data-mode=dark]{
+  --color-bg:#1a0a00; --color-surface:#2d1500; --color-surface-elevated:#3d2008;
+  --color-text:#fff3e0; --color-text-muted:#c4956a;
+  --color-primary:#fb923c; --color-primary-contrast:#1a0a00;
+  --color-accent:#fb923c; --color-accent-contrast:#1a0a00;
+  --color-border:#6a3a14; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(251,146,60,.5);
+}
+
+/* ── forest · verde ──────────────────────────────────────── */
+[data-theme=forest][data-mode=light]{
+  --color-bg:#f1faf3; --color-surface:#ffffff; --color-surface-elevated:#ffffff;
+  --color-text:#052e16; --color-text-muted:#4a7c59;
+  --color-primary:#16a34a; --color-primary-contrast:#ffffff;
+  --color-accent:#16a34a; --color-accent-contrast:#ffffff;
+  --color-border:#c3eccf; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(22,163,74,.4);
+}
+[data-theme=forest][data-mode=dark]{
+  --color-bg:#051a0d; --color-surface:#0d2d19; --color-surface-elevated:#133a22;
+  --color-text:#dcfce7; --color-text-muted:#6aaf7e;
+  --color-primary:#4ade80; --color-primary-contrast:#051a0d;
+  --color-accent:#4ade80; --color-accent-contrast:#051a0d;
+  --color-border:#20603a; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(74,222,128,.5);
+}
+
+/* ── NUEVO · amatista (violeta, sobrio) · acento magenta ─── */
+[data-theme=amatista][data-mode=light]{
+  --color-bg:#efe9fa; --color-surface:#f7f2fe; --color-surface-elevated:#fdfbff;
+  --color-text:#2a1a3e; --color-text-muted:#6b5a86;
+  --color-primary:#7c3aed; --color-primary-contrast:#ffffff;
+  --color-accent:#db2777; --color-accent-contrast:#ffffff;
+  --color-tertiary:#0891b2; --color-tertiary-contrast:#ffffff;
+  --color-border:#ddd0f0; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(124,58,237,.4);
+}
+[data-theme=amatista][data-mode=dark]{
+  --color-bg:#15101f; --color-surface:#1f1730; --color-surface-elevated:#2a1f40;
+  --color-text:#f3eefe; --color-text-muted:#b9a8d4;
+  --color-primary:#a78bfa; --color-primary-contrast:#15101f;
+  --color-accent:#f472b6; --color-accent-contrast:#15101f;
+  --color-tertiary:#22d3ee; --color-tertiary-contrast:#15101f;
+  --color-border:#3a2d55; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(167,139,250,.5);
+}
+
+/* ── NUEVO · carmesí (rojo-magenta, vibrante) · acento ámbar ─ */
+[data-theme=carmesi][data-mode=light]{
+  --color-bg:#ffeef1; --color-surface:#fff5f7; --color-surface-elevated:#fffdfd;
+  --color-text:#3a0a14; --color-text-muted:#8a4a56;
+  --color-primary:#e11d48; --color-primary-contrast:#ffffff;
+  --color-accent:#f59e0b; --color-accent-contrast:#3a0a14;
+  --color-tertiary:#8b5cf6; --color-tertiary-contrast:#ffffff;
+  --color-border:#fbcad4; --color-danger:#b91c1c; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(225,29,72,.4);
+}
+[data-theme=carmesi][data-mode=dark]{
+  --color-bg:#1f0a10; --color-surface:#2e1019; --color-surface-elevated:#3d1622;
+  --color-text:#ffe4ea; --color-text-muted:#d39aa6;
+  --color-primary:#fb7185; --color-primary-contrast:#1f0a10;
+  --color-accent:#fbbf24; --color-accent-contrast:#1f0a10;
+  --color-tertiary:#a78bfa; --color-tertiary-contrast:#1f0a10;
+  --color-border:#58202e; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fde047;
+  --focus-ring:rgba(251,113,133,.5);
+}
+
+/* ── NUEVO · cian-turquesa (vibrante) · acento violeta ───── */
+[data-theme=cian][data-mode=light]{
+  --color-bg:#e2f7f3; --color-surface:#effbf8; --color-surface-elevated:#fbfffe;
+  --color-text:#042f2e; --color-text-muted:#3f7a74;
+  --color-primary:#0d9488; --color-primary-contrast:#ffffff;
+  --color-accent:#7c3aed; --color-accent-contrast:#ffffff;
+  --color-tertiary:#f43f5e; --color-tertiary-contrast:#ffffff;
+  --color-border:#bce8e1; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(13,148,136,.4);
+}
+[data-theme=cian][data-mode=dark]{
+  --color-bg:#06201d; --color-surface:#0a2e2a; --color-surface-elevated:#103d37;
+  --color-text:#cffaf3; --color-text-muted:#6fb8af;
+  --color-primary:#2dd4bf; --color-primary-contrast:#06201d;
+  --color-accent:#a78bfa; --color-accent-contrast:#06201d;
+  --color-tertiary:#fb7185; --color-tertiary-contrast:#06201d;
+  --color-border:#1a514a; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(45,212,191,.5);
+}
+
+/* ── NUEVO · crepúsculo (índigo→ámbar, sobrio) · acento naranja ─ */
+[data-theme=crepusculo][data-mode=light]{
+  --color-bg:#ecebfa; --color-surface:#f4f3fd; --color-surface-elevated:#fcfcff;
+  --color-text:#1e1b3a; --color-text-muted:#5f5b82;
+  --color-primary:#4f46e5; --color-primary-contrast:#ffffff;
+  --color-accent:#f97316; --color-accent-contrast:#ffffff;
+  --color-tertiary:#14b8a6; --color-tertiary-contrast:#ffffff;
+  --color-border:#d8d6f0; --color-danger:#dc2626; --color-success:#16a34a; --color-warning:#d97706;
+  --focus-ring:rgba(79,70,229,.4);
+}
+[data-theme=crepusculo][data-mode=dark]{
+  --color-bg:#121026; --color-surface:#1b1838; --color-surface-elevated:#262248;
+  --color-text:#e8e6fb; --color-text-muted:#a8a3cc;
+  --color-primary:#818cf8; --color-primary-contrast:#121026;
+  --color-accent:#fb923c; --color-accent-contrast:#121026;
+  --color-tertiary:#2dd4bf; --color-tertiary-contrast:#121026;
+  --color-border:#33305c; --color-danger:#f87171; --color-success:#4ade80; --color-warning:#fbbf24;
+  --focus-ring:rgba(129,140,248,.5);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   BASE
+   ════════════════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{margin:0;font-family:var(--font-sans);background:#0b0b0c;color:#e5e7eb}
+button{font-family:inherit}
+
+/* Barra de control (chrome del mockup, neutra, fuera de tema) */
+.toolbar{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;gap:var(--space-3);
+  align-items:center;padding:var(--space-3) var(--space-4);
+  background:#141416;border-bottom:1px solid #2a2a2e}
+.toolbar h1{font-size:var(--font-size-sm);font-weight:var(--fw-semibold);margin:0 var(--space-3) 0 0;color:#cbd5e1;white-space:nowrap}
+.themes,.modes{display:flex;gap:var(--space-1);flex-wrap:wrap}
+.chip-btn{padding:6px 12px;border-radius:999px;border:1px solid #2f2f35;background:#1c1c20;
+  color:#cbd5e1;font-size:var(--font-size-xs);font-weight:var(--fw-medium);cursor:pointer;transition:.15s}
+.chip-btn:hover{border-color:#46464e}
+.chip-btn[aria-pressed=true]{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.chip-btn:focus-visible{outline:2px solid #3b82f6;outline-offset:2px}
+.spacer{flex:1}
+.legend{font-size:var(--font-size-xs);color:#8b8b92}
+
+/* ════════════════════════════════════════════════════════════════════════
+   STAGE — todo lo de dentro consume tokens del tema activo
+   ════════════════════════════════════════════════════════════════════════ */
+.stage{background:var(--color-bg);color:var(--color-text);min-height:100vh;
+  padding:var(--space-7) var(--space-6);transition:background .2s,color .2s}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-8)}
+
+.section{display:flex;flex-direction:column;gap:var(--space-4)}
+.section > h2{margin:0;font-size:var(--font-size-2xl);font-weight:var(--fw-bold);
+  letter-spacing:-.01em;line-height:var(--lh-tight)}
+.section > .sub{margin:-8px 0 0;color:var(--color-text-muted);font-size:var(--font-size-sm)}
+.divider{height:1px;background:var(--color-border);margin-top:var(--space-2)}
+
+/* Banner explicativo (in-theme, usa surface-elevated para demostrar elevación) */
+.banner{background:var(--color-surface-elevated);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-md);
+  display:flex;flex-direction:column;gap:var(--space-2)}
+.banner h3{margin:0;font-size:var(--font-size-lg);font-weight:var(--fw-semibold)}
+.banner p{margin:0;font-size:var(--font-size-sm);color:var(--color-text-muted);line-height:var(--lh-relaxed)}
+.banner code{font-family:var(--font-mono);font-size:.8em;background:var(--color-surface);
+  border:1px solid var(--color-border);padding:1px 5px;border-radius:var(--radius-sm)}
+
+/* ── Demo de ELEVACIÓN ── */
+.elev-row{display:flex;gap:var(--space-4);flex-wrap:wrap}
+.elev{flex:1;min-width:160px;border-radius:var(--radius-md);padding:var(--space-5);
+  border:1px solid var(--color-border)}
+.elev .lbl{font-size:var(--font-size-xs);font-weight:var(--fw-semibold);
+  text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted)}
+.elev .val{font-family:var(--font-mono);font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:4px}
+.elev.bg{background:var(--color-bg)}
+.elev.surface{background:var(--color-surface);box-shadow:var(--shadow-sm)}
+.elev.elevated{background:var(--color-surface-elevated);box-shadow:var(--shadow-md)}
+
+/* ── Demo de TIPOGRAFÍA ── */
+.type-stack{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-md);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
+.t-h{font-size:var(--font-size-2xl);font-weight:var(--fw-bold);letter-spacing:-.01em}
+.t-sub{font-size:var(--font-size-lg);font-weight:var(--fw-semibold)}
+.t-label{font-size:var(--font-size-sm);font-weight:var(--fw-medium);text-transform:uppercase;
+  letter-spacing:.05em;color:var(--color-text-muted)}
+.t-body{font-size:var(--font-size-md);line-height:var(--lh-relaxed)}
+.t-meta{font-size:var(--font-size-sm);color:var(--color-text-muted)}
+
+/* ── BUTTONS ── */
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:var(--space-2);border:1px solid transparent;
+  border-radius:var(--radius-md);padding:10px 18px;font-size:var(--font-size-sm);
+  font-weight:var(--fw-semibold);cursor:pointer;transition:filter .15s,background .15s,border-color .15s}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
+.btn:hover{filter:brightness(1.06)}
+.btn.primary{background:var(--color-primary);color:var(--color-primary-contrast)}
+.btn.secondary{background:var(--color-surface-elevated);color:var(--color-text);border-color:var(--color-border)}
+.btn.ghost{background:transparent;color:var(--color-primary)}
+.btn.ghost:hover{background:color-mix(in srgb,var(--color-primary) 12%,transparent);filter:none}
+.btn.danger{background:var(--color-danger);color:#fff}
+.btn.accent{background:var(--color-accent);color:var(--color-accent-contrast)}
+.btn.sm{padding:6px 12px;font-size:var(--font-size-xs)}
+.btn.lg{padding:13px 24px;font-size:var(--font-size-md)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ── INPUTS ── */
+.field{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.field > label{font-size:var(--font-size-sm);font-weight:var(--fw-medium)}
+.field .req{color:var(--color-danger)}
+.control{background:var(--color-surface-elevated);color:var(--color-text);
+  border:1.5px solid var(--color-border);border-radius:var(--radius-md);
+  padding:11px 14px;font-size:var(--font-size-md);width:100%;transition:border-color .15s,box-shadow .15s}
+.control::placeholder{color:var(--color-text-muted);opacity:.8}
+.control:hover{border-color:color-mix(in srgb,var(--color-primary) 40%,var(--color-border))}
+.control:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px var(--focus-ring)}
+textarea.control{min-height:92px;resize:vertical}
+.control.error{border-color:var(--color-danger)}
+.err-msg{color:var(--color-danger);font-size:var(--font-size-sm)}
+
+/* ── TAG / CHIP ── */
+.tags{display:flex;gap:var(--space-2);flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;
+  font-size:var(--font-size-sm);font-weight:var(--fw-medium);
+  background:color-mix(in srgb,var(--tag-c,var(--color-accent)) 18%,transparent);
+  color:var(--tag-c,var(--color-accent));border:1px solid color-mix(in srgb,var(--tag-c,var(--color-accent)) 32%,transparent)}
+.tag.x::after{content:"✕";font-size:.7em;opacity:.7}
+
+/* ── RATING ── */
+.stars{display:inline-flex;gap:4px;font-size:var(--font-size-xl);line-height:1}
+.star{color:var(--color-border)}
+.star.on{color:#f5b50a}
+
+/* ── CARD genérica ── */
+.card{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:var(--space-5);
+  display:flex;flex-direction:column;gap:var(--space-2)}
+.card h4{margin:0;font-size:var(--font-size-lg);font-weight:var(--fw-semibold)}
+.card p{margin:0;color:var(--color-text-muted);font-size:var(--font-size-sm);line-height:var(--lh-normal)}
+
+/* ── SERIES CARD ── */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:var(--space-4)}
+.scard{background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);
+  display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.scard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.poster{aspect-ratio:2/3;width:100%;display:flex;align-items:flex-end;padding:var(--space-3);
+  background:linear-gradient(150deg,var(--color-primary),var(--color-accent),var(--color-tertiary,var(--color-primary)));position:relative}
+.poster::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 55%)}
+.poster span{position:relative;z-index:1;color:#fff;font-weight:var(--fw-bold);
+  font-size:var(--font-size-md);text-shadow:0 1px 4px rgba(0,0,0,.5);line-height:var(--lh-tight)}
+.scard .info{padding:var(--space-3) var(--space-4) var(--space-4);display:flex;flex-direction:column;gap:6px;flex:1}
+.scard .title{font-size:var(--font-size-md);font-weight:var(--fw-semibold);line-height:var(--lh-tight);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scard .meta{font-size:var(--font-size-xs);color:var(--color-text-muted)}
+.scard .foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:var(--space-1)}
+.scard .stars{font-size:var(--font-size-md)}
+
+/* ── SERIES ROW ── */
+.rows{display:flex;flex-direction:column;gap:var(--space-3)}
+.srow{display:grid;grid-template-columns:56px 1.6fr 1fr auto auto;gap:var(--space-4);align-items:center;
+  background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);
+  padding:var(--space-3) var(--space-4);box-shadow:var(--shadow-sm);transition:border-color .15s}
+.srow:hover{border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border))}
+.srow .thumb{aspect-ratio:2/3;border-radius:var(--radius-sm);
+  background:linear-gradient(150deg,var(--color-primary),var(--color-accent),var(--color-tertiary,var(--color-primary)))}
+.srow .rtitle{font-weight:var(--fw-semibold);font-size:var(--font-size-md);line-height:var(--lh-tight)}
+.srow .ryear{font-size:var(--font-size-sm);color:var(--color-text-muted)}
+.srow .rseasons{font-size:var(--font-size-sm);color:var(--color-text-muted)}
+@media(max-width:640px){.srow{grid-template-columns:48px 1fr auto}.srow .rseasons,.srow .tags{display:none}}
+
+/* ── FIELDSET (form serie) ── */
+.fset{border:1px solid var(--color-border);border-radius:var(--radius-lg);
+  padding:var(--space-5);margin:0;background:var(--color-surface);display:flex;flex-direction:column;gap:var(--space-4)}
+.fset > legend{padding:0 var(--space-2);margin-left:var(--space-2);font-size:var(--font-size-sm);
+  font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.05em;color:var(--color-primary)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+@media(max-width:640px){.fgrid{grid-template-columns:1fr}}
+
+/* ── KPI CARD ── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-4)}
+.kpi{background:var(--color-surface-elevated);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-md);
+  display:flex;align-items:center;gap:var(--space-4);position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--kpi-accent,var(--color-primary))}
+.kpi .ico{width:46px;height:46px;border-radius:var(--radius-md);display:grid;place-items:center;
+  background:color-mix(in srgb,var(--kpi-accent,var(--color-primary)) 16%,transparent);
+  color:var(--kpi-accent,var(--color-primary));flex-shrink:0}
+.kpi .ico svg{width:24px;height:24px}
+.kpi .num{font-size:var(--font-size-3xl);font-weight:var(--fw-bold);line-height:1}
+.kpi .cap{font-size:var(--font-size-sm);color:var(--color-text-muted);margin-top:2px}
+
+/* Mini header en-tema (demostración de barra de app) */
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);
+  background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);
+  padding:var(--space-3) var(--space-5);box-shadow:var(--shadow-sm)}
+.appbar .brand{font-weight:var(--fw-bold);font-size:var(--font-size-lg)}
+.appbar nav{display:flex;gap:var(--space-4);font-size:var(--font-size-sm);color:var(--color-text-muted)}
+.appbar nav .active{color:var(--color-primary);font-weight:var(--fw-semibold)}
+
+/* ── PALETA CATEGÓRICA + DATOS ── */
+.swatches{display:flex;gap:var(--space-3);flex-wrap:wrap}
+.sw{display:flex;flex-direction:column;gap:6px;align-items:center;font-size:var(--font-size-xs);color:var(--color-text-muted)}
+.sw i{width:56px;height:56px;border-radius:var(--radius-md);border:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)}
+.data-row{display:flex;gap:var(--space-6);flex-wrap:wrap;align-items:center}
+.donut{width:160px;height:160px;border-radius:50%;flex-shrink:0;
+  background:conic-gradient(
+    var(--color-primary) 0 28%,
+    var(--color-accent) 28% 50%,
+    var(--color-tertiary,var(--color-primary)) 50% 70%,
+    var(--color-success) 70% 86%,
+    var(--color-warning) 86% 100%);
+  -webkit-mask:radial-gradient(circle 46px at center,transparent 98%,#000 100%);
+          mask:radial-gradient(circle 46px at center,transparent 98%,#000 100%)}
+.bars{display:flex;align-items:flex-end;gap:var(--space-3);height:140px;flex:1;min-width:240px}
+.bar{flex:1;border-radius:var(--radius-sm) var(--radius-sm) 0 0;min-width:24px}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="toolbar" role="toolbar" aria-label="Selector de tema y modo">
+  <h1>Mockup D1</h1>
+  <div class="themes" id="themes" role="group" aria-label="Tema"></div>
+  <div class="modes" id="modes" role="group" aria-label="Modo">
+    <button class="chip-btn" data-mode="light" aria-pressed="true">☀ Claro</button>
+    <button class="chip-btn" data-mode="dark" aria-pressed="false">☾ Oscuro</button>
+  </div>
+  <span class="spacer"></span>
+  <span class="legend" id="legend"></span>
+</div>
+
+<div class="stage" id="stage" data-theme="default" data-mode="light">
+  <div class="wrap">
+
+    <!-- Banner -->
+    <div class="banner">
+      <h3>Contrato visual a validar (D1)</h3>
+      <p>Cambia tema y modo arriba para recorrer los <strong>16 combos</strong>. Lo que se valida aquí: la <strong>capa de elevación</strong> (<code>bg</code> &lt; <code>surface</code> &lt; <code>surface-elevated</code>), la <strong>jerarquía tipográfica</strong>, los <strong>inputs con presencia</strong>, y los <strong>4 temas nuevos</strong> con <strong>3 colores</strong> (<code>primary · accent · tertiary</code>) + <strong>paleta categórica</strong>. El color extra va <strong>solo en datos/decorativo</strong> (chips, gráficos, portada); los controles siguen en primary. En los 4 temas actuales <code>accent</code>/<code>tertiary</code> caen a <code>primary</code>: siguen sobrios.</p>
+    </div>
+
+    <!-- App bar -->
+    <div class="appbar">
+      <span class="brand">📺 TV Shows</span>
+      <nav><span class="active">Series</span><span>Dashboard</span></nav>
+      <button class="btn primary sm">Nueva serie</button>
+    </div>
+
+    <!-- Elevación -->
+    <section class="section">
+      <h2>Elevación</h2>
+      <p class="sub">El problema histórico: bg/surface/border demasiado próximos. Ahora hay 3 niveles. En oscuro la separación se apoya en borde + tono, no solo en sombra.</p>
+      <div class="divider"></div>
+      <div class="elev-row">
+        <div class="elev bg"><div class="lbl">Fondo</div><div class="val">--color-bg</div></div>
+        <div class="elev surface"><div class="lbl">Superficie</div><div class="val">--color-surface</div></div>
+        <div class="elev elevated"><div class="lbl">Elevada</div><div class="val">--color-surface-elevated</div></div>
+      </div>
+    </section>
+
+    <!-- Tipografía -->
+    <section class="section">
+      <h2>Jerarquía tipográfica</h2>
+      <div class="divider"></div>
+      <div class="type-stack">
+        <div class="t-h">Heading de sección · 2xl bold</div>
+        <div class="t-sub">Subtítulo · lg semibold</div>
+        <div class="t-label">Label · sm medium muted</div>
+        <div class="t-body">Cuerpo de texto · md normal. Una sinopsis de ejemplo para ver el ritmo de lectura y el contraste del texto principal sobre la superficie.</div>
+        <div class="t-meta">Meta · sm muted — 2018 · 4 temporadas</div>
+      </div>
+    </section>
+
+    <!-- Buttons -->
+    <section class="section">
+      <h2>Botones</h2>
+      <p class="sub">Roles separados: primary, secondary (elevada+borde), ghost (ya no invisible), danger, y accent (el segundo hue de los temas nuevos).</p>
+      <div class="divider"></div>
+      <div class="row">
+        <button class="btn primary">Primary</button>
+        <button class="btn secondary">Secondary</button>
+        <button class="btn ghost">Ghost</button>
+        <button class="btn danger">Danger</button>
+        <button class="btn accent">Accent</button>
+      </div>
+      <div class="row">
+        <button class="btn primary sm">sm</button>
+        <button class="btn primary">md</button>
+        <button class="btn primary lg">lg</button>
+        <button class="btn primary" disabled>Deshabilitado</button>
+      </div>
+    </section>
+
+    <!-- Inputs -->
+    <section class="section">
+      <h2>Inputs &amp; formulario por secciones</h2>
+      <p class="sub">Campos con presencia (borde 1.5px, fondo elevado, foco con anillo de <code>--focus-ring</code>). Y el form de serie agrupado en <code>fieldset</code>.</p>
+      <div class="divider"></div>
+      <div class="row" style="align-items:flex-start;gap:var(--space-6)">
+        <div class="field">
+          <label>Título <span class="req">*</span></label>
+          <input class="control" placeholder="Nombre de la serie">
+        </div>
+        <div class="field">
+          <label>Año</label>
+          <input class="control error" placeholder="2018" value="">
+          <span class="err-msg">El año debe estar entre 1900 y hoy.</span>
+        </div>
+      </div>
+
+      <fieldset class="fset">
+        <legend>Clasificación</legend>
+        <div class="fgrid">
+          <div class="field" style="max-width:none">
+            <label>Temporadas</label>
+            <textarea class="control" placeholder="4 temporadas">4 temporadas</textarea>
+          </div>
+          <div class="field" style="max-width:none">
+            <label>Géneros</label>
+            <div class="tags" style="margin-top:6px">
+              <span class="tag" style="--tag-c:var(--color-primary)">Drama</span>
+              <span class="tag" style="--tag-c:var(--color-tertiary,var(--color-primary))">Thriller</span>
+            </div>
+            <div class="row" style="margin-top:var(--space-2)">
+              <input class="control" placeholder="Nuevo género…" style="flex:1">
+              <button class="btn secondary sm">Añadir</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="fset">
+        <legend>Valoración</legend>
+        <div class="stars" aria-label="4 de 5">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- KPIs -->
+    <section class="section">
+      <h2>Dashboard · KPI cards</h2>
+      <div class="divider"></div>
+      <div class="kpis">
+        <div class="kpi" style="--kpi-accent:var(--color-primary)">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+          <div><div class="num">120</div><div class="cap">Series totales</div></div>
+        </div>
+        <div class="kpi" style="--kpi-accent:#f5b50a">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 9l6.8-.6z"/></svg></div>
+          <div><div class="num">48</div><div class="cap">Destacadas (★4+)</div></div>
+        </div>
+        <div class="kpi" style="--kpi-accent:var(--color-accent)">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+          <div><div class="num">31</div><div class="cap">Miniseries</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Paleta categórica + datos -->
+    <section class="section">
+      <h2>Paleta categórica · datos</h2>
+      <p class="sub">Color repartido <strong>solo en datos/decorativo</strong>: chips de género y gráficos. Derivada de los colores del propio tema (<code>primary · accent · tertiary · success · warning</code>), distinta en cada uno. Los controles (botones/inputs) siguen en primary.</p>
+      <div class="divider"></div>
+      <div class="swatches">
+        <div class="sw"><i style="background:var(--color-primary)"></i>primary</div>
+        <div class="sw"><i style="background:var(--color-accent)"></i>accent</div>
+        <div class="sw"><i style="background:var(--color-tertiary,var(--color-primary))"></i>tertiary</div>
+        <div class="sw"><i style="background:var(--color-success)"></i>success</div>
+        <div class="sw"><i style="background:var(--color-warning)"></i>warning</div>
+      </div>
+      <div class="data-row" style="margin-top:var(--space-5)">
+        <div class="donut" role="img" aria-label="Distribución por género (ejemplo)"></div>
+        <div class="bars" aria-hidden="true">
+          <div class="bar" style="height:80%;background:var(--color-primary)"></div>
+          <div class="bar" style="height:55%;background:var(--color-accent)"></div>
+          <div class="bar" style="height:95%;background:var(--color-tertiary,var(--color-primary))"></div>
+          <div class="bar" style="height:40%;background:var(--color-success)"></div>
+          <div class="bar" style="height:65%;background:var(--color-warning)"></div>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:var(--space-5)">
+        <span class="tag" style="--tag-c:var(--color-primary)">Drama</span>
+        <span class="tag" style="--tag-c:var(--color-accent)">Thriller</span>
+        <span class="tag" style="--tag-c:var(--color-tertiary,var(--color-primary))">Ciencia ficción</span>
+        <span class="tag" style="--tag-c:var(--color-success)">Comedia</span>
+        <span class="tag" style="--tag-c:var(--color-warning)">Acción</span>
+      </div>
+    </section>
+
+    <!-- SeriesCard -->
+    <section class="section">
+      <h2>SeriesCard (vista cards)</h2>
+      <p class="sub">Ahora con contenedor real (surface + borde + sombra) y jerarquía título &gt; meta &gt; rating. El degradado de portada usa primary→accent.</p>
+      <div class="divider"></div>
+      <div class="grid-cards">
+        <article class="scard">
+          <div class="poster"><span>Dime quién soy</span></div>
+          <div class="info">
+            <div class="title">Dime quién soy</div>
+            <div class="meta">2023 · Miniserie</div>
+            <div class="tags"><span class="tag" style="--tag-c:var(--color-primary)">Drama</span></div>
+            <div class="foot"><span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star">★</span></span></div>
+          </div>
+        </article>
+        <article class="scard">
+          <div class="poster"><span>La amiga estupenda</span></div>
+          <div class="info">
+            <div class="title">La amiga estupenda (L'amica geniale)</div>
+            <div class="meta">2018 · Multi-temporada</div>
+            <div class="tags"><span class="tag" style="--tag-c:var(--color-primary)">Drama</span></div>
+            <div class="foot"><span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></span></div>
+          </div>
+        </article>
+        <article class="scard">
+          <div class="poster"><span>Lost</span></div>
+          <div class="info">
+            <div class="title">Lost (Perdidos)</div>
+            <div class="meta">2004 · Multi-temporada</div>
+            <div class="tags"><span class="tag" style="--tag-c:var(--color-primary)">Drama</span></div>
+            <div class="foot"><span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></span></div>
+          </div>
+        </article>
+        <article class="scard">
+          <div class="poster"><span>Fariña</span></div>
+          <div class="info">
+            <div class="title">Fariña</div>
+            <div class="meta">2018 · Miniserie</div>
+            <div class="tags"><span class="tag" style="--tag-c:var(--color-tertiary,var(--color-primary))">Thriller</span></div>
+            <div class="foot"><span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span></span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SeriesRow -->
+    <section class="section">
+      <h2>SeriesRow (vista lista)</h2>
+      <div class="divider"></div>
+      <div class="rows">
+        <div class="srow">
+          <div class="thumb"></div>
+          <div><div class="rtitle">Dime quién soy</div><div class="ryear">2023</div></div>
+          <div class="rseasons">Miniserie · 9 episodios</div>
+          <div class="tags"><span class="tag" style="--tag-c:var(--color-primary)">Drama</span></div>
+          <span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star">★</span></span>
+        </div>
+        <div class="srow">
+          <div class="thumb"></div>
+          <div><div class="rtitle">Lost (Perdidos)</div><div class="ryear">2004</div></div>
+          <div class="rseasons">6 temporadas</div>
+          <div class="tags"><span class="tag" style="--tag-c:var(--color-primary)">Drama</span></div>
+          <span class="stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards genéricas + estados semánticos -->
+    <section class="section">
+      <h2>Colores semánticos</h2>
+      <div class="divider"></div>
+      <div class="row">
+        <span class="btn" style="background:var(--color-success);color:#fff">Success</span>
+        <span class="btn" style="background:var(--color-warning);color:#1a1a1a">Warning</span>
+        <span class="btn" style="background:var(--color-danger);color:#fff">Danger</span>
+        <span class="btn accent">Accent (2º hue)</span>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const THEMES=[
+  ['default','Predeterminado'],['ocean','Océano'],['sunset','Atardecer'],['forest','Bosque'],
+  ['amatista','Amatista ✦'],['carmesi','Carmesí ✦'],['cian','Cian-Turquesa ✦'],['crepusculo','Crepúsculo ✦']
+];
+const stage=document.getElementById('stage');
+const legend=document.getElementById('legend');
+const themesBox=document.getElementById('themes');
+let theme='default',mode='light';
+
+THEMES.forEach(([id,label],i)=>{
+  const b=document.createElement('button');
+  b.className='chip-btn';b.textContent=label;b.dataset.theme=id;
+  b.setAttribute('aria-pressed',i===0?'true':'false');
+  b.onclick=()=>{theme=id;sync()};
+  themesBox.appendChild(b);
+});
+document.querySelectorAll('#modes .chip-btn').forEach(b=>{
+  b.onclick=()=>{mode=b.dataset.mode;sync()};
+});
+function sync(){
+  stage.dataset.theme=theme;stage.dataset.mode=mode;
+  document.querySelectorAll('#themes .chip-btn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.theme===theme));
+  document.querySelectorAll('#modes .chip-btn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));
+  const isNew=['amatista','carmesi','cian','crepusculo'].includes(theme);
+  const label=THEMES.find(t=>t[0]===theme)[1].replace(' ✦','');
+  legend.textContent=`${label} · ${mode==='light'?'Claro':'Oscuro'}${isNew?' · tema nuevo (multi-hue)':' · mono-hue'}`;
+}
+sync();
+</script>
+</body>
+</html>
