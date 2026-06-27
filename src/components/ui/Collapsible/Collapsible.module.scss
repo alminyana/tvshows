@@ -33,7 +33,9 @@
 }
 
 .chevron {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-3xl);
+  line-height: 1;
+  color: var(--color-primary);
   transition: transform 0.2s ease;
   display: inline-block;
 }

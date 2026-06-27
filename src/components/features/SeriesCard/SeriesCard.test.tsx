@@ -45,10 +45,26 @@ beforeEach(() => {
 });
 
 describe('SeriesCard', () => {
-  it('muestra título y año', () => {
+  it('muestra título, año y géneros', () => {
     renderCard();
     expect(screen.getByText('Breaking Bad')).toBeInTheDocument();
-    expect(screen.getByText('2008')).toBeInTheDocument();
+    expect(screen.getByText(/2008/)).toBeInTheDocument();
+    expect(screen.getByText('Drama')).toBeInTheDocument();
+    expect(screen.getByText('Thriller')).toBeInTheDocument();
+  });
+
+  it('limita los géneros a 3 y muestra el resto como "+N"', () => {
+    render(
+      <MemoryRouter>
+        <SeriesCard
+          series={{ ...mockSeries, genres: ['Drama', 'Thriller', 'Crimen', 'Misterio', 'Acción'] }}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Drama')).toBeInTheDocument();
+    expect(screen.getByText('Crimen')).toBeInTheDocument();
+    expect(screen.queryByText('Misterio')).not.toBeInTheDocument();
+    expect(screen.getByText('+2')).toBeInTheDocument();
   });
 
   it('navega al detalle al hacer click', () => {
