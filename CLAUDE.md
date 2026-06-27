@@ -21,7 +21,7 @@ Always read PROFILE.md, CONTEXT.md, and PRD-Phase-1.md before proposing any chan
 
 ## Project status
 
-Personal SPA to manage favorite TV shows. The app is scaffolded and functional. **Phase 2 (Supabase migration) is essentially complete**: Dexie/IndexedDB has been removed and all persistence now goes through Supabase (Postgres + Auth + Storage + RLS). Only the optional F7 tasks remain (heartbeat is implemented; periodic backups and deploy are deferred to a later phase). See `docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md`.
+Personal SPA to manage favorite TV shows. The app is scaffolded and functional. **Phase 2 (Supabase migration) is essentially complete**: Dexie/IndexedDB has been removed and all persistence now goes through Supabase (Postgres + Auth + Storage + RLS). The optional F7 heartbeat is implemented, deployed and verified (GitHub Action + `heartbeat` table); only periodic backups and deploy remain, deferred to a later phase. See `docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md`.
 
 ## Stack (locked — do not swap without asking)
 

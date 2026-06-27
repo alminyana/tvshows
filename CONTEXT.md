@@ -11,7 +11,7 @@
 # Project Overview
 SPA built with React 19 + Vite + TypeScript to manage information about the user's favorite TV shows. Supports creating, listing, editing and removing series, plus a dashboard with metrics. The app must be visually attractive, intuitive, fully responsive and themable (multiple color themes with light/dark mode).
 
-Phase 1 is frontend-only with local persistence (IndexedDB + localStorage). Backend, real authentication and hosting come in later phases.
+Phase 1 was frontend-only (IndexedDB + localStorage). **Phase 2 (Supabase migration) is essentially complete:** Dexie/IndexedDB has been removed and all business-data persistence now goes through Supabase (Postgres + Auth + Storage + RLS). Only optional F7 tasks remain (heartbeat done and verified; periodic backups and deploy deferred to a later phase). Hosting comes later.
 
 ## Tech Stack
 - **Framework:** React 19 + Vite
@@ -21,7 +21,7 @@ Phase 1 is frontend-only with local persistence (IndexedDB + localStorage). Back
 - **Styling:** SASS (component-scoped) + CSS variables for theming
 - **Forms & validation:** React Hook Form + Zod
 - **Charts:** Recharts
-- **Local persistence:** IndexedDB via Dexie (business data) + localStorage (UI preferences)
+- **Persistence:** Supabase (Postgres + Auth + Storage + RLS) for business data; localStorage only for UI preferences (theme, view mode)
 - **Testing:** Vitest + React Testing Library
 
 ## Project Structure
@@ -35,14 +35,15 @@ src/
     layout/      # Header, Sidebar, Layout
   pages/         # One per route (Dashboard, SeriesList, SeriesDetail, Login...)
   hooks/         # Custom hooks, prefixed with `use`
-  services/      # Data layer (mock in Phase 1, HTTP in Phase 2)
+  services/      # Data layer (stable public API + Supabase impl + mappers/)
   context/       # AuthContext, ThemeContext
   types/
   utils/
   constants/     # UI strings (preparation for future i18n)
   styles/        # Variables, mixins, reset, theme tokens
-  db/            # Dexie schema and seed data
+  lib/           # Supabase singleton client
 ```
+> `supabase/migrations/` (outside `src/`) holds the versioned schema + RLS + Storage; `scripts/` holds Node utilities (data migration, user creation, heartbeat).
 
 ## Code Style & Conventions
 - Functional components with hooks, no class components
@@ -63,8 +64,8 @@ src/
 - Test behavior, not implementation details
 
 ## Current State
-- Home page with a basic Hello World component
-- Phase 1 PRD pending implementation
+- Phase 1 fully implemented; Phase 2 (Supabase migration) essentially complete — F0–F7 (heartbeat) done
+- Remaining: optional F7 periodic backups + deploy (treated as a separate phase)
 
 ## Don'ts
 - Do not suggest external libraries without asking first
