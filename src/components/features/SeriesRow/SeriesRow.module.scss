@@ -42,12 +42,30 @@
   background: linear-gradient(135deg, var(--color-border), var(--color-surface));
 }
 
-.info {
+// Móvil: las zonas se apilan. Tablet+: se reparten en horizontal ocupando el ancho.
+.content {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+
+  @include tablet {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-5);
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  @include tablet {
+    flex: 2 1 0;
+  }
 }
 
 .title {
@@ -55,9 +73,7 @@
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .year {
@@ -65,10 +81,32 @@
   color: var(--color-text-muted);
 }
 
+.seasons {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include tablet {
+    flex: 2 1 0;
+  }
+}
+
 .genres {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-1);
+
+  @include tablet {
+    flex: 2 1 0;
+  }
+}
+
+.more {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
 .genre {

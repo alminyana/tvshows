@@ -2,8 +2,20 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { imageService } from '@/services';
 import { Rating } from '@/components/ui';
+import { MESSAGES } from '@/constants';
+import { classifySeasons } from '@/utils/classifySeasons';
+import type { SeasonsType } from '@/utils/classifySeasons';
 import type { Series } from '@/types';
 import styles from './SeriesCard.module.scss';
+
+const MAX_GENRES = 3;
+
+// Etiqueta corta de duración para la card (el texto completo se ve en la fila/detalle).
+const SEASONS_LABEL: Record<SeasonsType, string> = {
+  miniserie: MESSAGES.dashboard.durationMiniserie,
+  single: MESSAGES.dashboard.durationSingle,
+  multi: MESSAGES.dashboard.durationMulti,
+};
 
 interface Props {
   series: Series;
@@ -12,6 +24,10 @@ interface Props {
 export function SeriesCard({ series }: Props) {
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const visibleGenres = series.genres.slice(0, MAX_GENRES);
+  const extraGenres = series.genres.length - visibleGenres.length;
+  const seasonsLabel = SEASONS_LABEL[classifySeasons(series.seasons)];
 
   useEffect(() => {
     let src: string | undefined;
@@ -42,8 +58,20 @@ export function SeriesCard({ series }: Props) {
       </div>
       <div className={styles.info}>
         <h3 className={styles.title}>{series.title}</h3>
-        <span className={styles.year}>{series.year}</span>
-        <Rating value={series.rating} readOnly />
+        <p className={styles.meta}>
+          {series.year} · {seasonsLabel}
+        </p>
+        {visibleGenres.length > 0 && (
+          <div className={styles.genres}>
+            {visibleGenres.map((g) => (
+              <span key={g} className={styles.genre}>{g}</span>
+            ))}
+            {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
+          </div>
+        )}
+        <div className={styles.rating}>
+          <Rating value={series.rating} readOnly />
+        </div>
       </div>
     </article>
   );

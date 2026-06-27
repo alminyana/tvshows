@@ -134,8 +134,9 @@ interface User {
 
 ### 5.1 Listado de series
 
-- Vista en grid con cards (portada + título + año + rating).
-- Click en card → vista de detalle.
+- Vista en grid con cards (portada + título + año · etiqueta de duración + géneros [máx 3 + «+N»] + rating). La portada usa ratio 3/4.
+- Vista en lista (`SeriesRow`): miniatura + título + año + temporadas (texto completo) + géneros [máx 3 + «+N»] + rating.
+- Click en card o fila → vista de detalle.
 - Filtros básicos: por género, por rating.
 - Búsqueda por título.
 - Responsive: 1 columna en móvil, 2 en tablet, 3-4 en desktop.
