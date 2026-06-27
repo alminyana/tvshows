@@ -530,7 +530,7 @@ Con `moduleResolution: "bundler"` (TS 5.x), `paths` ya no necesita `baseUrl`; ts
    - Tipo `ViewMode = 'cards' | 'list'` en `types/`.
    - Persistencia en `localStorage` bajo la clave `tv-shows:series-view-mode`. Lectura inicial vía hook custom `useSeriesViewMode` (devuelve `[mode, setMode]`, con guard para SSR / valor inválido).
    - El toggle solo cambia el modo de render — filtros, búsqueda, datos en pantalla y URL no se tocan.
-   - **Vista lista:** nuevo componente `components/features/SeriesRow/` con thumbnail (≈48×72px), título, año, temporadas (texto completo), géneros (chips, máx 3 + «+N»), rating (estrellas). Una fila por serie, click navega a `/series/:id` igual que la card.
+   - **Vista lista:** nuevo componente `components/features/SeriesRow/` con thumbnail (≈48×72px), título, año, temporadas (texto completo), géneros (chips, máx 3 + «+N»), rating (estrellas). Una fila por serie, click navega a `/series/:id` igual que la card. En tablet+ la info se reparte en zonas horizontales (título+año / temporadas / géneros / rating) para ocupar el ancho; en móvil se apila. El título envuelve a varias líneas (sin recorte por ellipsis).
    - **Vista cards:** el componente existente `SeriesCard` se mantiene como render por defecto. Muestra portada (ratio 3/4), título, año · etiqueta de duración (vía `classifySeasons`), géneros (chips, máx 3 + «+N») y rating.
 
 7. **Compactar `SeriesCard` (tipo Netflix):**
