@@ -76,7 +76,7 @@
   }
 }
 
-// ─── SeriesCard mockup ────────────────────────────────────────────────────────
+// ─── SeriesCard / SeriesRow ───────────────────────────────────────────────────
 
 .cardGrid {
   display: grid;
@@ -87,45 +87,13 @@
   }
 }
 
-.seriesCard {
+.rowList {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.cardCover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100px;
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  border-radius: var(--radius-md);
-}
-
-.cardInfo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.cardTitle {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-semibold);
-}
-
-.cardYear {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.cardTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-
-// ─── KPIs ─────────────────────────────────────────────────────────────────────
+// ─── Dashboard: KPIs ──────────────────────────────────────────────────────────
 
 .kpiGrid {
   display: grid;
@@ -136,51 +104,13 @@
   }
 }
 
-.kpi {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
+// ─── Dashboard: Charts ────────────────────────────────────────────────────────
 
-.kpiLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin: 0;
-}
-
-.kpiValue {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  margin: 0;
-}
-
-.kpiDetail {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  margin: 0;
-}
-
-// ─── Charts ───────────────────────────────────────────────────────────────────
-
-.chartRow {
+.chartGrid {
   display: grid;
   gap: var(--space-4);
 
   @include m.tablet {
     grid-template-columns: 1fr 1fr;
   }
-}
-
-.chart {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.chartTitle {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-muted);
-  margin: 0;
 }

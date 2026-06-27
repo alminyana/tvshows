@@ -1,45 +1,96 @@
 import { useState } from 'react';
 import { useTheme } from '@/hooks';
 import { MESSAGES } from '@/constants';
-import type { Theme, ThemeMode } from '@/types';
+import type { Theme, ThemeMode, Series } from '@/types';
+import type { GenreCount, RatingCount, DurationCount } from '@/hooks/useDashboardMetrics';
 import {
-  Button, Card, Tag, Rating, Spinner, Avatar,
+  Button, Tag, Rating, Spinner, Avatar,
   Input, Textarea, Select, FormField,
   Modal, ConfirmDialog, IconButton,
 } from '@/components/ui';
+import { KPICard } from '@/components/features/dashboard/KPICard/KPICard';
+import { GenreDistributionChart } from '@/components/features/dashboard/GenreDistributionChart/GenreDistributionChart';
+import { GenrePieChart } from '@/components/features/dashboard/GenrePieChart/GenrePieChart';
+import { RatingDistributionChart } from '@/components/features/dashboard/RatingDistributionChart/RatingDistributionChart';
+import { DurationDistributionChart } from '@/components/features/dashboard/DurationDistributionChart/DurationDistributionChart';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-} from 'recharts';
+  CollectionIcon, StarIcon, MiniseriesIcon, LayersIcon,
+} from '@/components/features/dashboard/icons';
+import { SeriesCard } from '@/components/features/SeriesCard/SeriesCard';
+import { SeriesRow } from '@/components/features/SeriesRow/SeriesRow';
 import styles from './ShowcasePage.module.scss';
 
 const THEMES: Theme[] = ['default', 'ocean', 'sunset', 'forest'];
 const MODES: ThemeMode[] = ['light', 'dark'];
 
-const DUMMY_GENRES = [
-  { name: 'Drama', count: 8 },
-  { name: 'Thriller', count: 5 },
-  { name: 'Comedia', count: 4 },
-  { name: 'Ciencia ficción', count: 3 },
-  { name: 'Fantasía', count: 2 },
+// Datos mock con la misma forma que devuelve useDashboardMetrics, para alimentar
+// los componentes reales del dashboard sin tocar la BD.
+const MOCK_GENRE_DISTRIBUTION: GenreCount[] = [
+  { genre: 'Drama', count: 8 },
+  { genre: 'Thriller', count: 5 },
+  { genre: 'Comedia', count: 4 },
+  { genre: 'Ciencia ficción', count: 3 },
+  { genre: 'Fantasía', count: 2 },
 ];
 
-const DUMMY_RATINGS = [
-  { star: '★', count: 1 },
-  { star: '★★', count: 2 },
-  { star: '★★★', count: 4 },
-  { star: '★★★★', count: 7 },
-  { star: '★★★★★', count: 5 },
+const MOCK_RATING_DISTRIBUTION: RatingCount[] = [
+  { rating: 1, count: 1 },
+  { rating: 2, count: 2 },
+  { rating: 3, count: 4 },
+  { rating: 4, count: 7 },
+  { rating: 5, count: 5 },
 ];
 
-const MOCK_SERIES = {
-  title: 'Breaking Bad',
-  year: 2008,
-  seasons: '5 temporadas (2008–2013).',
-  rating: 5,
-  genres: ['Drama', 'Thriller'],
-  synopsis: 'Un profesor de química diagnosticado con cáncer terminal se convierte en fabricante de metanfetamina.',
-  cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'],
-};
+const MOCK_DURATION_DISTRIBUTION: DurationCount[] = [
+  { type: 'miniserie', count: 3 },
+  { type: 'single', count: 7 },
+  { type: 'multi', count: 9 },
+];
+
+const MOCK_SERIES: Series[] = [
+  {
+    id: 'showcase-1',
+    coverImage: '',
+    title: 'Breaking Bad',
+    synopsis: 'Un profesor de química diagnosticado con cáncer terminal se convierte en fabricante de metanfetamina.',
+    seasons: '5 temporadas (2008–2013).',
+    cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'],
+    year: 2008,
+    rating: 5,
+    genres: ['Drama', 'Thriller'],
+    createdBy: 'showcase',
+    createdAt: '2008-01-20T00:00:00.000Z',
+    updatedAt: '2013-09-29T00:00:00.000Z',
+  },
+  {
+    id: 'showcase-2',
+    coverImage: '',
+    title: 'The Wire',
+    synopsis: 'Retrato coral del narcotráfico y las instituciones de Baltimore.',
+    seasons: '5 temporadas (2002–2008).',
+    cast: ['Dominic West', 'Idris Elba'],
+    year: 2002,
+    rating: 5,
+    genres: ['Drama', 'Thriller'],
+    createdBy: 'showcase',
+    createdAt: '2002-06-02T00:00:00.000Z',
+    updatedAt: '2008-03-09T00:00:00.000Z',
+  },
+  {
+    id: 'showcase-3',
+    coverImage: '',
+    title: 'Chernobyl',
+    synopsis: 'Dramatización del accidente nuclear de 1986 y sus consecuencias.',
+    seasons: 'Miniserie (5 episodios).',
+    cast: ['Jared Harris', 'Stellan Skarsgård'],
+    year: 2019,
+    rating: 4,
+    genres: ['Drama', 'Documental'],
+    createdBy: 'showcase',
+    createdAt: '2019-05-06T00:00:00.000Z',
+    updatedAt: '2019-06-03T00:00:00.000Z',
+  },
+];
 
 export function ShowcasePage() {
   const { theme, mode, setTheme, setMode } = useTheme();
@@ -131,10 +182,10 @@ export function ShowcasePage() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Tag / Chip</h2>
         <div className={styles.row}>
-          {MOCK_SERIES.cast.map((name) => (
+          {MOCK_SERIES[0].cast.map((name) => (
             <Tag key={name} label={name} onRemove={() => undefined} />
           ))}
-          {MOCK_SERIES.genres.map((g) => (
+          {MOCK_SERIES[0].genres.map((g) => (
             <Tag key={g} label={g} />
           ))}
         </div>
@@ -164,24 +215,22 @@ export function ShowcasePage() {
         </div>
       </section>
 
-      {/* ─── Card mock ───────────────────────────────────────── */}
+      {/* ─── SeriesCard (componente real) ────────────────────── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>SeriesCard (mockup)</h2>
+        <h2 className={styles.sectionTitle}>SeriesCard</h2>
         <div className={styles.cardGrid}>
-          {[MOCK_SERIES, { ...MOCK_SERIES, title: 'The Wire', year: 2002, rating: 5, seasons: '5 temporadas (2002–2008).' }].map((s) => (
-            <Card key={s.title} hoverable className={styles.seriesCard}>
-              <div className={styles.cardCover}>
-                <Avatar initials={s.title.substring(0, 2).toUpperCase()} size="lg" />
-              </div>
-              <div className={styles.cardInfo}>
-                <strong className={styles.cardTitle}>{s.title}</strong>
-                <span className={styles.cardYear}>{s.year}</span>
-                <Rating value={s.rating} readOnly />
-                <div className={styles.cardTags}>
-                  {s.genres.map((g) => <Tag key={g} label={g} />)}
-                </div>
-              </div>
-            </Card>
+          {MOCK_SERIES.map((s) => (
+            <SeriesCard key={s.id} series={s} />
+          ))}
+        </div>
+      </section>
+
+      {/* ─── SeriesRow (componente real) ─────────────────────── */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>SeriesRow</h2>
+        <div className={styles.rowList}>
+          {MOCK_SERIES.map((s) => (
+            <SeriesRow key={s.id} series={s} />
           ))}
         </div>
       </section>
@@ -205,52 +254,48 @@ export function ShowcasePage() {
         />
       </section>
 
-      {/* ─── KPI cards (dashboard mockup) ───────────────────── */}
+      {/* ─── KPI Cards (componentes reales del dashboard) ────── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>KPI Cards (mockup dashboard)</h2>
+        <h2 className={styles.sectionTitle}>KPICard (dashboard)</h2>
         <div className={styles.kpiGrid}>
-          <Card className={styles.kpi}>
-            <p className={styles.kpiLabel}>{MESSAGES.dashboard.totalSeries}</p>
-            <p className={styles.kpiValue}>19</p>
-          </Card>
-          <Card className={styles.kpi}>
-            <p className={styles.kpiLabel}>{MESSAGES.dashboard.featuredSeries}</p>
-            <p className={styles.kpiValue}>12</p>
-            <p className={styles.kpiDetail}>{MESSAGES.dashboard.featuredDetail}</p>
-          </Card>
+          <KPICard
+            label={MESSAGES.dashboard.totalSeries}
+            value={19}
+            icon={<CollectionIcon />}
+            accent="#6366f1"
+          />
+          <KPICard
+            label={MESSAGES.dashboard.featuredSeries}
+            value={12}
+            detail={MESSAGES.dashboard.featuredDetail}
+            icon={<StarIcon />}
+            accent="#f59e0b"
+          />
+          <KPICard
+            label={MESSAGES.dashboard.miniseries}
+            value={3}
+            detail={MESSAGES.dashboard.miniseriesDetail}
+            icon={<MiniseriesIcon />}
+            accent="#8b5cf6"
+          />
+          <KPICard
+            label={MESSAGES.dashboard.multiSeason}
+            value={9}
+            detail={MESSAGES.dashboard.multiSeasonDetail}
+            icon={<LayersIcon />}
+            accent="#10b981"
+          />
         </div>
       </section>
 
-      {/* ─── Gráfico Recharts ────────────────────────────────── */}
+      {/* ─── Charts (componentes reales del dashboard) ───────── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Recharts (mockup)</h2>
-        <div className={styles.chartRow}>
-          <Card className={styles.chart}>
-            <p className={styles.chartTitle}>{MESSAGES.dashboard.genreDistribution}</p>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={DUMMY_GENRES} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                  {DUMMY_GENRES.map((_, i) => (
-                    <Cell key={i} fill="var(--color-primary)" opacity={0.7 + i * 0.05} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-          <Card className={styles.chart}>
-            <p className={styles.chartTitle}>{MESSAGES.dashboard.ratingDistribution}</p>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={DUMMY_RATINGS} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
-                <XAxis dataKey="star" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Bar dataKey="count" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
+        <h2 className={styles.sectionTitle}>Charts (dashboard)</h2>
+        <div className={styles.chartGrid}>
+          <GenreDistributionChart data={MOCK_GENRE_DISTRIBUTION} />
+          <GenrePieChart data={MOCK_GENRE_DISTRIBUTION} />
+          <RatingDistributionChart data={MOCK_RATING_DISTRIBUTION} />
+          <DurationDistributionChart data={MOCK_DURATION_DISTRIBUTION} />
         </div>
       </section>
     </div>
