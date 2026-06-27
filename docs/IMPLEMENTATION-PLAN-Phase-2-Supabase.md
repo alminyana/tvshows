@@ -183,7 +183,7 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 3. **Eliminar `utils/hashPassword.ts`** (SubtleCrypto): las passwords las gestiona Supabase.
 4. `ProtectedRoute`: filtra por el `role` de `profiles`.
 5. `LoginForm`/`LoginModal`: mismo UI, ahora contra Supabase; manejo de errores reales (credenciales inválidas, etc.).
-6. Gestión de usuarios del Admin (tu antiguo H6) — ver decisión señalada: Edge Function `admin-create-user` (valida admin + usa `service_role`) o gestión por script/dashboard en Fase 1.
+6. Gestión de usuarios del Admin (tu antiguo H6) — ver decisión señalada: Edge Function `admin-create-user` (valida admin + usa `service_role`) **pospuesta**. En su lugar, gestión por dashboard de Supabase o por script: `scripts/create-user.ts` (crea usuario Auth + `profile` con rol, idempotente). Borrado: por dashboard (ojo FK `series.created_by` sin cascade → bloquea si el usuario tiene series).
 
 ### Archivos
 - `src/services/authService.supabase.ts`
@@ -256,16 +256,16 @@ F3, F4 y F5 dependen de F1/F2 pero son en buena medida independientes entre sí 
 ## F7 (opcional) — Keep-alive anti-pausa + deploy · Complejidad: S
 
 - **Objetivo:** evitar la pausa del free tier por inactividad y, si se desea, publicar la app.
-- **Estado:** ⬜ Opcional.
+- **Estado:** 🟡 Heartbeat ✅ completado (2026-06-27); backups periódicos y deploy ⬜ pendientes (fase aparte).
 - **Dependencias:** F1. Independiente del resto.
 
 ### Tareas
-1. **Heartbeat:** GitHub Action programada (cada 3–4 días, no cada 7) que ejecuta una operación real de BD (un `SELECT`/upsert a una tabla `heartbeat`). La key va como **secret del repo**, nunca en el código.
-2. **Backups propios:** programar un export/backup periódico (el free tier no trae backups automáticos).
-3. **Deploy (opcional):** publicar el SPA (Vercel/Netlify/Cloudflare Pages) con sus variables de entorno.
+1. **Heartbeat:** ✅ Hecho. Migración `20260626233407_heartbeat.sql` (tabla `heartbeat` de fila única + `last_ping`, RLS sin policies → solo `service_role` escribe), script `scripts/heartbeat.ts` (upsert), workflow `.github/workflows/heartbeat.yml` (cron `0 6 */3 * *` + `workflow_dispatch`). Secrets `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el repo. Verificado con un run manual en verde; el `schedule` corre solo cada 3 días en la rama por defecto (`main`).
+2. **Backups propios:** ⬜ Pendiente — programar un export/backup periódico (el free tier no trae backups automáticos). De momento, backups manuales.
+3. **Deploy (opcional):** ⬜ Pendiente — publicar el SPA (Vercel/Netlify/Cloudflare Pages) con sus variables de entorno.
 
 ### Hecho cuando
-- El proyecto no se pausa por inactividad y existe al menos un backup recuperable.
+- El proyecto no se pausa por inactividad (✅ heartbeat) y existe al menos un backup recuperable (⬜ pendiente).
 
 ---
 
