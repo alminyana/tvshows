@@ -20,7 +20,7 @@ import { SeriesCard } from '@/components/features/SeriesCard/SeriesCard';
 import { SeriesRow } from '@/components/features/SeriesRow/SeriesRow';
 import styles from './ShowcasePage.module.scss';
 
-const THEMES: Theme[] = ['default', 'ocean', 'sunset', 'forest'];
+const THEMES: Theme[] = ['default', 'ocean', 'sunset', 'forest', 'amatista', 'carmesi', 'cian', 'crepusculo'];
 const MODES: ThemeMode[] = ['light', 'dark'];
 
 // Datos mock con la misma forma que devuelve useDashboardMetrics, para alimentar
@@ -106,7 +106,7 @@ export function ShowcasePage() {
 
       {/* ─── Selector de tema ────────────────────────────────── */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Temas (8 combinaciones)</h2>
+        <h2 className={styles.sectionTitle}>Temas (16 combinaciones)</h2>
         <div className={styles.themeGrid}>
           {THEMES.map((t) =>
             MODES.map((m) => (
