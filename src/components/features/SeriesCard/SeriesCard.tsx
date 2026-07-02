@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { imageService } from '@/services';
-import { Rating } from '@/components/ui';
+import { Rating, Tag } from '@/components/ui';
 import { MESSAGES } from '@/constants';
 import { classifySeasons } from '@/utils/classifySeasons';
 import type { SeasonsType } from '@/utils/classifySeasons';
+import { categoricalColor } from '@/utils';
 import type { Series } from '@/types';
 import styles from './SeriesCard.module.scss';
 
@@ -25,8 +26,9 @@ export function SeriesCard({ series }: Props) {
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const visibleGenres = series.genres.slice(0, MAX_GENRES);
-  const extraGenres = series.genres.length - visibleGenres.length;
+  const uniqueGenres = Array.from(new Set(series.genres));
+  const visibleGenres = uniqueGenres.slice(0, MAX_GENRES);
+  const extraGenres = uniqueGenres.length - visibleGenres.length;
   const seasonsLabel = SEASONS_LABEL[classifySeasons(series.seasons)];
 
   useEffect(() => {
@@ -63,8 +65,8 @@ export function SeriesCard({ series }: Props) {
         </p>
         {visibleGenres.length > 0 && (
           <div className={styles.genres}>
-            {visibleGenres.map((g) => (
-              <span key={g} className={styles.genre}>{g}</span>
+            {visibleGenres.map((g, i) => (
+              <Tag key={g} label={g} color={categoricalColor(i)} />
             ))}
             {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
           </div>

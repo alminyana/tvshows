@@ -1,10 +1,11 @@
 .tag {
+  --tag-c: var(--color-primary);
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   padding: 2px var(--space-2);
-  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-  color: var(--color-primary);
+  background: color-mix(in srgb, var(--tag-c) 15%, transparent);
+  color: var(--tag-c);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -25,7 +26,7 @@
   transition: background 0.1s;
 
   &:hover {
-    background: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    background: color-mix(in srgb, var(--tag-c) 25%, transparent);
   }
 
   &:focus-visible {
