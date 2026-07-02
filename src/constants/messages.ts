@@ -90,6 +90,13 @@ export const MESSAGES = {
     editSeries: 'Editar serie',
     viewCards: 'Vista en cuadrícula',
     viewList: 'Vista en lista',
+    sections: {
+      cover: 'Portada',
+      basics: 'Datos básicos',
+      classification: 'Clasificación',
+      rating: 'Valoración',
+      opinion: 'Opinión',
+    },
   },
 
   // Usuarios
