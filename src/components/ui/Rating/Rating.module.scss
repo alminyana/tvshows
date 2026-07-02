@@ -21,8 +21,8 @@
 
   &:has(input:focus-visible) .filled,
   &:has(input:focus-visible) .empty {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
     border-radius: var(--radius-sm);
   }
 }
@@ -33,4 +33,4 @@
 }
 
 .filled { color: #f5b50a; }
-.empty  { color: var(--color-border); }
+.empty  { color: var(--color-text-muted); }

@@ -35,7 +35,8 @@ Status:
 - **D0 — Skill `design-system`:** ✅ installed in `.claude/skills/design-system/`.
 - **D1 — Validation mockup:** ✅ approved (8 themes × 2 modes = 16 combos). Locked decisions: new tokens `--color-accent` and `--color-tertiary`; categorical palette **derived** from theme tokens, used **only in data/decorative areas** (genre chips, charts, poster gradients); elevation layer `--color-surface-elevated`; `--focus-ring`; `--shadow-lg`; medium tint on light mode for the 4 new themes; the 4 original themes stay neutral in light.
 - **D2 — Tokens + themes foundation:** ✅ done. `_tokens.scss` restructured with 16 blocks (8 themes × 2 modes); new tokens `--color-surface-elevated`, `--color-accent`, `--color-tertiary`, contrasts, `--focus-ring`, `--shadow-lg`; 4 new multi-hue themes registered across `VALID_THEMES`, `ThemeContext`, `messages.ts`, `Header`. `/showcase` shows 16 combos.
-- **D3 Primitives → D4 Views → D5 Series form (fieldsets) → D6 a11y/responsive:** pending. **D3 is next.**
+- **D3 — Primitives (restyle):** ✅ done. `Button`/`Input`/`Textarea`/`Select`/`Card`/`Rating`/`Tag`/`IconButton` consuming `--color-surface-elevated`, `--focus-ring`, `--shadow-lg`; new `components/ui/FileInput/` (hidden native input + styled `Button` trigger) wired into `SeriesForm`. `FormField`/`Spinner`/`Avatar` already tokens-first.
+- **D4 Views → D5 Series form (fieldsets) → D6 a11y/responsive:** pending. **D4 is next.**
 
 ## Skills
 
