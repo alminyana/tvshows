@@ -23,4 +23,11 @@ export const genresServiceSupabase: IGenresService = {
     }
     return data.name;
   },
+
+  // Borrado de catálogo (RLS: solo admin). Por FK ON DELETE CASCADE en
+  // series_genres, también lo retira de cualquier serie que lo tuviera asignado.
+  async remove(name: string): Promise<void> {
+    const { error } = await supabase.from('genres').delete().ilike('name', name);
+    if (error) throw error;
+  },
 };

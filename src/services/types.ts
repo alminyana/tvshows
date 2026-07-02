@@ -28,6 +28,7 @@ export interface IImageService {
 export interface IGenresService {
   getAll(): Promise<string[]>;
   add(name: string): Promise<string | null>;
+  remove(name: string): Promise<void>;
 }
 
 export interface IAuthService {
