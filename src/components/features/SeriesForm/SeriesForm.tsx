@@ -108,168 +108,190 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
 
   return (
     <form onSubmit={handleSubmit((data) => onSubmit(data, imageFile))} className={styles.form} noValidate>
-      <FormField
-        label={MESSAGES.series.cover}
-        error={imageError ?? undefined}
-      >
-        <div className={styles.imageField}>
-          {imagePreview ? (
-            <img src={imagePreview} alt="Previsualización de portada" className={styles.imagePreview} />
-          ) : (
-            <div className={styles.imagePlaceholder} aria-hidden="true" />
-          )}
-          <div className={styles.imageControls}>
-            <div
-              className={styles.pasteZone}
-              tabIndex={0}
-              role="button"
-              aria-label={MESSAGES.series.coverPaste}
-              onPaste={handlePaste}
-            >
-              {MESSAGES.series.coverPaste}
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}>{MESSAGES.series.sections.cover}</legend>
+
+        <FormField
+          label={MESSAGES.series.cover}
+          error={imageError ?? undefined}
+        >
+          <div className={styles.imageField}>
+            {imagePreview ? (
+              <img src={imagePreview} alt="Previsualización de portada" className={styles.imagePreview} />
+            ) : (
+              <div className={styles.imagePlaceholder} aria-hidden="true" />
+            )}
+            <div className={styles.imageControls}>
+              <div
+                className={styles.pasteZone}
+                tabIndex={0}
+                role="button"
+                aria-label={MESSAGES.series.coverPaste}
+                onPaste={handlePaste}
+              >
+                {MESSAGES.series.coverPaste}
+              </div>
+              <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
+              <FileInput
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileChange}
+                ariaLabel={MESSAGES.series.cover}
+                buttonLabel={MESSAGES.series.coverSelectFile}
+                fileName={imageFile?.name}
+              />
             </div>
-            <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
-            <FileInput
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handleFileChange}
-              ariaLabel={MESSAGES.series.cover}
-              buttonLabel={MESSAGES.series.coverSelectFile}
-              fileName={imageFile?.name}
-            />
           </div>
+        </FormField>
+      </fieldset>
+
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}>{MESSAGES.series.sections.basics}</legend>
+
+        <div className={styles.row}>
+          <FormField label={MESSAGES.series.title} htmlFor="title" error={errors.title?.message} required>
+            <Input id="title" {...register('title')} hasError={!!errors.title} />
+          </FormField>
+
+          <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message}>
+            <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
+          </FormField>
         </div>
-      </FormField>
 
-      <FormField label={MESSAGES.series.title} htmlFor="title" error={errors.title?.message} required>
-        <Input id="title" {...register('title')} hasError={!!errors.title} />
-      </FormField>
+        <FormField label={MESSAGES.series.synopsis} htmlFor="synopsis" error={errors.synopsis?.message}>
+          <Textarea id="synopsis" rows={4} {...register('synopsis')} hasError={!!errors.synopsis} />
+        </FormField>
+      </fieldset>
 
-      <FormField label={MESSAGES.series.synopsis} htmlFor="synopsis" error={errors.synopsis?.message}>
-        <Textarea id="synopsis" rows={4} {...register('synopsis')} hasError={!!errors.synopsis} />
-      </FormField>
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}>{MESSAGES.series.sections.classification}</legend>
 
-      <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message}>
-        <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
-      </FormField>
+        <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message}>
+          <Textarea id="seasons" rows={3} {...register('seasons')} hasError={!!errors.seasons} />
+        </FormField>
 
-      <FormField label={MESSAGES.series.seasons} htmlFor="seasons" error={errors.seasons?.message}>
-        <Textarea id="seasons" rows={3} {...register('seasons')} hasError={!!errors.seasons} />
-      </FormField>
-
-      <FormField label={MESSAGES.series.rating} error={errors.rating?.message}>
-        <Controller
-          name="rating"
-          control={control}
-          render={({ field }) => (
-            <Rating value={field.value ?? 0} onChange={field.onChange} label={MESSAGES.series.rating} />
-          )}
-        />
-      </FormField>
-
-      <FormField label={MESSAGES.series.genres} htmlFor="genres" error={errors.genres?.message}>
-        <Controller
-          name="genres"
-          control={control}
-          render={({ field }) => {
-            const selected = (field.value ?? []) as string[];
-            const addGenre = async () => {
-              const canonical = await addGenreToCatalog(genreInput);
-              if (!canonical) return;
-              if (!selected.some((g) => g.toLowerCase() === canonical.toLowerCase())) {
-                field.onChange([...selected, canonical]);
-              }
-              setGenreInput('');
-            };
-            return (
-              <div className={styles.chips}>
-                <Select
-                  id="genres"
-                  multiple
-                  options={genreOptions}
-                  value={selected}
-                  onChange={(vals) => field.onChange(vals)}
-                  hasError={!!errors.genres}
-                />
-                <div className={styles.chipInput}>
-                  <Input
-                    value={genreInput}
-                    onChange={(e) => setGenreInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addGenre();
-                      }
-                    }}
-                    placeholder="Nuevo género y Enter para añadir"
-                    aria-label="Añadir nuevo género"
+        <FormField label={MESSAGES.series.genres} htmlFor="genres" error={errors.genres?.message}>
+          <Controller
+            name="genres"
+            control={control}
+            render={({ field }) => {
+              const selected = (field.value ?? []) as string[];
+              const addGenre = async () => {
+                const canonical = await addGenreToCatalog(genreInput);
+                if (!canonical) return;
+                if (!selected.some((g) => g.toLowerCase() === canonical.toLowerCase())) {
+                  field.onChange([...selected, canonical]);
+                }
+                setGenreInput('');
+              };
+              return (
+                <div className={styles.chips}>
+                  <Select
+                    id="genres"
+                    multiple
+                    options={genreOptions}
+                    value={selected}
+                    onChange={(vals) => field.onChange(vals)}
+                    hasError={!!errors.genres}
                   />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    aria-label="Añadir género"
-                    onClick={addGenre}
-                  >
-                    {MESSAGES.actions.add}
-                  </Button>
-                </div>
-              </div>
-            );
-          }}
-        />
-      </FormField>
-
-      <FormField label={MESSAGES.series.cast} error={errors.cast?.message}>
-        <Controller
-          name="cast"
-          control={control}
-          render={({ field }) => {
-            const cast = field.value ?? [];
-            return (
-              <div className={styles.chips}>
-                {cast.length > 0 && (
-                  <div className={styles.chipRow}>
-                    {cast.map((name) => (
-                      <Tag
-                        key={name}
-                        label={name}
-                        onRemove={() => field.onChange(cast.filter((n) => n !== name))}
-                      />
-                    ))}
+                  <div className={styles.chipInput}>
+                    <Input
+                      value={genreInput}
+                      onChange={(e) => setGenreInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addGenre();
+                        }
+                      }}
+                      placeholder="Nuevo género y Enter para añadir"
+                      aria-label="Añadir nuevo género"
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      aria-label="Añadir género"
+                      onClick={addGenre}
+                    >
+                      {MESSAGES.actions.add}
+                    </Button>
                   </div>
-                )}
-                <div className={styles.chipInput}>
-                  <Input
-                    value={castInput}
-                    onChange={(e) => setCastInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addCastMember(castInput, cast, field.onChange);
-                      }
-                    }}
-                    placeholder="Nombre y Enter para añadir"
-                    aria-label="Añadir miembro del reparto"
-                  />
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    aria-label="Añadir reparto"
-                    onClick={() => addCastMember(castInput, cast, field.onChange)}
-                  >
-                    {MESSAGES.actions.add}
-                  </Button>
                 </div>
-              </div>
-            );
-          }}
-        />
-      </FormField>
+              );
+            }}
+          />
+        </FormField>
 
-      <FormField label={MESSAGES.series.opinion} htmlFor="opinion" error={errors.opinion?.message}>
-        <Textarea id="opinion" rows={3} {...register('opinion')} hasError={!!errors.opinion} />
-      </FormField>
+        <FormField label={MESSAGES.series.cast} error={errors.cast?.message}>
+          <Controller
+            name="cast"
+            control={control}
+            render={({ field }) => {
+              const cast = field.value ?? [];
+              return (
+                <div className={styles.chips}>
+                  {cast.length > 0 && (
+                    <div className={styles.chipRow}>
+                      {cast.map((name) => (
+                        <Tag
+                          key={name}
+                          label={name}
+                          onRemove={() => field.onChange(cast.filter((n) => n !== name))}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <div className={styles.chipInput}>
+                    <Input
+                      value={castInput}
+                      onChange={(e) => setCastInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addCastMember(castInput, cast, field.onChange);
+                        }
+                      }}
+                      placeholder="Nombre y Enter para añadir"
+                      aria-label="Añadir miembro del reparto"
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      aria-label="Añadir reparto"
+                      onClick={() => addCastMember(castInput, cast, field.onChange)}
+                    >
+                      {MESSAGES.actions.add}
+                    </Button>
+                  </div>
+                </div>
+              );
+            }}
+          />
+        </FormField>
+      </fieldset>
+
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}>{MESSAGES.series.sections.rating}</legend>
+
+        <FormField label={MESSAGES.series.rating} error={errors.rating?.message}>
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field }) => (
+              <Rating value={field.value ?? 0} onChange={field.onChange} label={MESSAGES.series.rating} />
+            )}
+          />
+        </FormField>
+      </fieldset>
+
+      <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}>{MESSAGES.series.sections.opinion}</legend>
+
+        <FormField label={MESSAGES.series.opinion} htmlFor="opinion" error={errors.opinion?.message}>
+          <Textarea id="opinion" rows={3} {...register('opinion')} hasError={!!errors.opinion} />
+        </FormField>
+      </fieldset>
 
       <div className={styles.formActions}>
         <Button type="submit" variant="primary" isLoading={isSubmitting} disabled={isSubmitting}>
