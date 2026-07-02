@@ -5,7 +5,7 @@ import type { Theme, ThemeMode, Series } from '@/types';
 import type { GenreCount, RatingCount, DurationCount } from '@/hooks/useDashboardMetrics';
 import {
   Button, Tag, Rating, Spinner, Avatar,
-  Input, Textarea, Select, FormField,
+  Input, Textarea, Select, FormField, FileInput,
   Modal, ConfirmDialog, IconButton,
 } from '@/components/ui';
 import { KPICard } from '@/components/features/dashboard/KPICard/KPICard';
@@ -173,6 +173,15 @@ export function ShowcasePage() {
                 { value: 'thriller', label: 'Thriller' },
                 { value: 'comedia', label: 'Comedia' },
               ]}
+            />
+          </FormField>
+          <FormField label="Portada">
+            <FileInput
+              accept="image/jpeg,image/png,image/webp"
+              onChange={() => undefined}
+              ariaLabel="Portada"
+              buttonLabel="Seleccionar imagen"
+              fileName="portada.jpg"
             />
           </FormField>
         </div>

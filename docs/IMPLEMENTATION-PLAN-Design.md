@@ -52,7 +52,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 | D0 Skill design-system | — | — | S · ✅ |
 | D1 Mockup de validación | — | D0 | M · ✅ |
 | D2 Tokens + temas | Hito 3 | D1 | L · ✅ |
-| D3 Primitives UI | Hito 1 (base) | D2 | L |
+| D3 Primitives UI | Hito 1 (base) | D2 | L · ✅ |
 | D4 Vistas | Hito 1 | D3 | L |
 | D5 Formulario de serie | Hito 2 | D3 | M |
 | D6 a11y + responsive + cierre | Hito 1/2/3 | D4, D5 | M |
@@ -138,18 +138,18 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 - **Objetivo:** subir el nivel visual de todas las primitives consumiendo los tokens nuevos.
 - **Entregable:** `components/ui/*` restyled; `/showcase` como prueba visual.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada — `Button` con roles diferenciados (ghost visible, focus-ring consistente vía `box-shadow`), `Input`/`Textarea`/`Select` con presencia real (borde 1.5px, `--color-surface-elevated`, hover, foco `--focus-ring`), `Card` elevada (`--color-surface-elevated` + `--shadow-md`/`--shadow-lg` en hover), `Rating` con estrellas vacías legibles (`--color-text-muted`), `Tag`/`IconButton` alineados al foco consistente. Nuevo primitive `components/ui/FileInput/` (input nativo oculto + `Button` secundario que dispara el click) integrado en `SeriesForm`, sin librería nueva. `FormField`/`Spinner`/`Avatar` ya cumplían tokens-first, sin cambios. Lint, `tsc -b` y suite (321 tests) en verde.
 - **Dependencias:** D2.
 
 ### Tareas
-1. **Button:** separar roles (primary/secondary/ghost/danger) con jerarquía clara; ghost deja de ser invisible.
-2. **Input / Textarea:** presencia real (borde, relleno, `:focus-visible`, estados error/disabled). Un campo vacío debe leerse como campo.
-3. **Select** (el estilable): coherente con Input. *(El `<select multiple>` nativo queda como está — decisión.)*
-4. **Tag / Chip:** ya están bien; alinear a tokens nuevos.
-5. **Card:** surface elevada real (borde+tono+sombra dark).
-6. **Rating:** estrellas vacías visibles (hoy casi negras sobre fondo oscuro).
-7. **`<input type="file">`:** envolver y disparar desde botón estilado (`Button`), ocultando el nativo. Sin librería.
-8. **FormField, IconButton, Spinner, Avatar:** alinear a tokens.
+1. **Button:** separar roles (primary/secondary/ghost/danger) con jerarquía clara; ghost deja de ser invisible. ✅
+2. **Input / Textarea:** presencia real (borde, relleno, `:focus-visible`, estados error/disabled). Un campo vacío debe leerse como campo. ✅
+3. **Select** (el estilable): coherente con Input. *(El `<select multiple>` nativo queda como está — decisión.)* ✅
+4. **Tag / Chip:** ya están bien; alinear a tokens nuevos. ✅
+5. **Card:** surface elevada real (borde+tono+sombra dark). ✅
+6. **Rating:** estrellas vacías visibles (hoy casi negras sobre fondo oscuro). ✅
+7. **`<input type="file">`:** envolver y disparar desde botón estilado (`Button`), ocultando el nativo. Sin librería. ✅ — nuevo `components/ui/FileInput/`.
+8. **FormField, IconButton, Spinner, Avatar:** alinear a tokens. ✅
 
 ### Archivos
 - `src/components/ui/{Button,Input,Textarea,Select,Tag,Card,Rating,FormField,IconButton}/`.

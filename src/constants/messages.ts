@@ -78,6 +78,7 @@ export const MESSAGES = {
     cover: 'Portada',
     coverPaste: 'Pega aquí una imagen (Ctrl/Cmd+V)',
     coverPasteHint: 'Copia una imagen de otra web y pégala, o usa el selector de archivo.',
+    coverSelectFile: 'Seleccionar imagen',
     createdBy: 'Añadida por',
     noResults: 'No se encontraron series',
     searchPlaceholder: 'Buscar por título…',
