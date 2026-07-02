@@ -54,7 +54,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 | D2 Tokens + temas | Hito 3 | D1 | L · ✅ |
 | D3 Primitives UI | Hito 1 (base) | D2 | L · ✅ |
 | D4 Vistas | Hito 1 | D3 | L · ✅ |
-| D5 Formulario de serie | Hito 2 | D3 | M |
+| D5 Formulario de serie | Hito 2 | D3 | M · ✅ |
 | D6 a11y + responsive + cierre | Hito 1/2/3 | D4, D5 | M |
 
 ---
@@ -193,14 +193,14 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 - **Objetivo:** convertir la columna plana en un formulario con secciones y controles destacados.
 - **Entregable:** `SeriesForm` con `fieldset`/`legend` por sección y campos con presencia.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada — `SeriesForm` reestructurado en 5 `fieldset`/`legend` (contenedor `surface` + borde + radius-lg, legend uppercase en `--color-primary`, siguiendo `.fset`/`.fset > legend` de `mockup-D1.html`): **Portada**, **Datos básicos** (título+año en fila de 2 columnas + sinopsis), **Clasificación** (temporadas, géneros, **reparto** — decisión: reparto agrupa con clasificación en vez de con opinión), **Valoración**, **Opinión**. Legends centralizadas en `MESSAGES.series.sections`. Sin cambios en RHF/Zod ni en los `name`. `pasteZone`/`imagePlaceholder` subidos a `--color-surface-elevated` para no fundirse con el nuevo fondo `surface` del fieldset. Lint, `tsc -b` y suite (321 tests, sin tocar selectores) en verde.
 - **Dependencias:** D3.
 
 ### Tareas
-1. **Agrupación con `fieldset`/`legend`:** secciones temáticas — **Portada**, **Datos básicos** (título/año/sinopsis), **Clasificación** (temporadas/géneros), **Valoración** (rating), **Opinión**. Requiere tocar el **JSX** del form (acotado a estructura + estilo, sin cambiar la lógica RHF/Zod ni los `name`).
-2. **Inputs destacados:** heredan D3; revisar espaciado entre secciones y dentro de cada fieldset.
-3. **Controles concretos:** botones "Añadir" (género/reparto) con jerarquía; rating visible; `<input type="file">` estilado (de D3). El `<select multiple>` se deja como está.
-4. **Mantener** la dropzone de paste tal cual (referencia de calidad) y los `aria-label` distintos de los botones "Añadir" (cuidado con los selectores de test de H10).
+1. **Agrupación con `fieldset`/`legend`:** secciones temáticas — **Portada**, **Datos básicos** (título/año/sinopsis), **Clasificación** (temporadas/géneros/reparto), **Valoración** (rating), **Opinión**. Requiere tocar el **JSX** del form (acotado a estructura + estilo, sin cambiar la lógica RHF/Zod ni los `name`). ✅
+2. **Inputs destacados:** heredan D3; revisar espaciado entre secciones y dentro de cada fieldset. ✅
+3. **Controles concretos:** botones "Añadir" (género/reparto) con jerarquía; rating visible; `<input type="file">` estilado (de D3). El `<select multiple>` se deja como está. ✅ (ya resuelto en D3)
+4. **Mantener** la dropzone de paste tal cual (referencia de calidad) y los `aria-label` distintos de los botones "Añadir" (cuidado con los selectores de test de H10). ✅
 
 ### Archivos
 - `src/components/features/SeriesForm/SeriesForm.tsx` (+ `.module.scss`).
