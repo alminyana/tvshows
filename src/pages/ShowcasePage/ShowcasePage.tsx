@@ -271,28 +271,28 @@ export function ShowcasePage() {
             label={MESSAGES.dashboard.totalSeries}
             value={19}
             icon={<CollectionIcon />}
-            accent="#6366f1"
+            accent="var(--color-primary)"
           />
           <KPICard
             label={MESSAGES.dashboard.featuredSeries}
             value={12}
             detail={MESSAGES.dashboard.featuredDetail}
             icon={<StarIcon />}
-            accent="#f59e0b"
+            accent="var(--color-accent)"
           />
           <KPICard
             label={MESSAGES.dashboard.miniseries}
             value={3}
             detail={MESSAGES.dashboard.miniseriesDetail}
             icon={<MiniseriesIcon />}
-            accent="#8b5cf6"
+            accent="var(--color-tertiary)"
           />
           <KPICard
             label={MESSAGES.dashboard.multiSeason}
             value={9}
             detail={MESSAGES.dashboard.multiSeasonDetail}
             icon={<LayersIcon />}
-            accent="#10b981"
+            accent="var(--color-success)"
           />
         </div>
       </section>
