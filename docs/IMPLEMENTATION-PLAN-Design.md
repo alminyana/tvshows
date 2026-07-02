@@ -55,7 +55,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 | D3 Primitives UI | Hito 1 (base) | D2 | L · ✅ |
 | D4 Vistas | Hito 1 | D3 | L · ✅ |
 | D5 Formulario de serie | Hito 2 | D3 | M · ✅ |
-| D6 a11y + responsive + cierre | Hito 1/2/3 | D4, D5 | M |
+| D6 a11y + responsive + cierre | Hito 1/2/3 | D4, D5 | M · ✅ |
 
 ---
 
@@ -218,15 +218,15 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 - **Objetivo:** app lista, sin regресiones, en los 16 combos y 3 breakpoints.
 - **Entregable:** suite verde, lint/tsc/build limpios, a11y y responsive verificados.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada — barrido final del rediseño visual (D0–D6 cerrado). `:focus-visible` migrado a `box-shadow: 0 0 0 3px var(--focus-ring)` (o `inset` en elementos contenidos) en los últimos focos sueltos que quedaban con `outline` hardcodeado (`ThemeToggle`, `Collapsible`, `Header.hamburger`, `SeriesListPage.viewButton`, `ShowcasePage`, dropzone de `SeriesForm`). Auditoría de contraste AA programática sobre los 16 bloques de `_tokens.scss`: corregidos 9 pares que fallaban (`primary/accent/tertiary-contrast` de blanco→negro en `ocean`, `sunset`, `forest`, `cian`, `amatista`, `carmesi`, `crepusculo` claros; 3 `--color-text-muted` recalibrados en `default`/`ocean`/`cian` claros) sin tocar el hue de marca. `--color-border` vs `--color-surface` (~1.2–2:1) se deja tal cual por decisión explícita — es un borde decorativo, no el único indicador de límite (hay sombra + diferencia de fondo). Responsive: grid de cards ya cubría 2/3/4/5 columnas en los breakpoints del proyecto; normalizados los `@media (max-width: 600px)` sueltos de `SeriesForm` (título+año, imagen+dropzone) al patrón mobile-first `@include tablet` compartido; de paso, tipografía hardcodeada (`0.875rem`/`0.75rem`) movida a tokens. `lint`, `tsc -b`, `build` y suite (321 tests) en verde. `/showcase` confirmado tras `import.meta.env.DEV` en `App.tsx` (ya lo estaba).
 - **Dependencias:** D4, D5.
 
 ### Tareas
-1. `:focus-visible` correcto en todos los interactivos restyled.
-2. Contraste verificado en los 16 combos (texto, UI, estados).
-3. Responsive en móvil/tablet/desktop (incluye el nuevo grid de cards y el form por secciones).
-4. `lint`, `tsc -b`, `build`, `test:run` limpios.
-5. Confirmar `/showcase` sigue solo en DEV.
+1. `:focus-visible` correcto en todos los interactivos restyled. ✅
+2. Contraste verificado en los 16 combos (texto, UI, estados). ✅ (border/surface aceptado como decorativo, decisión explícita)
+3. Responsive en móvil/tablet/desktop (incluye el nuevo grid de cards y el form por secciones). ✅
+4. `lint`, `tsc -b`, `build`, `test:run` limpios. ✅
+5. Confirmar `/showcase` sigue solo en DEV. ✅
 
 ### Hecho cuando
 - Los 16 combos pasan revisión visual y de contraste, el responsive aguanta en los 3 breakpoints, y toda la cadena de calidad está en verde.

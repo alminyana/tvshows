@@ -25,9 +25,9 @@ Always read PROFILE.md, CONTEXT.md, and PRD-Phase-1.md before proposing any chan
 
 Personal SPA to manage favorite TV shows. The app is scaffolded and functional. **Phase 2 (Supabase migration) is essentially complete**: Dexie/IndexedDB has been removed and all persistence now goes through Supabase (Postgres + Auth + Storage + RLS). The optional F7 heartbeat is implemented, deployed and verified (GitHub Action + `heartbeat` table); only periodic backups and deploy remain, deferred to a later phase. See `docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md`.
 
-A **visual redesign is now in progress** (design/visual only, no business logic changes): tokens-first overhaul of elevation, typography and themes, plus 4 new themes and form/view restyling. See `docs/IMPLEMENTATION-PLAN-Design.md` and the redesign status below.
+The **visual redesign is complete** (design/visual only, no business logic changes): tokens-first overhaul of elevation, typography and themes, 4 new themes, primitives/views/form restyling, and an a11y + responsive closing pass. See `docs/IMPLEMENTATION-PLAN-Design.md` and the redesign status below.
 
-## Visual redesign (in progress)
+## Visual redesign (complete — D0–D6)
 
 Design-only effort, tokens-first. Plan: `@docs/IMPLEMENTATION-PLAN-Design.md`. Visual contract: `@docs/design/mockup-D1.html`.
 
@@ -38,7 +38,7 @@ Status:
 - **D3 — Primitives (restyle):** ✅ done. `Button`/`Input`/`Textarea`/`Select`/`Card`/`Rating`/`Tag`/`IconButton` consuming `--color-surface-elevated`, `--focus-ring`, `--shadow-lg`; new `components/ui/FileInput/` (hidden native input + styled `Button` trigger) wired into `SeriesForm`. `FormField`/`Spinner`/`Avatar` already tokens-first.
 - **D4 — Views:** ✅ done. `SeriesCard`/`SeriesRow` elevated (real shadows, tinted-border hover on row, `--focus-ring`), primary→accent→tertiary gradient on cover placeholders, genre chips deduplicated and recolored via the `Tag` primitive with a rotating categorical color (new `src/utils/categoricalPalette.ts`: `primary·accent·tertiary·success·warning`). `SeriesDetailPage` groups year/seasons/rating/genres in a bordered `.metaCard`; reinforced title→meta→synopsis hierarchy. `DashboardPage`/`ShowcasePage` KPI accents moved from hardcoded hex to theme tokens. `Header` focus unified to `--focus-ring`. Also fixed a D3 regression: `Card` base background was wrongly `--color-surface-elevated`, reverted to `--color-surface` per the frozen `mockup-D1.html` contract.
 - **D5 — Series form (fieldsets):** ✅ done. `SeriesForm` grouped into 5 `fieldset`/`legend` sections (Cover, Basics, Classification, Rating, Opinion; cast grouped under Classification per user decision), styled per the `.fset`/`.fset > legend` pattern in `mockup-D1.html`. No RHF/Zod or `name` changes; legends centralized in `MESSAGES.series.sections`.
-- **D6 a11y/responsive:** pending. **D6 is next and closes the visual redesign.**
+- **D6 — a11y + responsive + cierre:** ✅ done. **The visual redesign (D0–D6) is complete.** Remaining hardcoded `outline` focus rules migrated to `--focus-ring`; a programmatic AA contrast audit over all 16 `_tokens.scss` blocks found and fixed 9 failing text/UI pairs (white→black `*-contrast` on several light-mode brand colors, 3 recalibrated `--color-text-muted`) without touching brand hues — `--color-border` vs `--color-surface` (~1.2–2:1) kept as-is, decorative border, explicit user decision. `SeriesForm`'s ad-hoc `max-width: 600px` media queries normalized to the shared mobile-first `@include tablet` mixin. Lint/`tsc -b`/`build`/tests all green.
 
 ## Skills
 
