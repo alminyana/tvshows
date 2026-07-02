@@ -3,12 +3,17 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SeriesForm } from './SeriesForm';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
+import type { User } from '@/types/user';
 
 vi.mock('@/services', () => ({
   imageService: { getSrc: vi.fn().mockResolvedValue(undefined) },
 }));
 
-// useGenres con estado real para cubrir el alta de un género nuevo en el form.
+const mockUseAuth = vi.fn<() => { user: User | null; loading: boolean; login: () => void; logout: () => void }>(
+  () => ({ user: null, loading: false, login: vi.fn(), logout: vi.fn() }),
+);
+
+// useGenres con estado real para cubrir el alta/baja de géneros en el form.
 vi.mock('@/hooks', async () => {
   const React = await vi.importActual<typeof import('react')>('react');
   const SEED = [
@@ -34,8 +39,12 @@ vi.mock('@/hooks', async () => {
         setGenres((prev) => [...prev, trimmed]);
         return trimmed;
       };
-      return { genres, loading: false, error: null, add };
+      const remove = async (name: string) => {
+        setGenres((prev) => prev.filter((g) => g.toLowerCase() !== name.toLowerCase()));
+      };
+      return { genres, loading: false, error: null, add, remove };
     },
+    useAuth: () => mockUseAuth(),
   };
 });
 
@@ -58,6 +67,7 @@ function renderForm(props: Partial<React.ComponentProps<typeof SeriesForm>> = {}
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockUseAuth.mockReturnValue({ user: null, loading: false, login: vi.fn(), logout: vi.fn() });
   URL.createObjectURL = vi.fn(() => 'blob:mock');
   URL.revokeObjectURL = vi.fn();
 });
@@ -120,6 +130,41 @@ describe('SeriesForm', () => {
     // El género nuevo aparece como opción seleccionable
     expect(screen.getByRole('option', { name: 'Western' })).toBeInTheDocument();
     expect((screen.getByRole('option', { name: 'Western' }) as HTMLOptionElement).selected).toBe(true);
+  });
+
+  it('muestra los géneros seleccionados como chips encima del desplegable', () => {
+    renderForm({ initialValues: validValues });
+    expect(screen.getByText(/géneros seleccionados/i)).toBeInTheDocument();
+    // "Drama" y "Thriller" aparecen tanto en la opción del select como en el chip.
+    expect(screen.getAllByText('Drama').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText('Thriller').length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('no muestra botón de eliminar en los chips de género para un usuario no admin', () => {
+    renderForm({ initialValues: validValues });
+    expect(screen.queryByRole('button', { name: /quitar Drama/i })).not.toBeInTheDocument();
+  });
+
+  it('permite a un admin eliminar un género del catálogo, actualizando dropdown y selección', async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 'admin-1', email: 'a@local', password: 'h', role: 'admin', createdAt: '' },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+    });
+    const user = userEvent.setup();
+    renderForm({ initialValues: validValues });
+
+    await user.click(screen.getByRole('button', { name: /quitar Drama/i }));
+    expect(screen.getByText(/eliminar el género "Drama" del catálogo/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /confirmar/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('option', { name: 'Drama' })).not.toBeInTheDocument();
+    });
+    // Ya no está ni en el catálogo (dropdown) ni en la lista de seleccionados.
+    expect(screen.queryByText('Drama')).not.toBeInTheDocument();
   });
 
   it('quita un chip del reparto', async () => {

@@ -6,6 +6,7 @@ vi.mock('@/services', () => ({
   genresService: {
     getAll: vi.fn(),
     add: vi.fn(),
+    remove: vi.fn(),
   },
 }));
 
@@ -74,5 +75,19 @@ describe('useGenres', () => {
     });
 
     expect(returned).toBeNull();
+  });
+
+  it('remove borra el género del catálogo y lo quita del estado local', async () => {
+    vi.mocked(genresService.getAll).mockResolvedValue(['Drama', 'Comedia']);
+    vi.mocked(genresService.remove).mockResolvedValue(undefined);
+    const { result } = renderHook(() => useGenres());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.remove('Drama');
+    });
+
+    expect(genresService.remove).toHaveBeenCalledWith('Drama');
+    expect(result.current.genres).toEqual(['Comedia']);
   });
 });
