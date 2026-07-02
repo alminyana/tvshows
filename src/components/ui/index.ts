@@ -1,6 +1,7 @@
 export { Button } from './Button/Button';
 export { Input } from './Input/Input';
 export { Textarea } from './Textarea/Textarea';
+export { FileInput } from './FileInput/FileInput';
 export { Select } from './Select/Select';
 export type { SelectOption } from './Select/Select';
 export { Tag } from './Tag/Tag';

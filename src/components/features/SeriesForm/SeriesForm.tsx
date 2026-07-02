@@ -5,7 +5,7 @@ import { seriesSchema } from '@/utils/seriesSchema';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
 import { useGenres } from '@/hooks';
 import { imageService } from '@/services';
-import { Button, FormField, Input, Textarea, Select, Rating, Tag } from '@/components/ui';
+import { Button, FormField, Input, Textarea, Select, Rating, Tag, FileInput } from '@/components/ui';
 import { MESSAGES } from '@/constants';
 import styles from './SeriesForm.module.scss';
 
@@ -129,12 +129,12 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
               {MESSAGES.series.coverPaste}
             </div>
             <p className={styles.pasteHint}>{MESSAGES.series.coverPasteHint}</p>
-            <input
-              type="file"
+            <FileInput
               accept="image/jpeg,image/png,image/webp"
               onChange={handleFileChange}
-              className={styles.fileInput}
-              aria-label={MESSAGES.series.cover}
+              ariaLabel={MESSAGES.series.cover}
+              buttonLabel={MESSAGES.series.coverSelectFile}
+              fileName={imageFile?.name}
             />
           </div>
         </div>
