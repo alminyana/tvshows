@@ -4,6 +4,7 @@ import { useSeriesById, useAuth, useNotification } from '@/hooks';
 import { seriesService, imageService } from '@/services';
 import { Rating, Tag, Spinner, Button, ConfirmDialog } from '@/components/ui';
 import { MESSAGES } from '@/constants';
+import { categoricalColor } from '@/utils';
 import styles from './SeriesDetailPage.module.scss';
 
 export function SeriesDetailPage() {
@@ -103,17 +104,19 @@ export function SeriesDetailPage() {
         <div className={styles.content}>
           <h1 className={styles.title}>{series.title}</h1>
 
-          <div className={styles.meta}>
-            <span className={styles.year}>{series.year}</span>
-            <span className={styles.seasons}>{series.seasons}</span>
-          </div>
+          <div className={styles.metaCard}>
+            <div className={styles.meta}>
+              <span className={styles.year}>{series.year}</span>
+              <span className={styles.seasons}>{series.seasons}</span>
+            </div>
 
-          <Rating value={series.rating} readOnly label={MESSAGES.series.rating} />
+            <Rating value={series.rating} readOnly label={MESSAGES.series.rating} />
 
-          <div className={styles.genres}>
-            {series.genres.map((g) => (
-              <Tag key={g} label={g} />
-            ))}
+            <div className={styles.genres}>
+              {Array.from(new Set(series.genres)).map((g, i) => (
+                <Tag key={g} label={g} color={categoricalColor(i)} />
+              ))}
+            </div>
           </div>
 
           <section className={styles.section}>

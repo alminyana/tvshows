@@ -53,7 +53,7 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 | D1 Mockup de validación | — | D0 | M · ✅ |
 | D2 Tokens + temas | Hito 3 | D1 | L · ✅ |
 | D3 Primitives UI | Hito 1 (base) | D2 | L · ✅ |
-| D4 Vistas | Hito 1 | D3 | L |
+| D4 Vistas | Hito 1 | D3 | L · ✅ |
 | D5 Formulario de serie | Hito 2 | D3 | M |
 | D6 a11y + responsive + cierre | Hito 1/2/3 | D4, D5 | M |
 
@@ -166,16 +166,16 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 - **Objetivo:** aplicar el sistema a las vistas con datos reales.
 - **Entregable:** listado (cards+lista), detalle, dashboard, landing y header pulidos.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ Completada — `SeriesCard`/`SeriesRow` con elevación real (`shadow-md`→`shadow-lg` en card, `shadow-sm`+borde tintado en row), foco vía `--focus-ring`, degradado `primary→accent→tertiary` en placeholders sin portada, y géneros deduplicados (`Array.from(new Set(...))`, corrige el bug de chips repetidos). Chips de género ahora usan el primitive `Tag` con color categórico rotado (`primary·accent·tertiary·success·warning`, nuevo `src/utils/categoricalPalette.ts`), sustituyendo los `<span>` bespoke — consistente en Card, Row y `SeriesDetailPage`. `SeriesDetailPage` con `.metaCard` (surface+borde) agrupando año/temporadas/rating/género y jerarquía `title` (3xl bold) → meta → sinopsis reforzada. `DashboardPage`/`ShowcasePage`: `KPICard.accent` pasa de hex hardcodeado a `var(--color-primary/accent/tertiary/success)` (los gráficos ya usaban `Card`, heredan la elevación de D3 sin tocarlos). `Header`: foco consistente y `themeSelect`/`loginButton` alineados a los tokens de presencia de D3. `LandingPage` revisado, sin cambios (overlay intencionalmente fuera del sistema de temas). Corrección de D3: `Card` base volvía a `--color-surface` (no `-elevated`), fiel al contrato congelado en `mockup-D1.html`. Lint, `tsc -b` y suite (321 tests) en verde.
 - **Dependencias:** D3.
 
 ### Tareas
-1. **SeriesCard:** contenedor con elevación; jerarquía del bloque inferior (título > meta > género > rating); alturas uniformes (ya documentado en H9). Dedupe de chip de género (**bug** de "La amiga estupenda").
-2. **SeriesRow (lista):** ritmo horizontal y agrupación; reducir el vacío entre columnas; consistencia visual del campo temporadas.
-3. **SeriesDetailPage:** contenedor para los metadatos (año/temporadas/rating/género); aprovechar el vacío inferior; jerarquía título→meta→sinopsis.
-4. **DashboardPage:** contenedores de KPI y de gráficos coherentes (los tooltips de Recharts ya están tematizados desde H9/H10); encabezados con icono ya existen.
-5. **LandingPage:** revisión ligera (ya está decente; ajustar a tokens nuevos si cambia algún color).
-6. **Header:** pulido de jerarquía y estados.
+1. **SeriesCard:** contenedor con elevación; jerarquía del bloque inferior (título > meta > género > rating); alturas uniformes (ya documentado en H9). Dedupe de chip de género (**bug** de "La amiga estupenda"). ✅
+2. **SeriesRow (lista):** ritmo horizontal y agrupación; reducir el vacío entre columnas; consistencia visual del campo temporadas. ✅
+3. **SeriesDetailPage:** contenedor para los metadatos (año/temporadas/rating/género); aprovechar el vacío inferior; jerarquía título→meta→sinopsis. ✅
+4. **DashboardPage:** contenedores de KPI y de gráficos coherentes (los tooltips de Recharts ya están tematizados desde H9/H10); encabezados con icono ya existen. ✅
+5. **LandingPage:** revisión ligera (ya está decente; ajustar a tokens nuevos si cambia algún color). ✅ — sin cambios de color.
+6. **Header:** pulido de jerarquía y estados. ✅
 
 ### Archivos
 - `src/components/features/{SeriesCard,SeriesRow}/`, `src/pages/{SeriesListPage,SeriesDetailPage,DashboardPage,LandingPage}/`, `src/components/layout/Header/`.
