@@ -7,6 +7,8 @@ const mockSupabase = vi.hoisted(() => {
     order: vi.fn(),
     single: vi.fn(),
     in: vi.fn(),
+    delete: vi.fn(),
+    ilike: vi.fn(),
   };
   Object.values(chain).forEach((fn) => {
     fn.mockReturnValue(chain);
@@ -73,5 +75,19 @@ describe('genresServiceSupabase.add', () => {
       error: { code: '42P01', message: 'tabla no existe' },
     });
     await expect(genresServiceSupabase.add('Drama')).rejects.toMatchObject({ code: '42P01' });
+  });
+});
+
+describe('genresServiceSupabase.remove', () => {
+  it('borra el género por nombre (case-insensitive)', async () => {
+    mockSupabase._chain.ilike.mockResolvedValue({ error: null });
+    await genresServiceSupabase.remove('Drama');
+    expect(mockSupabase._chain.delete).toHaveBeenCalled();
+    expect(mockSupabase._chain.ilike).toHaveBeenCalledWith('name', 'Drama');
+  });
+
+  it('lanza error si Supabase falla', async () => {
+    mockSupabase._chain.ilike.mockResolvedValue({ error: { message: 'DB error' } });
+    await expect(genresServiceSupabase.remove('Drama')).rejects.toMatchObject({ message: 'DB error' });
   });
 });

@@ -6,6 +6,7 @@ interface UseGenresResult {
   loading: boolean;
   error: string | null;
   add: (name: string) => Promise<string | null>;
+  remove: (name: string) => Promise<void>;
 }
 
 export function useGenres(): UseGenresResult {
@@ -45,5 +46,11 @@ export function useGenres(): UseGenresResult {
     return canonical;
   }, []);
 
-  return { genres, loading, error, add };
+  // Borra el género del catálogo compartido (RLS: solo admin) y lo retira del estado local.
+  const remove = useCallback(async (name: string): Promise<void> => {
+    await genresService.remove(name);
+    setGenres((prev) => prev.filter((g) => g.toLowerCase() !== name.toLowerCase()));
+  }, []);
+
+  return { genres, loading, error, add, remove };
 }

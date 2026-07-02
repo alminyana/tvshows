@@ -3,10 +3,11 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { seriesSchema } from '@/utils/seriesSchema';
 import type { SeriesFormValues } from '@/utils/seriesSchema';
-import { useGenres } from '@/hooks';
+import { useGenres, useAuth } from '@/hooks';
 import { imageService } from '@/services';
-import { Button, FormField, Input, Textarea, Select, Rating, Tag, FileInput } from '@/components/ui';
+import { Button, FormField, Input, Textarea, Select, Rating, Tag, FileInput, ConfirmDialog } from '@/components/ui';
 import { MESSAGES } from '@/constants';
+import { categoricalColor } from '@/utils';
 import styles from './SeriesForm.module.scss';
 
 interface SeriesFormProps {
@@ -21,6 +22,8 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
     register,
     handleSubmit,
     control,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<SeriesFormValues>({
     resolver: zodResolver(seriesSchema),
@@ -40,10 +43,30 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
   const [imageError, setImageError] = useState<string | null>(null);
   const [castInput, setCastInput] = useState('');
   const [genreInput, setGenreInput] = useState('');
+  const [genreToDelete, setGenreToDelete] = useState<string | null>(null);
+  const [isDeletingGenre, setIsDeletingGenre] = useState(false);
   const filePreviewUrlRef = useRef<string | null>(null);
-  const { genres: genreCatalog, add: addGenreToCatalog } = useGenres();
+  const { genres: genreCatalog, add: addGenreToCatalog, remove: removeGenreFromCatalog } = useGenres();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const genreOptions = genreCatalog.map((g) => ({ value: g, label: g }));
+
+  async function handleConfirmDeleteGenre() {
+    if (!genreToDelete) return;
+    setIsDeletingGenre(true);
+    try {
+      await removeGenreFromCatalog(genreToDelete);
+      const current = getValues('genres') ?? [];
+      setValue(
+        'genres',
+        current.filter((g) => g.toLowerCase() !== genreToDelete.toLowerCase()),
+      );
+      setGenreToDelete(null);
+    } finally {
+      setIsDeletingGenre(false);
+    }
+  }
 
   useEffect(() => {
     if (!existingImageId) return;
@@ -185,6 +208,21 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
               };
               return (
                 <div className={styles.chips}>
+                  {selected.length > 0 && (
+                    <div className={styles.selectedGenres}>
+                      <span className={styles.chipRowLabel}>{MESSAGES.series.selectedGenres}</span>
+                      <div className={styles.chipRow}>
+                        {selected.map((g, i) => (
+                          <Tag
+                            key={g}
+                            label={g}
+                            color={categoricalColor(i)}
+                            onRemove={isAdmin ? () => setGenreToDelete(g) : undefined}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <Select
                     id="genres"
                     multiple
@@ -298,6 +336,15 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           {MESSAGES.actions.save}
         </Button>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!genreToDelete}
+        title={genreToDelete ? MESSAGES.series.genreDeleteConfirm(genreToDelete) : ''}
+        message={MESSAGES.series.genreDeleteConfirmDetail}
+        onConfirm={handleConfirmDeleteGenre}
+        onClose={() => setGenreToDelete(null)}
+        isLoading={isDeletingGenre}
+      />
     </form>
   );
 }
