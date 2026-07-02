@@ -1,3 +1,5 @@
+@use '@/styles/mixins' as *;
+
 .form {
   display: flex;
   flex-direction: column;
@@ -28,11 +30,11 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-4);
 
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
+  @include tablet {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -56,12 +58,12 @@
 
 .imageField {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   gap: var(--space-4);
 
-  @media (max-width: 600px) {
-    flex-direction: column;
+  @include tablet {
+    flex-direction: row;
   }
 }
 
@@ -98,22 +100,27 @@
   border-radius: var(--radius-md);
   background: var(--color-surface-elevated);
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   text-align: center;
   cursor: text;
   transition: border-color 0.2s ease, color 0.2s ease;
 
-  &:hover,
-  &:focus-visible {
+  &:hover {
     border-color: var(--color-primary);
     color: var(--color-text);
+  }
+
+  &:focus-visible {
     outline: none;
+    border-color: var(--color-primary);
+    color: var(--color-text);
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 }
 
 .pasteHint {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
