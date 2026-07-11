@@ -5,7 +5,7 @@ import path from 'node:path';
 import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig({
-  plugins: [react(), cloudflare()],
+  plugins: [react(), ...(process.env.VITEST ? [] : [cloudflare()])],
   // server: {
   //   host: true, // expone en 0.0.0.0
   //   port: 5173,
