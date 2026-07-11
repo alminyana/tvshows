@@ -46,7 +46,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 | Fase | Depende de | Complejidad | Estado |
 |---|---|---|---|
 | P0 Preparación del repo | — | S | ✅ Hecho |
-| P1 Provisión Cloudflare + conexión Git | P0 | S | ✅ Hecho (automático, vía GitHub App) |
+| P1 Provisión Cloudflare + conexión Git | P0 | S | ✅ Hecho (confirmado en dashboard) |
 | P2 Variables de entorno + config de build | P1 | S | ⬜ Pendiente |
 | P3 Ajustes en Supabase para el nuevo origen | P0 | S | ⬜ Pendiente |
 | P4 Primer deploy + verificación funcional | P1, P2, P3 | M | ⬜ Pendiente |
@@ -90,20 +90,23 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 ## P1 — Provisión en Cloudflare + conexión Git · Complejidad: S
 
 - **Objetivo:** Worker creado y enlazado al repo, con la config de build correcta.
-- **Estado:** ✅ **Hecho automáticamente.** La GitHub App de Cloudflare conectó el repo y generó `wrangler.jsonc` + dependencias (`cbdb948`), sin que este plan haya documentado un paso manual explícito en el dashboard — se asume hecho desde la cuenta de Cloudflare del proyecto.
+- **Estado:** ✅ **Hecho.** La GitHub App de Cloudflare conectó el repo y generó `wrangler.jsonc` + dependencias (`cbdb948`); confirmado en el dashboard (Settings → Build) el resto de la configuración.
 - **Dependencias:** P0.
 
 ### Qué quedó configurado
 - `wrangler.jsonc`: `name: "tvshows"`, `compatibility_date`, `observability.enabled: true`, `assets.not_found_handling: "single-page-application"`, `compatibility_flags: ["nodejs_compat"]`.
-- `package.json`: `preview` → `pnpm run build && wrangler dev`; nuevo script `deploy` → `pnpm run build && wrangler deploy`.
+- `package.json`: `preview` → `pnpm run build && wrangler dev`; script `deploy` → `pnpm run build && wrangler deploy` (no usado directamente por Cloudflare, ver abajo).
 - `vite.config.ts`: plugin `cloudflare()` (ahora excluido bajo Vitest, ver `P0`).
-
-### Pendiente de confirmar (no verificable desde el repo)
-- Qué rama dispara el deploy de producción en el dashboard de Cloudflare (asumido `main`, a confirmar).
-- Si hay algún **Build command** configurado en el dashboard aparte del que corre `wrangler deploy` internamente, o si Cloudflare usa directamente el script `deploy` de `package.json`.
+- **Dashboard (Settings → Build), confirmado por el usuario:**
+  - **Build command:** `pnpm build`
+  - **Deploy command:** `npx wrangler deploy`
+  - **Non-production branch deploy command:** `npx wrangler versions upload`
+  - **Path:** `/`
+  - Nota: Cloudflare separa build y deploy en dos comandos propios del dashboard (`pnpm build` + `npx wrangler deploy`), **no** llama al script `deploy` de `package.json`. Usa `npx` (no `pnpm exec`) porque el paso de deploy corre en un contexto sin el `node_modules` del build — `npx` resuelve `wrangler` bajo demanda.
+- **Rama de producción:** `main` — confirmado en el dashboard (Settings → Build → Production branch).
 
 ### Verificación / "Hecho cuando"
-- El proyecto Worker existe en el dashboard, enlazado al repo, con el build detectando pnpm + la versión de Node de `.node-version` en el log.
+- El proyecto Worker existe en el dashboard, enlazado al repo, con `pnpm build` + `npx wrangler deploy` configurados como Build/Deploy command.
 
 ---
 
@@ -226,7 +229,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 ## Resumen operativo (estado actual)
 
 1. ✅ `.node-version`, routing SPA nativo, rutas DEV-only fuera del bundle, Vitest arreglado — todo commiteado y mergeado (`334a35b` / PR #76).
-2. ✅ `wrangler.jsonc` + integración Git ya conectada por Cloudflare.
+2. ✅ `wrangler.jsonc` + integración Git conectada; Build/Deploy command confirmados en el dashboard (`pnpm build` / `npx wrangler deploy` / `npx wrangler versions upload` para no-producción).
 3. ⬜ Declarar `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` en el dashboard del Worker (Production, y Preview si aplica). Nada de `service_role` ni credenciales de scripts.
 4. ⬜ Supabase → Auth → Site URL + Redirect URLs con el origen `*.workers.dev`.
 5. ⬜ Deploy → smoke test completo (`P4`) → (dominio propio / headers si procede).
