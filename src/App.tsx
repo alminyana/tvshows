@@ -1,7 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider, AuthProvider, NotificationProvider } from '@/context';
 import { Layout, ProtectedRoute } from '@/components/layout';
-import { ShowcasePage, SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage, LandingPage } from '@/pages';
+import { SeriesListPage, SeriesDetailPage, SeriesFormPage, LoginPage, DashboardPage, UsersPage, NotFoundPage, LandingPage } from '@/pages';
+
+const ShowcasePage = lazy(() =>
+  import('@/pages/ShowcasePage/ShowcasePage').then((m) => ({ default: m.ShowcasePage }))
+);
 
 export default function App() {
   return (
@@ -23,7 +28,14 @@ export default function App() {
               <Route path="/users" element={<UsersPage />} />
             </Route>
             {import.meta.env.DEV && (
-              <Route path="/showcase" element={<ShowcasePage />} />
+              <Route
+                path="/showcase"
+                element={(
+                  <Suspense fallback={null}>
+                    <ShowcasePage />
+                  </Suspense>
+                )}
+              />
             )}
             <Route path="*" element={<NotFoundPage />} />
           </Route>
