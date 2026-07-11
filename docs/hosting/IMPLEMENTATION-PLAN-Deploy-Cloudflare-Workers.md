@@ -47,7 +47,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 |---|---|---|---|
 | P0 Preparación del repo | — | S | ✅ Hecho |
 | P1 Provisión Cloudflare + conexión Git | P0 | S | ✅ Hecho (confirmado en dashboard) |
-| P2 Variables de entorno + config de build | P1 | S | ⬜ Pendiente |
+| P2 Variables de entorno + config de build | P1 | S | ✅ Hecho |
 | P3 Ajustes en Supabase para el nuevo origen | P0 | S | ⬜ Pendiente |
 | P4 Primer deploy + verificación funcional | P1, P2, P3 | M | ⬜ Pendiente |
 | P5 Dominio propio (opcional) | P4 | S | ⬜ Opcional |
@@ -114,19 +114,17 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 
 - **Objetivo:** que el build del edge disponga de las env vars de Vite, en producción y en previews.
 - **Entregable:** `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` definidas; build verde.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ **Hecho.**
 - **Dependencias:** P1.
 
-### Tareas
-1. En el dashboard del Worker → **Settings → Variables and Secrets**, añadir:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   Al ser vars que Vite inlinea en **build time**, deben estar disponibles ahí, no solo en runtime del Worker.
-2. **NO** añadir `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`, `USER_PASSWORD` ni ninguna credencial de scripts Node. El Worker no tiene código server-side que las use — confirmado con `wrangler deploy --dry-run` (`No bindings found` cuando `wrangler.jsonc` no las declara). Añadirlas sería exponer secretos sin ningún caso de uso.
-3. Relanzar el deploy (push a la rama de producción) y confirmar build verde.
+### Tareas realizadas
+1. **Hallazgo:** el Worker es solo de Static Assets (sin `_worker.js`/entrypoint), así que **Settings → Variables and Secrets** a nivel de Worker (runtime) rechaza cualquier variable con el error *"Variables cannot be added to a Worker that only has static assets"*. Las env vars de build-time viven en una ubicación distinta: dentro de **Settings → Build**, hay su propia sección **Variables and Secrets** (build-time, para el proceso `pnpm build`), separada de la de runtime.
+2. Añadidas ahí `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+3. **NO** se añadió `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`, `USER_PASSWORD` ni ninguna credencial de scripts Node — el Worker no tiene código server-side que las use.
+4. Deploy relanzado — build verde confirmado.
 
 ### Verificación / "Hecho cuando"
-- El build termina OK con las env vars presentes; el cliente Supabase del bundle servido apunta al proyecto correcto (se valida funcionalmente en `P4`).
+- ✅ El build termina OK con las env vars presentes. La validación funcional (que el cliente Supabase del bundle apunte al proyecto correcto) se confirma en `P4`.
 
 ---
 
@@ -230,6 +228,6 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 
 1. ✅ `.node-version`, routing SPA nativo, rutas DEV-only fuera del bundle, Vitest arreglado — todo commiteado y mergeado (`334a35b` / PR #76).
 2. ✅ `wrangler.jsonc` + integración Git conectada; Build/Deploy command confirmados en el dashboard (`pnpm build` / `npx wrangler deploy` / `npx wrangler versions upload` para no-producción).
-3. ⬜ Declarar `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` en el dashboard del Worker (Production, y Preview si aplica). Nada de `service_role` ni credenciales de scripts.
+3. ✅ `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` declaradas en **Settings → Build → Variables and Secrets** (build-time, no la de runtime del Worker); deploy relanzado y verde.
 4. ⬜ Supabase → Auth → Site URL + Redirect URLs con el origen `*.workers.dev`.
 5. ⬜ Deploy → smoke test completo (`P4`) → (dominio propio / headers si procede).
