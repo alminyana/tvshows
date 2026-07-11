@@ -151,3 +151,8 @@ PROFILE.md
 
 #mocks
 tvshows-export.json
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
