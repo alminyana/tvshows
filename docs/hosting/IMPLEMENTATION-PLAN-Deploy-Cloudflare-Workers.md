@@ -48,7 +48,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 | P0 Preparación del repo | — | S | ✅ Hecho |
 | P1 Provisión Cloudflare + conexión Git | P0 | S | ✅ Hecho (confirmado en dashboard) |
 | P2 Variables de entorno + config de build | P1 | S | ✅ Hecho |
-| P3 Ajustes en Supabase para el nuevo origen | P0 | S | ⬜ Pendiente |
+| P3 Ajustes en Supabase para el nuevo origen | P0 | S | ✅ Hecho |
 | P4 Primer deploy + verificación funcional | P1, P2, P3 | M | ⬜ Pendiente |
 | P5 Dominio propio (opcional) | P4 | S | ⬜ Opcional |
 | P6 Headers de seguridad + caché + cierre (opcional) | P4 | M | ⬜ Opcional |
@@ -132,7 +132,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 
 - **Objetivo:** que Auth y los flujos basados en email funcionen desde el dominio de Cloudflare.
 - **Entregable:** Site URL y Redirect URLs de Supabase actualizadas con el origen del Worker.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ **Hecho.**
 - **Dependencias:** P0 (independiente de P1/P2; puede prepararse en paralelo).
 
 ### Tareas
@@ -229,5 +229,5 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 1. ✅ `.node-version`, routing SPA nativo, rutas DEV-only fuera del bundle, Vitest arreglado — todo commiteado y mergeado (`334a35b` / PR #76).
 2. ✅ `wrangler.jsonc` + integración Git conectada; Build/Deploy command confirmados en el dashboard (`pnpm build` / `npx wrangler deploy` / `npx wrangler versions upload` para no-producción).
 3. ✅ `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` declaradas en **Settings → Build → Variables and Secrets** (build-time, no la de runtime del Worker); deploy relanzado y verde.
-4. ⬜ Supabase → Auth → Site URL + Redirect URLs con el origen `*.workers.dev`.
+4. ✅ Supabase → Auth → Site URL + Redirect URLs con el origen `*.workers.dev`.
 5. ⬜ Deploy → smoke test completo (`P4`) → (dominio propio / headers si procede).
