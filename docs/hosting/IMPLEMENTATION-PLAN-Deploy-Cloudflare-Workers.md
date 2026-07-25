@@ -49,7 +49,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 | P1 Provisión Cloudflare + conexión Git | P0 | S | ✅ Hecho (confirmado en dashboard) |
 | P2 Variables de entorno + config de build | P1 | S | ✅ Hecho |
 | P3 Ajustes en Supabase para el nuevo origen | P0 | S | ✅ Hecho |
-| P4 Primer deploy + verificación funcional | P1, P2, P3 | M | ⬜ Pendiente |
+| P4 Primer deploy + verificación funcional | P1, P2, P3 | M | ✅ Hecho |
 | P5 Dominio propio (opcional) | P4 | S | ⬜ Opcional |
 | P6 Headers de seguridad + caché + cierre (opcional) | P4 | M | ⬜ Opcional |
 | P7 Alternativa: deploy vía Wrangler + GitHub Actions (opcional) | P0 | M | ⬜ Descartado (P1 ya resuelto vía Git nativa) |
@@ -151,7 +151,7 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 
 - **Objetivo:** app publicada y validada end-to-end en el dominio `*.workers.dev`.
 - **Entregable:** URL pública funcional, smoke test completo pasado.
-- **Estado:** ⬜ Pendiente.
+- **Estado:** ✅ **Hecho.** URL de producción: `https://tvshows.alminyana.workers.dev`.
 - **Dependencias:** P1, P2, P3.
 
 ### Tareas
@@ -169,7 +169,10 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 4. Anotar la URL y el **rollback**: cada deployment de Worker queda versionado; ante un fallo, rollback al deployment anterior desde el dashboard.
 
 ### Verificación / "Hecho cuando"
-- Todos los puntos del smoke test pasan en `*.workers.dev`, incluida la recarga en rutas profundas y el ciclo completo de CRUD con Storage y Auth.
+- ✅ Todos los puntos del smoke test pasan en `*.workers.dev`, incluida la recarga en rutas profundas y el ciclo completo de CRUD con Storage y Auth.
+
+### Nota — hallazgo durante el deploy
+Una de las dos env vars (`VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`) en **Settings → Build → Variables and Secrets** estaba mal introducida, causando `Uncaught Error: Invalid supabaseUrl` en runtime (página en blanco). Corregido el valor y relanzado el deploy; smoke test completo pasado tras el fix.
 
 ---
 
@@ -230,4 +233,4 @@ La integración Git nativa de Cloudflare (equivalente a la opción **(A)** de la
 2. ✅ `wrangler.jsonc` + integración Git conectada; Build/Deploy command confirmados en el dashboard (`pnpm build` / `npx wrangler deploy` / `npx wrangler versions upload` para no-producción).
 3. ✅ `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` declaradas en **Settings → Build → Variables and Secrets** (build-time, no la de runtime del Worker); deploy relanzado y verde.
 4. ✅ Supabase → Auth → Site URL + Redirect URLs con el origen `*.workers.dev`.
-5. ⬜ Deploy → smoke test completo (`P4`) → (dominio propio / headers si procede).
+5. ✅ Deploy en producción (`https://tvshows.alminyana.workers.dev`) → smoke test completo pasado (`P4`) → (dominio propio / headers si procede, `P5`/`P6` opcionales).
