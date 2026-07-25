@@ -77,6 +77,7 @@ export type Database = {
       }
       series: {
         Row: {
+          cast_members: string[]
           cover_image_path: string | null
           created_at: string
           created_by: string | null
@@ -90,6 +91,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          cast_members?: string[]
           cover_image_path?: string | null
           created_at?: string
           created_by?: string | null
@@ -103,6 +105,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          cast_members?: string[]
           cover_image_path?: string | null
           created_at?: string
           created_by?: string | null

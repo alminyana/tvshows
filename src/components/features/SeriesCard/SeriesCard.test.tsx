@@ -67,6 +67,31 @@ describe('SeriesCard', () => {
     expect(screen.getByText('+2')).toBeInTheDocument();
   });
 
+  it('muestra el reparto', () => {
+    renderCard();
+    expect(screen.getByText('Bryan Cranston')).toBeInTheDocument();
+  });
+
+  it('muestra todos los nombres del reparto sin truncar', () => {
+    render(
+      <MemoryRouter>
+        <SeriesCard
+          series={{ ...mockSeries, cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'] }}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Bryan Cranston, Aaron Paul, Anna Gunn')).toBeInTheDocument();
+  });
+
+  it('no muestra el bloque de reparto si está vacío', () => {
+    render(
+      <MemoryRouter>
+        <SeriesCard series={{ ...mockSeries, cast: [] }} />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByText('Bryan Cranston')).not.toBeInTheDocument();
+  });
+
   it('navega al detalle al hacer click', () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Breaking Bad' }));

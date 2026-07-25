@@ -83,15 +83,42 @@
   color: var(--color-text-muted);
 }
 
+// Bloque duración + reparto: ocupa el hueco que antes tenía solo .seasons.
+.duration {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+
+  // Doble de ancho que título y géneros: el reparto es el texto más largo.
+  @include tablet {
+    flex: 4 1 0;
+  }
+}
+
 .seasons {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
 
-  @include tablet {
-    flex: 2 1 0;
+// Reparto completo: texto plano para no competir con los chips de género.
+.cast {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: var(--line-height-tight);
+  overflow-wrap: anywhere;
+}
+
+.castLabel {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+
+  &::after {
+    content: ': ';
   }
 }
 

@@ -55,6 +55,28 @@ describe('SeriesRow', () => {
     expect(screen.getByText('Thriller')).toBeInTheDocument();
   });
 
+  it('muestra el reparto', () => {
+    renderRow();
+    expect(screen.getByText('Bryan Cranston')).toBeInTheDocument();
+  });
+
+  it('muestra todos los nombres del reparto bajo el título "Reparto"', () => {
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <SeriesRow
+          series={{
+            ...series,
+            cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn', 'Dean Norris'],
+          }}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Reparto')).toBeInTheDocument();
+    expect(
+      screen.getByText('Bryan Cranston, Aaron Paul, Anna Gunn, Dean Norris')
+    ).toBeInTheDocument();
+  });
+
   it('muestra el rating (estrellas)', () => {
     renderRow();
     expect(screen.getAllByText('★').length).toBeGreaterThan(0);
