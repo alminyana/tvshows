@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { imageService } from '@/services';
 import { Rating, Tag } from '@/components/ui';
 import { categoricalColor } from '@/utils';
+import { MESSAGES } from '@/constants';
 import type { Series } from '@/types';
 import styles from './SeriesRow.module.scss';
 
@@ -19,6 +20,8 @@ export function SeriesRow({ series }: Props) {
   const uniqueGenres = Array.from(new Set(series.genres));
   const visibleGenres = uniqueGenres.slice(0, MAX_GENRES);
   const extraGenres = uniqueGenres.length - visibleGenres.length;
+
+  const uniqueCast = Array.from(new Set(series.cast));
 
   useEffect(() => {
     let src: string | undefined;
@@ -53,7 +56,16 @@ export function SeriesRow({ series }: Props) {
           <h3 className={styles.title}>{series.title}</h3>
           <span className={styles.year}>{series.year}</span>
         </div>
-        <span className={styles.seasons}>{series.seasons}</span>
+
+        <div className={styles.duration}>
+          <span className={styles.seasons}>{series.seasons}</span>
+          {uniqueCast.length > 0 && (
+            <p className={styles.cast}>
+              <span className={styles.castLabel}>{MESSAGES.series.cast}</span>
+              {uniqueCast.join(', ')}
+            </p>
+          )}
+        </div>
         <div className={styles.genres}>
           {visibleGenres.map((g, i) => (
             <Tag key={g} label={g} color={categoricalColor(i)} />

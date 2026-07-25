@@ -31,6 +31,8 @@ export function SeriesCard({ series }: Props) {
   const extraGenres = uniqueGenres.length - visibleGenres.length;
   const seasonsLabel = SEASONS_LABEL[classifySeasons(series.seasons)];
 
+  const uniqueCast = Array.from(new Set(series.cast));
+
   useEffect(() => {
     let src: string | undefined;
     imageService.getSrc(series.coverImage).then((s) => {
@@ -71,6 +73,7 @@ export function SeriesCard({ series }: Props) {
             {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
           </div>
         )}
+        {uniqueCast.length > 0 && <p className={styles.cast}>{uniqueCast.join(', ')}</p>}
         <div className={styles.rating}>
           <Rating value={series.rating} readOnly />
         </div>

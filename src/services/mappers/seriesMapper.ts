@@ -10,6 +10,7 @@ export interface SeriesDbRow {
   rating: number | null;
   opinion: string | null;
   cover_image_path: string | null;
+  cast_members: string[] | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -30,8 +31,7 @@ export function mapDbRowToSeries(row: SeriesDbRow): Series {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     genres: row.series_genres.flatMap((sg) => (sg.genres ? [sg.genres.name] : [])),
-    // cast no existe en el schema de BD; se omite hasta que se añada la columna
-    cast: [],
+    cast: row.cast_members ?? [],
   };
 }
 
@@ -49,6 +49,7 @@ export function mapSeriesToDbInsert(
     rating: data.rating,
     opinion: data.opinion ?? null,
     cover_image_path: data.coverImage || null,
+    cast_members: data.cast ?? [],
     created_by: data.createdBy || null,
     created_at: now,
     updated_at: now,
@@ -64,6 +65,7 @@ export function mapSeriesToDbUpdate(data: Partial<Omit<Series, 'id' | 'createdAt
   if (data.rating !== undefined) update.rating = data.rating;
   if (data.opinion !== undefined) update.opinion = data.opinion ?? null;
   if (data.coverImage !== undefined) update.cover_image_path = data.coverImage || null;
+  if (data.cast !== undefined) update.cast_members = data.cast;
   if (data.createdBy !== undefined) update.created_by = data.createdBy || null;
   return update;
 }
