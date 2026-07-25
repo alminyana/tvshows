@@ -29,16 +29,6 @@ cp .env.example .env.local   # fill in your Supabase keys
 pnpm dev                     # runs at http://localhost:5173
 ```
 
-Environment variables (`.env.local`, see `.env.example`):
-
-| Variable | Use |
-|---|---|
-| `VITE_SUPABASE_URL` | Project URL (bundled into the client) |
-| `VITE_SUPABASE_ANON_KEY` | Anon key (bundled into the client) |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Node scripts / Edge Functions only**, never bundled |
-
-`.env.local` is gitignored; only `.env.example` (without values) is versioned.
-
 ## Scripts
 
 | Command | Action |
@@ -85,8 +75,5 @@ Design invariants:
 - **Genres** are a single catalog in the `genres` table, with an N:M relation to `series` through the `series_genres` join table.
 - **UI copy in Spanish**, centralized in `src/constants` to prepare for i18n. Variables, functions, and components in English.
 
-## Documentation
 
-- Specification: `docs/PRD-Phase-1.md`
-- Supabase migration plan: `docs/IMPLEMENTATION-PLAN-Phase-2-Supabase.md`
-- Agent / contribution conventions: `CLAUDE.md`
+
