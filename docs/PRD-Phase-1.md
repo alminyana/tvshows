@@ -126,7 +126,7 @@ interface User {
 
 > Nota: el rol Viewer no se almacena. Es el estado por defecto cuando no hay sesión activa.
 >
-> **Fase 2:** en BD, `User` se corresponde con la tabla `profiles` (1:1 con `auth.users`, columnas `id`/`email`/`role`/`created_at`); la contraseña vive en `auth.users`, gestionada por Supabase. Los nombres de columna van en snake_case y una capa de mappers los traduce a camelCase para la app. El campo `cast: string[]` aún no tiene columna en BD (deuda técnica conocida de la migración).
+> **Fase 2:** en BD, `User` se corresponde con la tabla `profiles` (1:1 con `auth.users`, columnas `id`/`email`/`role`/`created_at`); la contraseña vive en `auth.users`, gestionada por Supabase. Los nombres de columna van en snake_case y una capa de mappers los traduce a camelCase para la app. El campo `cast: string[]` persiste en la columna `series.cast_members` (`text[]`), nombrada así porque `cast` es palabra reservada en Postgres.
 
 ---
 
