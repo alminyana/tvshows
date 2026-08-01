@@ -7,7 +7,7 @@ import type { Series } from '@/types';
 
 vi.mock('@/hooks', () => ({
   useAuth: vi.fn(() => ({
-    user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
+    user: { id: 'admin-1', email: 'a@local', password: 'h', role: 'admin', createdAt: '' },
     loading: false,
     login: vi.fn(),
     logout: vi.fn(),
@@ -108,7 +108,7 @@ function renderEdit(id = 'abc-1') {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useAuth).mockReturnValue({
-    user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
+    user: { id: 'admin-1', email: 'a@local', password: 'h', role: 'admin', createdAt: '' },
     loading: false,
     login: vi.fn(),
     logout: vi.fn(),
@@ -155,9 +155,9 @@ describe('SeriesFormPage — modo editar', () => {
     expect(screen.getByRole('heading', { name: /editar serie/i })).toBeInTheDocument();
   });
 
-  it('muestra error si el user no tiene permiso para editar', () => {
+  it('muestra error si el usuario no es admin', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: 'otro-user', email: 'o@local', password: 'h', role: 'user', createdAt: '' },
+      user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
       loading: false,
       login: vi.fn(),
       logout: vi.fn(),
