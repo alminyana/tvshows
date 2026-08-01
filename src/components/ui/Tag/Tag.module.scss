@@ -12,6 +12,11 @@
   white-space: nowrap;
 }
 
+// El fondo sigue tintado con --tag-c; solo el texto sube de jerarquía.
+.strongText {
+  color: var(--color-text-cast);
+}
+
 .remove {
   display: flex;
   align-items: center;

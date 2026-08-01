@@ -7,13 +7,16 @@ interface TagProps {
   onRemove?: () => void;
   /** Color categórico decorativo (p. ej. chips de género). Por defecto `primary`. */
   color?: CategoricalColor;
+  /** Texto con el color de texto principal en oscuro, en vez del color categórico. */
+  strongText?: boolean;
 }
 
-export function Tag({ label, onRemove, color = 'primary' }: TagProps) {
+export function Tag({ label, onRemove, color = 'primary', strongText = false }: TagProps) {
   const colorStyle = { '--tag-c': `var(--color-${color})` } as CSSProperties;
+  const className = strongText ? `${styles.tag} ${styles.strongText}` : styles.tag;
 
   return (
-    <span className={styles.tag} style={colorStyle}>
+    <span className={className} style={colorStyle}>
       {label}
       {onRemove && (
         <button

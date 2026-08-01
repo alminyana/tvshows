@@ -129,7 +129,7 @@ export function SeriesDetailPage() {
               <h2 className={styles.sectionTitle}>{MESSAGES.series.cast}</h2>
               <div className={styles.castList}>
                 {series.cast.map((name) => (
-                  <Tag key={name} label={name} />
+                  <Tag key={name} label={name} strongText />
                 ))}
               </div>
             </section>

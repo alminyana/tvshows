@@ -22,7 +22,7 @@ export const seriesServiceSupabase: ISeriesService = {
     const { data, error } = await supabase
       .from('series')
       .select(SELECT_WITH_GENRES)
-      .order('created_at', { ascending: false });
+      .order('title', { ascending: true });
     if (error) throw error;
     return (data as SeriesDbRow[]).map(mapDbRowToSeries);
   },
