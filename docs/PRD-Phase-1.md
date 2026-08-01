@@ -42,7 +42,7 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 | Rol | Login | Permisos |
 |---|---|---|
 | **Viewer** | No | Solo lectura. Acceso público por defecto al abrir la app. |
-| **User** | Sí | CRUD sobre series propias. No gestiona usuarios. |
+| **User** | Sí | Solo lectura, igual que el Viewer pero con sesión. No crea ni edita series ni gestiona usuarios. |
 | **Admin** | Sí | CRUD sobre todas las series. Gestión de usuarios. |
 
 ### Matriz de permisos
@@ -51,10 +51,18 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 |---|---|---|---|
 | Ver listado y detalle de series | ✓ | ✓ | ✓ |
 | Ver dashboard y métricas | ✓ | ✓ | ✓ |
-| Crear serie | ✗ | ✓ | ✓ |
-| Editar serie | ✗ | solo las propias | todas |
-| Eliminar serie | ✗ | solo las propias | todas |
+| Crear serie | ✗ | ✗ | ✓ |
+| Editar serie | ✗ | ✗ | todas |
+| Eliminar serie | ✗ | ✗ | todas |
 | Crear/editar/eliminar usuarios | ✗ | ✗ | ✓ |
+
+> **Cambio sobre el diseño original:** el rol User nació con CRUD sobre sus propias series (con
+> comprobación de propiedad vía `series.createdBy`). La escritura quedó reservada al Admin: los
+> botones "Nueva serie", "Editar" y "Eliminar" solo se muestran a `role === 'admin'`
+> (`src/utils/permissions.ts`) y las rutas `/series/new` y `/series/:id/edit` van protegidas con
+> `roles={['admin']}`. La restricción es de aplicación; la **RLS de Supabase sigue permitiendo a un
+> `user` autenticado insertar y editar sus propias series vía API**, pendiente de alinear en una
+> migración futura.
 
 ### Reglas de auth (Fase 1)
 
@@ -289,8 +297,8 @@ Se documenta explícitamente para evitar scope creep:
 ## 12. Criterios de aceptación Fase 1
 
 - [ ] Un Viewer puede entrar sin login y ver listado, detalle y dashboard.
-- [ ] Un User puede loguearse, crear series, editar/eliminar las suyas y no las ajenas.
-- [ ] Un Admin puede hacer todo lo anterior + editar/eliminar cualquier serie + gestionar usuarios.
+- [ ] Un User puede loguearse, pero no ve los botones de crear/editar/eliminar series ni accede a las rutas del formulario.
+- [ ] Un Admin puede crear, editar y eliminar cualquier serie + gestionar usuarios.
 - [ ] El formulario de serie valida correctamente con Zod y muestra errores comprensibles.
 - [ ] Las imágenes se almacenan en el bucket `covers` de Supabase Storage y se recuperan correctamente al recargar (Fase 1: IndexedDB).
 - [ ] El dashboard refleja las 4 métricas en tiempo real al añadir/quitar series.

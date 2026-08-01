@@ -39,7 +39,7 @@ export function SeriesFormPage() {
     );
   }
 
-  if (isEdit && series && !canEditSeries(user, series)) {
+  if (isEdit && series && !canEditSeries(user)) {
     return (
       <div className={styles.center}>
         <p className={styles.error}>{MESSAGES.errors.generic}</p>

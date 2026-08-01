@@ -4,7 +4,7 @@ import { useSeriesById, useAuth, useNotification } from '@/hooks';
 import { seriesService, imageService } from '@/services';
 import { Rating, Tag, Spinner, Button, ConfirmDialog } from '@/components/ui';
 import { MESSAGES } from '@/constants';
-import { categoricalColor } from '@/utils';
+import { categoricalColor, canEditSeries } from '@/utils';
 import styles from './SeriesDetailPage.module.scss';
 
 export function SeriesDetailPage() {
@@ -16,9 +16,7 @@ export function SeriesDetailPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const canModify =
-    user !== null &&
-    (user.role === 'admin' || (user.role === 'user' && series?.createdBy === user.id));
+  const canModify = canEditSeries(user);
 
   async function handleDelete() {
     if (!series) return;
