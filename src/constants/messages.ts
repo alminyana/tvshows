@@ -3,14 +3,13 @@ export const MESSAGES = {
   landing: {
     title: 'TV Shows',
     claim: 'Tu colección personal de series favoritas',
-    enter: 'Entrar',
+    enter: 'Acceder',
   },
 
   // Navegación
   nav: {
     series: 'Series',
     dashboard: 'Dashboard',
-    users: 'Usuarios',
     login: 'Iniciar sesión',
     logout: 'Cerrar sesión',
   },
@@ -100,28 +99,6 @@ export const MESSAGES = {
       rating: 'Valoración',
       opinion: 'Opinión',
     },
-  },
-
-  // Usuarios
-  users: {
-    title: 'Usuarios',
-    email: 'Email',
-    password: 'Contraseña',
-    role: 'Rol',
-    roles: {
-      admin: 'Administrador',
-      user: 'Usuario',
-    },
-    deleteConfirm: '¿Eliminar este usuario?',
-    deleteConfirmDetail: 'Esta acción no se puede deshacer.',
-    cannotDeleteSelf: 'No puedes eliminar tu propia cuenta.',
-    newUser: 'Nuevo usuario',
-    editUser: 'Editar usuario',
-    noUsers: 'No hay usuarios.',
-    listAriaLabel: 'Lista de usuarios',
-    created: 'Usuario creado correctamente.',
-    updated: 'Usuario actualizado correctamente.',
-    deleted: 'Usuario eliminado correctamente.',
   },
 
   // Login

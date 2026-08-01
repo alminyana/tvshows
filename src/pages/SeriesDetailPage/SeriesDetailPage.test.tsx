@@ -102,7 +102,7 @@ describe('SeriesDetailPage', () => {
     expect(screen.queryByRole('button', { name: /eliminar/i })).not.toBeInTheDocument();
   });
 
-  it('muestra botones de editar/eliminar al Admin', () => {
+  it('muestra botones de editar/eliminar cuando hay sesión', () => {
     vi.mocked(useSeriesById).mockReturnValue({ series: mockSeries, loading: false, notFound: false, error: null });
     vi.mocked(useAuth).mockReturnValue({
       user: { id: 'admin-1', email: 'a@local', password: 'h', role: 'admin', createdAt: '' },
@@ -113,32 +113,6 @@ describe('SeriesDetailPage', () => {
     renderPage();
     expect(screen.getByRole('button', { name: /editar/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /eliminar/i })).toBeInTheDocument();
-  });
-
-  it('oculta botones de editar/eliminar al User aunque sea el dueño de la serie', () => {
-    vi.mocked(useSeriesById).mockReturnValue({ series: mockSeries, loading: false, notFound: false, error: null });
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
-      loading: false,
-      login: vi.fn(),
-      logout: vi.fn(),
-    });
-    renderPage();
-    expect(screen.queryByRole('button', { name: /editar/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /eliminar/i })).not.toBeInTheDocument();
-  });
-
-  it('oculta botones de editar/eliminar a un User que no es el dueño', () => {
-    vi.mocked(useSeriesById).mockReturnValue({ series: mockSeries, loading: false, notFound: false, error: null });
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 'otro-user', email: 'o@local', password: 'h', role: 'user', createdAt: '' },
-      loading: false,
-      login: vi.fn(),
-      logout: vi.fn(),
-    });
-    renderPage();
-    expect(screen.queryByRole('button', { name: /editar/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /eliminar/i })).not.toBeInTheDocument();
   });
 
   it('abre el diálogo de confirmación al pulsar eliminar', async () => {

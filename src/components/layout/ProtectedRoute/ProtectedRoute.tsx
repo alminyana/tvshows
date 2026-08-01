@@ -1,16 +1,10 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import { Spinner } from '@/components/ui';
-import type { Role } from '@/types';
 import styles from './ProtectedRoute.module.scss';
 
-interface ProtectedRouteProps {
-  roles?: Role[];
-}
-
-export function ProtectedRoute({ roles }: ProtectedRouteProps) {
+export function ProtectedRoute() {
   const { user, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -20,11 +14,8 @@ export function ProtectedRoute({ roles }: ProtectedRouteProps) {
     );
   }
 
+  // Solo hay un rol: basta con tener sesión. El listado es público, así que es el destino natural.
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (roles && !roles.includes(user.role)) {
     return <Navigate to="/series" replace />;
   }
 

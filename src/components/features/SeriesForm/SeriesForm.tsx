@@ -48,7 +48,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
   const filePreviewUrlRef = useRef<string | null>(null);
   const { genres: genreCatalog, add: addGenreToCatalog, remove: removeGenreFromCatalog } = useGenres();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isLoggedIn = user !== null;
 
   const genreOptions = genreCatalog.map((g) => ({ value: g, label: g }));
 
@@ -217,7 +217,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
                             key={g}
                             label={g}
                             color={categoricalColor(i)}
-                            onRemove={isAdmin ? () => setGenreToDelete(g) : undefined}
+                            onRemove={isLoggedIn ? () => setGenreToDelete(g) : undefined}
                           />
                         ))}
                       </div>

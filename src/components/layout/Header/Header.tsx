@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks';
 import { ThemeToggle } from '@/components/ui';
+import { LoginModal } from '@/components/features';
 import { MESSAGES, VALID_THEMES } from '@/constants';
 import type { Theme } from '@/types';
 import styles from './Header.module.scss';
@@ -17,6 +18,7 @@ export function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const navLinks = [
     { to: '/series', label: MESSAGES.nav.series },
@@ -74,7 +76,7 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <button className={styles.loginButton} onClick={() => navigate('/login')}>
+            <button className={styles.loginButton} onClick={() => setLoginOpen(true)}>
               {MESSAGES.nav.login}
             </button>
           )}
@@ -92,6 +94,8 @@ export function Header() {
           </button>
         </div>
       </div>
+
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </header>
   );
 }
