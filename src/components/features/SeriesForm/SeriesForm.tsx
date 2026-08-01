@@ -274,6 +274,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
                         <Tag
                           key={name}
                           label={name}
+                          strongText
                           onRemove={() => field.onChange(cast.filter((n) => n !== name))}
                         />
                       ))}
