@@ -1,7 +1,8 @@
 /**
- * Crea (o actualiza el rol de) un usuario en Supabase Auth + profiles.
+ * Crea un usuario en Supabase Auth + su fila en profiles (siempre admin,
+ * el único rol que existe).
  * Uso: ver scripts/README.md
- * Ejecutar con: pnpm tsx --env-file=.env.local scripts/create-user.ts <email> <password> [admin|user]
+ * Ejecutar con: pnpm tsx --env-file=.env.local scripts/create-user.ts <email> <password>
  */
 import { createClient } from '@supabase/supabase-js';
 
@@ -18,18 +19,14 @@ const SERVICE_ROLE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 
 // ── Argumentos ───────────────────────────────────────────────────────────────
 
-const [email, password, roleArg = 'user'] = process.argv.slice(2);
+const [email, password] = process.argv.slice(2);
 
 if (!email || !password) {
-  console.error('Uso: pnpm tsx scripts/create-user.ts <email> <password> [admin|user]');
+  console.error('Uso: pnpm tsx scripts/create-user.ts <email> <password>');
   process.exit(1);
 }
 
-if (roleArg !== 'admin' && roleArg !== 'user') {
-  console.error(`Rol inválido: "${roleArg}". Debe ser "admin" o "user".`);
-  process.exit(1);
-}
-const role: 'admin' | 'user' = roleArg;
+const role = 'admin';
 
 // ── Cliente Supabase (service_role) ──────────────────────────────────────────
 
@@ -40,21 +37,15 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  // Si ya existe el perfil, solo aseguramos el rol (idempotente).
+  // Idempotente: si el perfil ya existe, no se recrea.
   const { data: existing } = await supabase
     .from('profiles')
-    .select('id, role')
+    .select('id')
     .eq('email', email)
     .maybeSingle();
 
   if (existing) {
-    if (existing.role === role) {
-      console.log(`↩ Usuario ya existe con rol "${role}": ${email} (${existing.id})`);
-      return;
-    }
-    const { error } = await supabase.from('profiles').update({ role }).eq('id', existing.id);
-    if (error) throw new Error(`Error actualizando rol de ${email}: ${error.message}`);
-    console.log(`✓ Rol actualizado a "${role}": ${email} (${existing.id})`);
+    console.log(`↩ Usuario ya existe: ${email} (${existing.id})`);
     return;
   }
 
@@ -69,14 +60,14 @@ async function main() {
 
   const uid = data.user.id;
 
-  // El trigger handle_new_user puede haber creado ya el perfil con rol por
-  // defecto; upsert garantiza el rol correcto sin importar el orden.
+  // El trigger handle_new_user puede haber creado ya el perfil; el upsert
+  // deja la fila consistente sin importar el orden.
   const { error: profileError } = await supabase
     .from('profiles')
     .upsert({ id: uid, email, role });
   if (profileError) throw new Error(`Error creando perfil ${email}: ${profileError.message}`);
 
-  console.log(`✓ Usuario creado con rol "${role}": ${email} (${uid})`);
+  console.log(`✓ Usuario creado: ${email} (${uid})`);
 }
 
 main().catch((err) => {

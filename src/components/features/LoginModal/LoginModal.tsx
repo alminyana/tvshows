@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { Modal } from '@/components/ui';
 import { LoginForm } from '../LoginForm/LoginForm';
 import { MESSAGES } from '@/constants';
@@ -9,16 +8,10 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const navigate = useNavigate();
-
-  function handleSuccess() {
-    onClose();
-    navigate('/series');
-  }
-
+  // Solo cierra: quien entra desde el dashboard se queda en el dashboard.
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={MESSAGES.login.title} size="sm">
-      <LoginForm onSuccess={handleSuccess} />
+      <LoginForm onSuccess={onClose} />
     </Modal>
   );
 }

@@ -18,8 +18,6 @@ VITE_SUPABASE_URL=https://<ref>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=<service_role_key>
 ADMIN_EMAIL=tu-email-admin@ejemplo.com
 ADMIN_PASSWORD=contraseña-segura-admin
-USER_EMAIL=tu-email-user@ejemplo.com
-USER_PASSWORD=contraseña-segura-user
 ```
 
 ### Ejecución
@@ -35,9 +33,8 @@ El script es **idempotente**: si un usuario o serie ya existe, lo omite sin erro
 ```
 === Migración a Supabase ===
 
-── Usuarios ──
+── Usuario ──
   ✓ Usuario creado: admin@ejemplo.com (uuid...)
-  ✓ Usuario creado: user@ejemplo.com (uuid...)
 
 ── Géneros (10) ──
   ✓ 10 géneros sincronizados
@@ -62,9 +59,9 @@ Tras ejecutar, comprueba en el dashboard de Supabase:
 
 ## create-user.ts
 
-Crea un usuario nuevo en Supabase Auth y su fila en `profiles` con el rol
-indicado. Es la vía para añadir usuarios mientras no exista la gestión desde el
-panel Admin (Edge Function `admin-create-user`, pospuesta en F4).
+Crea un usuario nuevo en Supabase Auth y su fila en `profiles`. Solo existe el
+rol `admin`, así que todo usuario creado puede gestionar series. Es la única vía
+para dar de alta usuarios: no hay pantalla de gestión en la app.
 
 ### Variables de entorno
 
@@ -73,16 +70,12 @@ Usa `VITE_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`.
 ### Ejecución
 
 ```bash
-# Rol "user" (por defecto si se omite el tercer argumento)
 pnpm tsx --env-file=.env.local scripts/create-user.ts nuevo@ejemplo.com 'contraseña-segura'
-
-# Rol "admin"
-pnpm tsx --env-file=.env.local scripts/create-user.ts admin2@ejemplo.com 'contraseña-segura' admin
 ```
 
 El usuario se crea ya confirmado (`email_confirm: true`), porque la confirmación
 por email está desactivada en Fase 1. Es **idempotente**: si el email ya existe,
-no lo recrea; solo ajusta el rol si difiere.
+no lo recrea.
 
 ## heartbeat.ts
 

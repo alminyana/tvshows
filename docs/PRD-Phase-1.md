@@ -39,38 +39,37 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 
 ### Roles
 
-| Rol | Login | Permisos |
+| Estado | Login | Permisos |
 |---|---|---|
-| **Viewer** | No | Solo lectura. Acceso público por defecto al abrir la app. |
-| **User** | Sí | Solo lectura, igual que el Viewer pero con sesión. No crea ni edita series ni gestiona usuarios. |
-| **Admin** | Sí | CRUD sobre todas las series. Gestión de usuarios. |
+| **Visitante** | No | Solo lectura. Acceso público por defecto al abrir la app. |
+| **Admin** | Sí | Lectura + CRUD sobre todas las series. Único rol con sesión. |
 
 ### Matriz de permisos
 
-| Acción | Viewer | User | Admin |
-|---|---|---|---|
-| Ver listado y detalle de series | ✓ | ✓ | ✓ |
-| Ver dashboard y métricas | ✓ | ✓ | ✓ |
-| Crear serie | ✗ | ✗ | ✓ |
-| Editar serie | ✗ | ✗ | todas |
-| Eliminar serie | ✗ | ✗ | todas |
-| Crear/editar/eliminar usuarios | ✗ | ✗ | ✓ |
+| Acción | Visitante | Admin |
+|---|---|---|
+| Ver listado y detalle de series | ✓ | ✓ |
+| Ver dashboard y métricas | ✓ | ✓ |
+| Crear serie | ✗ | ✓ |
+| Editar serie | ✗ | ✓ |
+| Eliminar serie | ✗ | ✓ |
 
-> **Cambio sobre el diseño original:** el rol User nació con CRUD sobre sus propias series (con
-> comprobación de propiedad vía `series.createdBy`). La escritura quedó reservada al Admin: los
-> botones "Nueva serie", "Editar" y "Eliminar" solo se muestran a `role === 'admin'`
-> (`src/utils/permissions.ts`) y las rutas `/series/new` y `/series/:id/edit` van protegidas con
-> `roles={['admin']}`. La restricción es de aplicación; la **RLS de Supabase sigue permitiendo a un
-> `user` autenticado insertar y editar sus propias series vía API**, pendiente de alinear en una
-> migración futura.
+> **Evolución del modelo de roles.** El diseño original tenía tres roles: Viewer sin sesión, User
+> con CRUD sobre sus propias series (comprobando `series.createdBy`) y Admin con todo. Primero la
+> escritura se reservó al Admin, con lo que User quedó como un "logueado sin permisos"; después se
+> retiró por completo. Hoy `canCreateSeries`/`canEditSeries`/`canDeleteSeries`
+> (`src/utils/permissions.ts`) equivalen a "hay sesión", `Role` es el literal `'admin'`, y la
+> migración `20260801120000_single_admin_role.sql` fuerza `profiles.role = 'admin'` en el CHECK, el
+> default y el trigger `handle_new_user`. La pantalla de gestión de usuarios (§5.5) se eliminó: las
+> altas se hacen con `scripts/create-user.ts`.
 
 ### Reglas de auth (Fase 1)
 
-- Sin registro público. Solo el Admin da de alta nuevos usuarios (rol User o Admin).
-- Acceso por defecto a la app como Viewer (sin login).
-- Login accesible desde un botón en el header.
+- Sin registro público. Las altas se hacen por script (`scripts/create-user.ts`) o desde el panel de Supabase.
+- Acceso por defecto a la app como visitante (sin login).
+- Login desde el botón del header, que abre `LoginModal`: no hay ruta `/login`. Tras entrar, se permanece en la página actual.
 - Rutas protegidas mediante guard (`<ProtectedRoute>`).
-- La sesión activa se persiste y refresca vía **Supabase Auth** (`supabase-js`); el rol se lee de la tabla `profiles`. El acceso del Viewer público se resuelve con políticas RLS de lectura abierta sobre `series`.
+- La sesión activa se persiste y refresca vía **Supabase Auth** (`supabase-js`); el rol se lee de la tabla `profiles`. El acceso público del visitante se resuelve con políticas RLS de lectura abierta sobre `series`.
 
 > **Fase 1 (histórico):** el guard se preparó para auth real y la sesión se simulaba con un token en localStorage. **Fase 2** sustituyó esto por Supabase Auth (email/password con emails reales).
 
@@ -78,7 +77,7 @@ SPA en React 19 + TypeScript para gestionar una colección personal de series fa
 
 > **Fase 1 (histórico).** Al primer arranque, si la BD estaba vacía, se cargaban un Admin (`admin@local`/`admin`) y un User (`user@local`/`user`).
 >
-> **Fase 2:** ya no hay seed en cliente. Los usuarios reales se crearon vía el script de migración (`scripts/migrate-to-supabase.ts`) con la Admin API de Supabase (`email_confirm: true`), y su fila en `profiles` con el rol.
+> **Fase 2:** ya no hay seed en cliente. El usuario admin se crea vía el script de migración (`scripts/migrate-to-supabase.ts`) con la Admin API de Supabase (`email_confirm: true`), junto con su fila en `profiles`.
 
 ---
 
@@ -127,12 +126,12 @@ interface User {
   id: string;
   email: string;        // único
   password: string;     // Fase 1: hash simulado. Fase 2: las gestiona Supabase Auth; no se almacena en `profiles`
-  role: 'admin' | 'user';
+  role: 'admin';        // único rol con sesión
   createdAt: string;
 }
 ```
 
-> Nota: el rol Viewer no se almacena. Es el estado por defecto cuando no hay sesión activa.
+> Nota: el visitante no se almacena. Es el estado por defecto cuando no hay sesión activa.
 >
 > **Fase 2:** en BD, `User` se corresponde con la tabla `profiles` (1:1 con `auth.users`, columnas `id`/`email`/`role`/`created_at`); la contraseña vive en `auth.users`, gestionada por Supabase. Los nombres de columna van en snake_case y una capa de mappers los traduce a camelCase para la app. El campo `cast: string[]` persiste en la columna `series.cast_members` (`text[]`), nombrada así porque `cast` es palabra reservada en Postgres.
 
@@ -152,7 +151,7 @@ interface User {
 ### 5.2 Detalle de serie
 
 - Portada, título, año, rating (estrellas), géneros, sinopsis, reparto, opinión, temporadas.
-- Botones de editar/eliminar visibles solo si el usuario tiene permiso (User dueño o Admin).
+- Botones de editar/eliminar visibles solo si hay sesión iniciada.
 - Acción "Eliminar" requiere confirmación.
 
 ### 5.3 Crear / editar serie
@@ -181,12 +180,11 @@ Métricas mostradas como gráficos Recharts con animaciones y paleta del tema ac
 3. **Distribución por género** (gráfico de barras o donut). Una serie con varios géneros cuenta una vez por cada uno.
 4. **Distribución por rating** (gráfico de barras): cuántas series hay con rating 1, 2, 3, 4, 5.
 
-### 5.5 Gestión de usuarios (solo Admin)
+### 5.5 Gestión de usuarios — **retirada**
 
-- Listado de usuarios existentes con su rol.
-- Crear nuevo usuario (email, password, rol).
-- Editar usuario (cambiar rol o resetear password).
-- Eliminar usuario (con confirmación; no se puede eliminar al propio usuario logueado).
+> Existió una pantalla `/users` (listado, alta, edición de rol/password y borrado con guard de no
+> auto-eliminarse). Se eliminó al quedar un único rol: las altas se hacen con
+> `scripts/create-user.ts` o desde el panel de Supabase.
 
 ### 5.6 Sistema de temas
 
@@ -235,14 +233,12 @@ src/
 
 | Ruta | Acceso | Descripción |
 |---|---|---|
-| `/` | Público | Redirige a `/series` |
+| `/` | Público | Landing; el botón "Acceder" lleva a `/series` |
 | `/series` | Público | Listado de series |
 | `/series/:id` | Público | Detalle de una serie |
-| `/series/new` | User, Admin | Crear nueva serie |
-| `/series/:id/edit` | User dueño, Admin | Editar serie |
+| `/series/new` | Con sesión | Crear nueva serie |
+| `/series/:id/edit` | Con sesión | Editar serie |
 | `/dashboard` | Público | Dashboard con métricas |
-| `/login` | Público | Pantalla de login |
-| `/users` | Admin | Gestión de usuarios |
 | `*` | Público | 404 |
 
 ---
@@ -296,9 +292,9 @@ Se documenta explícitamente para evitar scope creep:
 
 ## 12. Criterios de aceptación Fase 1
 
-- [ ] Un Viewer puede entrar sin login y ver listado, detalle y dashboard.
-- [ ] Un User puede loguearse, pero no ve los botones de crear/editar/eliminar series ni accede a las rutas del formulario.
-- [ ] Un Admin puede crear, editar y eliminar cualquier serie + gestionar usuarios.
+- [ ] Un visitante puede entrar sin login y ver listado, detalle y dashboard.
+- [ ] Un visitante sin sesión no ve los botones de crear/editar/eliminar series ni accede a las rutas del formulario.
+- [ ] Tras iniciar sesión desde el header, puede crear, editar y eliminar cualquier serie.
 - [ ] El formulario de serie valida correctamente con Zod y muestra errores comprensibles.
 - [ ] Las imágenes se almacenan en el bucket `covers` de Supabase Storage y se recuperan correctamente al recargar (Fase 1: IndexedDB).
 - [ ] El dashboard refleja las 4 métricas en tiempo real al añadir/quitar series.

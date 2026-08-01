@@ -1,5 +1,5 @@
 import type { Series } from '@/types/series';
-import type { User, Role } from '@/types/user';
+import type { User } from '@/types/user';
 
 export interface ISeriesService {
   getAll(): Promise<Series[]>;
@@ -7,14 +7,6 @@ export interface ISeriesService {
   create(data: Omit<Series, 'id' | 'createdAt' | 'updatedAt'>): Promise<Series>;
   update(id: string, data: Partial<Omit<Series, 'id' | 'createdAt'>>): Promise<Series>;
   remove(id: string): Promise<void>;
-}
-
-export interface IUsersService {
-  getAll(): Promise<User[]>;
-  getById(id: string): Promise<User | undefined>;
-  create(data: { email: string; password: string; role: Role }): Promise<User>;
-  update(id: string, data: { email?: string; password?: string; role?: Role }): Promise<User>;
-  remove(id: string, currentUserId: string): Promise<void>;
 }
 
 // get(id)→Blob es exclusivo del mock; getUrl(path)→string es exclusivo de Supabase.

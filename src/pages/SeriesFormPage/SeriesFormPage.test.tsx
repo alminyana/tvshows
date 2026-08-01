@@ -155,9 +155,9 @@ describe('SeriesFormPage — modo editar', () => {
     expect(screen.getByRole('heading', { name: /editar serie/i })).toBeInTheDocument();
   });
 
-  it('muestra error si el usuario no es admin', () => {
+  it('muestra error si no hay sesión', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
+      user: null,
       loading: false,
       login: vi.fn(),
       logout: vi.fn(),

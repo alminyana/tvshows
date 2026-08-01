@@ -29,12 +29,6 @@ interface ExportFile {
   series: ExportSeries[];
 }
 
-interface UserDef {
-  email: string;
-  password: string;
-  role: 'admin' | 'user';
-}
-
 // ── Env ──────────────────────────────────────────────────────────────────────
 
 function requireEnv(name: string): string {
@@ -47,8 +41,6 @@ const SUPABASE_URL = requireEnv('VITE_SUPABASE_URL');
 const SERVICE_ROLE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 const ADMIN_EMAIL = requireEnv('ADMIN_EMAIL');
 const ADMIN_PASSWORD = requireEnv('ADMIN_PASSWORD');
-const USER_EMAIL = requireEnv('USER_EMAIL');
-const USER_PASSWORD = requireEnv('USER_PASSWORD');
 
 const EXPORT_PATH = process.argv[2];
 if (!EXPORT_PATH) {
@@ -64,45 +56,39 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-async function createUsers(users: UserDef[]): Promise<Map<'admin' | 'user', string>> {
-  const uidMap = new Map<'admin' | 'user', string>();
+// Solo existe el rol admin: se crea un único usuario, dueño de las series migradas.
+async function createAdmin(email: string, password: string): Promise<string> {
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle();
 
-  for (const u of users) {
-    const { data: existing } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', u.email)
-      .maybeSingle();
-
-    if (existing) {
-      console.log(`  ↩ Usuario ya existe: ${u.email} (${existing.id})`);
-      uidMap.set(u.role, existing.id as string);
-      continue;
-    }
-
-    const { data, error } = await supabase.auth.admin.createUser({
-      email: u.email,
-      password: u.password,
-      email_confirm: true,
-    });
-    if (error) throw new Error(`Error creando usuario ${u.email}: ${error.message}`);
-
-    const uid = data.user.id;
-
-    // El trigger handle_new_user puede haber creado ya el perfil; upsert para
-    // garantizar que el role queda correcto independientemente del orden.
-    const { error: profileError } = await supabase.from('profiles').upsert({
-      id: uid,
-      email: u.email,
-      role: u.role,
-    });
-    if (profileError) throw new Error(`Error creando perfil ${u.email}: ${profileError.message}`);
-
-    console.log(`  ✓ Usuario creado: ${u.email} (${uid})`);
-    uidMap.set(u.role, uid);
+  if (existing) {
+    console.log(`  ↩ Usuario ya existe: ${email} (${existing.id})`);
+    return existing.id as string;
   }
 
-  return uidMap;
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+  if (error) throw new Error(`Error creando usuario ${email}: ${error.message}`);
+
+  const uid = data.user.id;
+
+  // El trigger handle_new_user puede haber creado ya el perfil; upsert para
+  // dejar la fila consistente independientemente del orden.
+  const { error: profileError } = await supabase.from('profiles').upsert({
+    id: uid,
+    email,
+    role: 'admin',
+  });
+  if (profileError) throw new Error(`Error creando perfil ${email}: ${profileError.message}`);
+
+  console.log(`  ✓ Usuario creado: ${email} (${uid})`);
+  return uid;
 }
 
 async function upsertGenres(names: string[]): Promise<Map<string, string>> {
@@ -166,15 +152,9 @@ async function main() {
   const exportData = JSON.parse(raw) as ExportFile;
   console.log(`Leídas ${exportData.series.length} series de ${EXPORT_PATH}\n`);
 
-  // 2. Crear usuarios
-  console.log('── Usuarios ──');
-  const users: UserDef[] = [
-    { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, role: 'admin' },
-    { email: USER_EMAIL, password: USER_PASSWORD, role: 'user' },
-  ];
-  const uidMap = await createUsers(users);
-  const adminUid = uidMap.get('admin');
-  if (!adminUid) throw new Error('No se pudo obtener el UID del admin');
+  // 2. Crear el usuario admin
+  console.log('── Usuario ──');
+  const adminUid = await createAdmin(ADMIN_EMAIL, ADMIN_PASSWORD);
   console.log();
 
   // 3. Recopilar todos los géneros únicos
