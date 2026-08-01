@@ -19,7 +19,7 @@ export default function App() {
             <Route path="/series" element={<SeriesListPage />} />
             <Route path="/series/:id" element={<SeriesDetailPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route element={<ProtectedRoute roles={['user', 'admin']} />}>
+            <Route element={<ProtectedRoute roles={['admin']} />}>
               <Route path="/series/new" element={<SeriesFormPage />} />
               <Route path="/series/:id/edit" element={<SeriesFormPage />} />
             </Route>

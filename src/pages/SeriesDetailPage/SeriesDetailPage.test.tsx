@@ -115,7 +115,7 @@ describe('SeriesDetailPage', () => {
     expect(screen.getByRole('button', { name: /eliminar/i })).toBeInTheDocument();
   });
 
-  it('muestra botones de editar/eliminar al User dueño de la serie', () => {
+  it('oculta botones de editar/eliminar al User aunque sea el dueño de la serie', () => {
     vi.mocked(useSeriesById).mockReturnValue({ series: mockSeries, loading: false, notFound: false, error: null });
     vi.mocked(useAuth).mockReturnValue({
       user: { id: 'user-1', email: 'u@local', password: 'h', role: 'user', createdAt: '' },
@@ -124,8 +124,8 @@ describe('SeriesDetailPage', () => {
       logout: vi.fn(),
     });
     renderPage();
-    expect(screen.getByRole('button', { name: /editar/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /eliminar/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /editar/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /eliminar/i })).not.toBeInTheDocument();
   });
 
   it('oculta botones de editar/eliminar a un User que no es el dueño', () => {
