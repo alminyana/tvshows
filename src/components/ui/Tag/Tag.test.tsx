@@ -13,6 +13,11 @@ describe('Tag', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('aplica el modificador de texto enfatizado con strongText', () => {
+    render(<Tag label="Drama" strongText />);
+    expect(screen.getByText('Drama').className).toMatch(/strongText/);
+  });
+
   it('llama onRemove al pulsar el botón de quitar', async () => {
     const onRemove = vi.fn();
     render(<Tag label="Drama" onRemove={onRemove} />);

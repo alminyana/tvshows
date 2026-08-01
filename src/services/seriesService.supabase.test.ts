@@ -75,6 +75,12 @@ describe('seriesServiceSupabase.getAll', () => {
     expect(mockSupabase.from).toHaveBeenCalledWith('series');
   });
 
+  it('ordena alfabéticamente por título', async () => {
+    mockSupabase._chain.order.mockResolvedValue({ data: [dbRow], error: null });
+    await seriesServiceSupabase.getAll();
+    expect(mockSupabase._chain.order).toHaveBeenCalledWith('title', { ascending: true });
+  });
+
   it('lanza error si Supabase devuelve error', async () => {
     mockSupabase._chain.order.mockResolvedValue({ data: null, error: { message: 'DB error' } });
     await expect(seriesServiceSupabase.getAll()).rejects.toMatchObject({ message: 'DB error' });
