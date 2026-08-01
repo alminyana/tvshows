@@ -155,19 +155,7 @@ describe('SeriesListPage', () => {
     expect(screen.queryByRole('button', { name: /nueva serie/i })).not.toBeInTheDocument();
   });
 
-  it('no muestra el botón "Nueva serie" al rol user', () => {
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 'u1', email: 'user@test.com', password: 'h', role: 'user', createdAt: '' },
-      loading: false,
-      login: vi.fn(),
-      logout: vi.fn(),
-    });
-    vi.mocked(useSeries).mockReturnValue({ series: [], loading: false, error: null, reload: vi.fn() });
-    renderPage();
-    expect(screen.queryByRole('button', { name: /nueva serie/i })).not.toBeInTheDocument();
-  });
-
-  it('muestra el botón "Nueva serie" al admin', () => {
+  it('muestra el botón "Nueva serie" cuando hay sesión', () => {
     vi.mocked(useAuth).mockReturnValue({
       user: { id: 'a1', email: 'admin@test.com', password: 'h', role: 'admin', createdAt: '' },
       loading: false,

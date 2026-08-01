@@ -1,4 +1,5 @@
-export type Role = 'admin' | 'user';
+// Único rol con sesión: el visitante sin login es la ausencia de usuario.
+export type Role = 'admin';
 
 export interface User {
   id: string;

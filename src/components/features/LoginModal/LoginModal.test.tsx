@@ -5,16 +5,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { LoginModal } from './LoginModal';
 
 const mockLogin = vi.fn();
-const mockNavigate = vi.fn();
 
 vi.mock('@/hooks', () => ({
   useAuth: vi.fn(() => ({ user: null, loading: false, login: mockLogin, logout: vi.fn() })),
 }));
-
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>();
-  return { ...actual, useNavigate: () => mockNavigate };
-});
 
 function renderModal(isOpen = true, onClose = vi.fn()) {
   return render(
@@ -48,7 +42,7 @@ describe('LoginModal', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('llama a onClose y navega a /series tras login exitoso', async () => {
+  it('llama a onClose tras login exitoso, sin navegar', async () => {
     mockLogin.mockResolvedValue(undefined);
     const onClose = vi.fn();
     renderModal(true, onClose);
@@ -57,7 +51,6 @@ describe('LoginModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /entrar/i }));
     await waitFor(() => {
       expect(onClose).toHaveBeenCalledOnce();
-      expect(mockNavigate).toHaveBeenCalledWith('/series');
     });
   });
 });

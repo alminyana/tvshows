@@ -24,6 +24,11 @@ vi.mock('@/hooks', async (importOriginal) => {
   };
 });
 
+vi.mock('@/components/features', () => ({
+  LoginModal: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div data-testid="login-modal">Modal</div> : null,
+}));
+
 import { useAuth } from '@/hooks';
 
 function renderHeader() {
@@ -61,6 +66,13 @@ describe('Header', () => {
   it('muestra el botón de login cuando no hay sesión', () => {
     renderHeader();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
+  });
+
+  it('abre el modal de login al pulsar el botón de login', async () => {
+    renderHeader();
+    expect(screen.queryByTestId('login-modal')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
+    expect(screen.getByTestId('login-modal')).toBeInTheDocument();
   });
 
   it('muestra el email y el botón de logout cuando hay sesión', () => {
