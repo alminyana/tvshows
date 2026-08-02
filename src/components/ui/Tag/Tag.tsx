@@ -9,11 +9,21 @@ interface TagProps {
   color?: CategoricalColor;
   /** Texto con el color de texto principal en oscuro, en vez del color categórico. */
   strongText?: boolean;
+  /** Escala tipográfica: `sm` (chip compacto, por defecto) o `md` (tamaño del cuerpo de texto). */
+  size?: 'sm' | 'md';
 }
 
-export function Tag({ label, onRemove, color = 'primary', strongText = false }: TagProps) {
+export function Tag({
+  label,
+  onRemove,
+  color = 'primary',
+  strongText = false,
+  size = 'sm',
+}: TagProps) {
   const colorStyle = { '--tag-c': `var(--color-${color})` } as CSSProperties;
-  const className = strongText ? `${styles.tag} ${styles.strongText}` : styles.tag;
+  const className = [styles.tag, strongText && styles.strongText, size === 'md' && styles.md]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <span className={className} style={colorStyle}>
