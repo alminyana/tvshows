@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks';
-import { ThemeToggle } from '@/components/ui';
+import { Select, ThemeToggle } from '@/components/ui';
 import { LoginModal } from '@/components/features';
 import { MESSAGES, VALID_THEMES } from '@/constants';
 import type { Theme } from '@/types';
@@ -19,11 +19,37 @@ export function Header() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   const navLinks = [
     { to: '/series', label: MESSAGES.nav.series },
     { to: '/dashboard', label: MESSAGES.nav.dashboard },
   ];
+
+  // Cierre del menú móvil con Escape (devolviendo el foco al disparador) y con
+  // un click fuera del header. Solo suscrito mientras el panel está abierto.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setMenuOpen(false);
+      hamburgerRef.current?.focus();
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (headerRef.current?.contains(e.target as Node)) return;
+      setMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [menuOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -31,41 +57,49 @@ export function Header() {
   };
 
   return (
-    <header className={styles.header} role="banner">
+    <header className={styles.header} role="banner" ref={headerRef}>
       <div className={styles.inner}>
         <NavLink to="/" className={styles.logo} aria-label="TV Shows — inicio">
           📺 TV Shows
         </NavLink>
 
-        <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`} aria-label="Navegación principal">
-          {navLinks.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+        <div
+          id="header-menu"
+          className={`${styles.menuPanel} ${menuOpen ? styles.menuPanelOpen : ''}`}
+        >
+          <nav className={styles.nav} aria-label="Navegación principal">
+            {navLinks.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
 
-        <div className={styles.controls}>
           <div className={styles.themeControls}>
-            <select
+            {/* Rótulo visible solo en móvil; aria-hidden para no duplicar el
+                nombre accesible que el select ya expone vía aria-label. */}
+            <span className={styles.themeLabel} aria-hidden="true">
+              {MESSAGES.theme.label}
+            </span>
+
+            <Select
               className={styles.themeSelect}
+              options={THEMES}
               value={theme}
               onChange={(e) => setTheme(e.target.value as Theme)}
               aria-label={MESSAGES.theme.label}
-            >
-              {THEMES.map(({ value, label }) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
+            />
 
             <ThemeToggle />
           </div>
+        </div>
 
+        <div className={styles.controls}>
           {user ? (
             <div className={styles.userInfo}>
               <span className={styles.userEmail} title={user.email}>
@@ -82,10 +116,11 @@ export function Header() {
           )}
 
           <button
+            ref={hamburgerRef}
             className={styles.hamburger}
-            aria-label="Abrir menú"
+            aria-label={menuOpen ? MESSAGES.nav.closeMenu : MESSAGES.nav.openMenu}
             aria-expanded={menuOpen}
-            aria-controls="main-nav"
+            aria-controls="header-menu"
             onClick={() => setMenuOpen((prev) => !prev)}
           >
             <span className={styles.hamburgerLine} />

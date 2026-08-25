@@ -1,6 +1,30 @@
+// Contenedor del modo simple: posiciona el chevron sobre el select y le presta
+// el `currentColor`. Sin `width`: en flujo normal ocupa el ancho disponible, y
+// como flex item se ajusta al contenido.
+.wrap {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.select:disabled ~ .chevron {
+  opacity: 0.5;
+}
+
 .select {
   width: 100%;
-  padding: var(--space-2) var(--space-3);
+  flex: 1;
+  // El padding derecho reserva el hueco del chevron (16px + su offset).
+  padding: var(--space-2) var(--space-6) var(--space-2) var(--space-3);
   background: var(--color-surface-elevated);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
