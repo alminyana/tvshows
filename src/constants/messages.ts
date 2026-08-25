@@ -12,6 +12,8 @@ export const MESSAGES = {
     dashboard: 'Dashboard',
     login: 'Iniciar sesión',
     logout: 'Cerrar sesión',
+    openMenu: 'Abrir menú',
+    closeMenu: 'Cerrar menú',
   },
 
   // Temas
