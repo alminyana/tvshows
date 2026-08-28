@@ -41,6 +41,30 @@
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
+
+  // Muestras de identidad de cada tema (`--color-primary` de cada uno). No
+  // dependen del tema activo: sirven para mostrar los 8 temas a la vez.
+  --swatch-default: #2563eb;
+  --swatch-ocean: #0284c7;
+  --swatch-sunset: #ea580c;
+  --swatch-forest: #16a34a;
+  --swatch-amatista: #7c3aed;
+  --swatch-carmesi: #e11d48;
+  --swatch-cian: #0d9488;
+  --swatch-crepusculo: #4f46e5;
+}
+
+// En oscuro las muestras pasan al primary de modo oscuro de cada tema, más
+// luminoso, para que se distingan sobre `--color-bg`.
+[data-mode='dark'] {
+  --swatch-default: #60a5fa;
+  --swatch-ocean: #38bdf8;
+  --swatch-sunset: #fb923c;
+  --swatch-forest: #4ade80;
+  --swatch-amatista: #a78bfa;
+  --swatch-carmesi: #fb7185;
+  --swatch-cian: #2dd4bf;
+  --swatch-crepusculo: #818cf8;
 }
 
 // ─── default · azul neutro ────────────────────────────────────────────────────
