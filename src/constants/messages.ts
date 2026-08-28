@@ -4,6 +4,42 @@ export const MESSAGES = {
     title: 'TV Shows',
     claim: 'Tu colección personal de series favoritas',
     enter: 'Acceder',
+    kicker: 'Colección personal',
+    kickerYears: (from: number, to: number) => `${from}–${to}`,
+    introCount: (total: number) => `${total} series vistas, puntuadas y comentadas una a una.`,
+    introTail:
+      'Sin algoritmo y sin recomendaciones: solo lo que he visto y lo que pienso de cada una.',
+    viewDashboard: 'Ver el dashboard',
+    scrollCue: 'La colección, en detalle',
+    stats: {
+      title: 'La colección en cifras',
+      subtitle:
+        'Los mismos indicadores que abren el dashboard, calculados sobre lo que hay hoy en la base de datos.',
+    },
+    mosaic: {
+      title: 'Un vistazo a la colección',
+      subtitle:
+        'Cada ficha lleva sinopsis, temporadas, género, reparto y una opinión escrita. Nada de sinopsis copiada y poco más.',
+    },
+    inside: {
+      title: 'Qué encuentras dentro',
+      subtitle: 'Dos pantallas, sin más ceremonia.',
+      catalogTitle: 'El catálogo',
+      catalogText:
+        'Todas las series en rejilla o en lista, con buscador y filtros por género y valoración. Cada ficha abre sinopsis, temporadas, reparto y la opinión propia.',
+      dashboardTitle: 'El dashboard',
+      dashboardText:
+        'Cuatro gráficas sobre la colección: reparto por género, distribución de valoraciones, duración de las series y peso de cada género sobre el total.',
+      genreChartLabel: 'Series por género',
+    },
+    access: {
+      title: 'Entra sin cuenta',
+      text: 'La colección es pública en modo lectura: puedes navegarla entera sin registrarte. Crear, editar o borrar series requiere iniciar sesión desde el botón del header.',
+    },
+    footer: {
+      brand: 'TV Shows — colección personal',
+      themes: (total: number) => `${total} temas, en claro y en oscuro`,
+    },
   },
 
   // Navegación
