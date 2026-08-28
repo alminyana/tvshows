@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSeries } from './useSeries';
 import type { Genre } from '../types/genre';
+import type { Series } from '../types/series';
 import { classifySeasons } from '../utils/classifySeasons';
 import type { SeasonsType } from '../utils/classifySeasons';
 
@@ -20,6 +21,8 @@ export interface DurationCount {
 }
 
 export interface DashboardMetrics {
+  /** Lista cruda ya cargada, para consumidores que además necesitan las series. */
+  series: Series[];
   totalSeries: number;
   featuredSeries: number;
   miniseriesCount: number;
@@ -80,5 +83,5 @@ export function useDashboardMetrics(): DashboardMetrics {
     };
   }, [series]);
 
-  return { ...metrics, loading, error };
+  return { ...metrics, series, loading, error };
 }

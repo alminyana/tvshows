@@ -1,61 +1,131 @@
+@use '@/styles/mixins' as m;
+
+// Los únicos colores literales de este módulo son los velos negros sobre imagen
+// y el texto blanco que va encima: el hero es oscuro en los 16 combos de tema.
+// Todo lo demás pasa por tokens.
+
 .page {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  flex-direction: column;
+  background: var(--color-bg);
 }
 
-// ── Fondo ─────────────────────────────────────────────────────────────────────
+// ── Hero ──────────────────────────────────────────────────────────────────────
 
-.background {
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding-block: var(--space-8);
+}
+
+.heroBackground {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-.slide {
+// Rejilla de portadas reales, desenfocada y girada: hace de textura, no de contenido.
+.heroTiles {
+  position: absolute;
+  inset: -8%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  transform: rotate(-4deg) scale(1.14);
+  filter: blur(2px) saturate(0.8);
+  opacity: 0.5;
+
+  @include m.tablet {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-3);
+    transform: rotate(-4deg) scale(1.12);
+  }
+
+  @include m.desktop {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+.heroTile {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+// Mientras las portadas cargan (o si no hay ninguna) el fondo mantiene volumen
+// con el mismo degradado que usa el placeholder de SeriesCard.
+.heroFallback {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.05);
-  transition:
-    opacity 2s ease-in-out,
-    transform 20s ease-out;
+  background: linear-gradient(150deg, var(--color-primary), var(--color-accent), var(--color-tertiary));
+  opacity: 0.35;
 }
 
-.slideActive {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.overlay {
+.heroWash {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.8) 100%
+    180deg,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.82) 45%,
+    rgba(0, 0, 0, 0.88) 100%
+  );
+
+  @include m.tablet {
+    background: linear-gradient(
+      105deg,
+      rgba(0, 0, 0, 0.92) 22%,
+      rgba(0, 0, 0, 0.86) 46%,
+      rgba(0, 0, 0, 0.6) 72%,
+      rgba(0, 0, 0, 0.76) 100%
+    );
+  }
+}
+
+// Funde el hero con el fondo de la página en cualquier modo.
+.heroFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    transparent 26%,
+    transparent 62%,
+    var(--color-bg) 100%
   );
 }
 
-// ── Contenido centrado ────────────────────────────────────────────────────────
-
-.content {
+.heroContent {
   position: relative;
   z-index: 1;
-  text-align: center;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-7);
-  padding: var(--space-6);
-  max-width: 600px;
+  align-items: flex-start;
+  gap: var(--space-5);
+
+  @include m.tablet {
+    padding-inline: var(--space-6);
+    gap: var(--space-5);
+  }
+}
+
+.kicker {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 }
 
 .title {
@@ -63,13 +133,458 @@
   font-weight: var(--font-weight-bold);
   color: #ffffff;
   line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
   margin: 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .claim {
-  font-size: clamp(var(--font-size-md), 3vw, var(--font-size-xl));
-  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-medium);
+  color: rgba(255, 255, 255, 0.92);
   margin: 0;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.intro {
+  font-size: var(--font-size-md);
+  color: rgba(255, 255, 255, 0.74);
+  line-height: var(--line-height-relaxed);
+  max-width: 560px;
+  margin: 0;
+  text-wrap: pretty;
+
+  @include m.tablet {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.heroActions {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+
+  @include m.tablet {
+    flex-direction: row;
+    align-self: flex-start;
+    align-items: center;
+  }
+}
+
+// El botón secundario vive sobre el velo oscuro del hero: su superficie clara
+// por defecto no sirve aquí. Especificidad doble para ganar a `Button.secondary`.
+.heroActions .heroGhost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+}
+
+.scrollCue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--space-5);
+  z-index: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+
+  // En pantallas bajas (móvil apaisado) chocaría con el contenido centrado.
+  @media (max-height: 640px) {
+    display: none;
+  }
+}
+
+// ── Secciones ─────────────────────────────────────────────────────────────────
+
+.section {
+  padding-block: var(--space-8);
+
+  @include m.tablet {
+    padding-block: calc(var(--space-8) + var(--space-6));
+  }
+}
+
+.sectionInner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+
+  @include m.tablet {
+    padding-inline: var(--space-6);
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+
+  @include m.tablet {
+    gap: var(--space-3);
+    margin-bottom: var(--space-7);
+  }
+}
+
+.sectionTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+  margin: 0;
+
+  @include m.tablet {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.sectionSubtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  max-width: 620px;
+  margin: 0;
+  text-wrap: pretty;
+
+  @include m.tablet {
+    font-size: var(--font-size-lg);
+  }
+}
+
+// ── Cifras ────────────────────────────────────────────────────────────────────
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-5);
+}
+
+// ── Tira de portadas ──────────────────────────────────────────────────────────
+
+.strip {
+  position: relative;
+
+  // Los velos laterales desvanecen la tira contra el fondo de la página.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  // En móvil la tira empieza pegada al margen: solo se desvanece por la derecha,
+  // que es donde queda contenido fuera de pantalla.
+  &::before {
+    left: 0;
+    width: 0;
+    background: linear-gradient(90deg, var(--color-bg), transparent);
+
+    @include m.tablet {
+      width: 160px;
+    }
+  }
+
+  &::after {
+    right: 0;
+    width: var(--space-7);
+    background: linear-gradient(270deg, var(--color-bg), transparent);
+
+    @include m.tablet {
+      width: 160px;
+    }
+  }
+}
+
+.stripTrack {
+  display: flex;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-inline: var(--space-5);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include m.tablet {
+    gap: var(--space-5);
+    padding-inline: var(--space-6);
+  }
+}
+
+.stripItem {
+  flex: 0 0 auto;
+
+  img {
+    display: block;
+    width: 140px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+
+    @include m.tablet {
+      width: 200px;
+    }
+  }
+}
+
+// ── Qué encuentras dentro ─────────────────────────────────────────────────────
+
+.insideGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+
+  @include m.tablet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.insideCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.insideIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.insideHeading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.insideTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.insideText {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.insidePreview {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.previewCover {
+  display: block;
+  flex-shrink: 0;
+  width: 84px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+
+  @include m.tablet {
+    width: 96px;
+  }
+}
+
+.previewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+
+.previewGenres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+// ── Mini gráfica de géneros ───────────────────────────────────────────────────
+
+.genreChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.genreChartLabel {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.genreRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.genreRow {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 28px;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.genreName {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.genreTrack {
+  display: block;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.genreBar {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+}
+
+.genreCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  text-align: right;
+}
+
+// ── Entra sin cuenta ──────────────────────────────────────────────────────────
+
+.accessBand {
+  background: var(--color-surface-elevated);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: var(--space-8);
+
+  @include m.tablet {
+    padding-block: calc(var(--space-8) + var(--space-6));
+  }
+}
+
+.accessInner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+
+  @include m.tablet {
+    padding-inline: var(--space-6);
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.accessText {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  max-width: 640px;
+  margin: 0;
+  text-wrap: pretty;
+
+  @include m.tablet {
+    font-size: var(--font-size-lg);
+  }
+}
+
+// ── Pie ───────────────────────────────────────────────────────────────────────
+
+.footer {
+  padding-block: var(--space-6);
+  background: var(--color-bg);
+}
+
+.footerInner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  @include m.tablet {
+    padding-inline: var(--space-6);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footerBrand,
+.footerNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.footerThemes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  @include m.tablet {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.swatches {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.swatch {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
