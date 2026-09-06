@@ -97,7 +97,18 @@ El sistema actual es plano: no hay nivel de elevación, el foco no está tokeniz
 
 // Sombra grande (no existía)
 --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
+
+// Acentos categóricos de las KPI cards del dashboard (4 slots)
+--kpi-accent-1..4          // por defecto: primary · accent · tertiary · success
 ```
+
+**`--kpi-accent-1..4`**: los 4 matices que tiñen la franja izquierda y el icono de cada `KPICard`. Por defecto valen la paleta categórica del tema, lo que ya da 4 hue distintos en los 4 temas multi-hue. En los **4 temas mono-hue** (`default`, `ocean`, `sunset`, `forest`) `accent` y `tertiary` son iguales a `primary` — y en `forest` además `primary` == `success` — así que sus slots 2/3/4 se sobreescriben derivándolos del propio primary con relative color syntax:
+
+```scss
+--kpi-accent-2: oklch(from var(--color-primary) l c calc(h + 90));
+```
+
+Conserva luminancia y croma (mismo peso visual y contraste en claro y en oscuro) y rota solo el matiz. Si necesitas otra paleta categórica de N slots, sigue este patrón en vez de hardcodear hex.
 
 **Importante para modo oscuro:** las sombras `rgba(0,0,0,…)` apenas se perciben sobre fondos oscuros. Para dar elevación en dark, **combina `--color-surface-elevated` + `--color-border`** (un borde sutil más claro) en lugar de confiar en `box-shadow`. En claro, la sombra sí trabaja.
 
