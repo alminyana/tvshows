@@ -156,3 +156,10 @@ tvshows-export.json
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# global
+.DS_Store
+docs/.DS_Store
+
+#development plans
+/docs
