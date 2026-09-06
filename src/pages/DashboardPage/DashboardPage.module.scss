@@ -1,3 +1,5 @@
+@use '@/styles/mixins' as *;
+
 .page {
   display: flex;
   flex-direction: column;
@@ -22,8 +24,22 @@
 
 .chartGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-4);
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.chartWide {
+  @include tablet {
+    grid-column: 1 / -1;
+  }
 }
 
 .center {

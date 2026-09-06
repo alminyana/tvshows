@@ -65,8 +65,8 @@ export function DashboardPage() {
       </div>
 
       <div className={styles.chartGrid}>
+        <GenrePieChart data={genreDistribution} className={styles.chartWide} />
         <GenreDistributionChart data={genreDistribution} />
-        <GenrePieChart data={genreDistribution} />
         <RatingDistributionChart data={ratingDistribution} />
         <DurationDistributionChart data={durationDistribution} />
       </div>
