@@ -405,3 +405,26 @@
   --color-warning: #fbbf24;
   --focus-ring: rgba(129, 140, 248, 0.5);
 }
+
+// ─── Acentos categóricos de las KPI cards ────────────────────────────────────
+// Por defecto = la paleta categórica del tema (D1). En los 4 temas mono-hue
+// accent y tertiary son iguales a primary, así que sus slots 2/3/4 se derivan
+// rotando el matiz del propio primary a pasos de 90°.
+
+:root {
+  --kpi-accent-1: var(--color-primary);
+  --kpi-accent-2: var(--color-accent);
+  --kpi-accent-3: var(--color-tertiary);
+  --kpi-accent-4: var(--color-success);
+}
+
+// Sin `[data-mode]` a propósito: al derivar de `--color-primary`, cada modo
+// resuelve con su propio primary (más luminoso en oscuro) sin duplicar bloques.
+[data-theme='default'],
+[data-theme='ocean'],
+[data-theme='sunset'],
+[data-theme='forest'] {
+  --kpi-accent-2: oklch(from var(--color-primary) l c calc(h + 90));
+  --kpi-accent-3: oklch(from var(--color-primary) l c calc(h + 180));
+  --kpi-accent-4: oklch(from var(--color-primary) l c calc(h + 270));
+}
