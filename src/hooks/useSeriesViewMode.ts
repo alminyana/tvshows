@@ -6,7 +6,7 @@ const STORAGE_KEY = 'tv-shows:series-view-mode';
 function readMode(): ViewMode {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'cards' || stored === 'list') return stored;
+    if (stored === 'cards' || stored === 'mosaic' || stored === 'list') return stored;
   } catch {
     // SSR guard
   }

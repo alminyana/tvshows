@@ -10,6 +10,7 @@ import type { Series } from '@/types';
 import styles from './SeriesCard.module.scss';
 
 const MAX_GENRES = 3;
+const MAX_RATING = 5;
 
 // Etiqueta corta de duración para la card (el texto completo se ve en la fila/detalle).
 const SEASONS_LABEL: Record<SeasonsType, string> = {
@@ -20,9 +21,11 @@ const SEASONS_LABEL: Record<SeasonsType, string> = {
 
 interface Props {
   series: Series;
+  /** `card` (por defecto) muestra los datos bajo la portada; `mosaic` los superpone. */
+  variant?: 'card' | 'mosaic';
 }
 
-export function SeriesCard({ series }: Props) {
+export function SeriesCard({ series, variant = 'card' }: Props) {
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -32,6 +35,7 @@ export function SeriesCard({ series }: Props) {
   const seasonsLabel = SEASONS_LABEL[classifySeasons(series.seasons)];
 
   const uniqueCast = Array.from(new Set(series.cast));
+  const isMosaic = variant === 'mosaic';
 
   useEffect(() => {
     let src: string | undefined;
@@ -46,7 +50,7 @@ export function SeriesCard({ series }: Props) {
 
   return (
     <article
-      className={styles.card}
+      className={`${styles.card} ${isMosaic ? styles.mosaic : ''}`}
       onClick={() => navigate(`/series/${series.id}`)}
       role="button"
       tabIndex={0}
@@ -62,21 +66,33 @@ export function SeriesCard({ series }: Props) {
       </div>
       <div className={styles.info}>
         <h3 className={styles.title}>{series.title}</h3>
-        <p className={styles.meta}>
-          {series.year} · {seasonsLabel}
-        </p>
-        {visibleGenres.length > 0 && (
-          <div className={styles.genres}>
-            {visibleGenres.map((g, i) => (
-              <Tag key={g} label={g} color={categoricalColor(i)} />
-            ))}
-            {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
-          </div>
+        {isMosaic ? (
+          <span
+            className={styles.ratingNumber}
+            aria-label={`${MESSAGES.series.rating}: ${series.rating} de ${MAX_RATING}`}
+          >
+            <span aria-hidden="true">★</span>
+            {series.rating}
+          </span>
+        ) : (
+          <>
+            <p className={styles.meta}>
+              {series.year} · {seasonsLabel}
+            </p>
+            {visibleGenres.length > 0 && (
+              <div className={styles.genres}>
+                {visibleGenres.map((g, i) => (
+                  <Tag key={g} label={g} color={categoricalColor(i)} />
+                ))}
+                {extraGenres > 0 && <span className={styles.more}>+{extraGenres}</span>}
+              </div>
+            )}
+            {uniqueCast.length > 0 && <p className={styles.cast}>{uniqueCast.join(', ')}</p>}
+            <div className={styles.rating}>
+              <Rating value={series.rating} readOnly />
+            </div>
+          </>
         )}
-        {uniqueCast.length > 0 && <p className={styles.cast}>{uniqueCast.join(', ')}</p>}
-        <div className={styles.rating}>
-          <Rating value={series.rating} readOnly />
-        </div>
       </div>
     </article>
   );
