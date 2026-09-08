@@ -35,6 +35,21 @@ describe('useSeriesViewMode', () => {
     expect(result.current[0]).toBe('list');
   });
 
+  it('lee "mosaic" de localStorage', () => {
+    localStorage.setItem(STORAGE_KEY, 'mosaic');
+    const { result } = renderHook(() => useSeriesViewMode());
+    expect(result.current[0]).toBe('mosaic');
+  });
+
+  it('persiste "mosaic" al llamar setMode', () => {
+    const { result } = renderHook(() => useSeriesViewMode());
+    act(() => {
+      result.current[1]('mosaic');
+    });
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('mosaic');
+    expect(result.current[0]).toBe('mosaic');
+  });
+
   it('puede volver a "cards" desde "list"', () => {
     localStorage.setItem(STORAGE_KEY, 'list');
     const { result } = renderHook(() => useSeriesViewMode());

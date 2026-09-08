@@ -157,7 +157,7 @@
 // ─── sunset · naranja cálido ──────────────────────────────────────────────────
 
 [data-theme='sunset'][data-mode='light'] {
-  --color-bg: #fff6ec;
+  --color-bg: #fdf0e3;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
   --color-text: #1a0a00;
@@ -165,11 +165,11 @@
   --color-text-cast: var(--color-text-muted);
   --color-primary: #ea580c;
   --color-primary-contrast: #000000;
-  --color-accent: #ea580c;
-  --color-accent-contrast: #000000;
-  --color-tertiary: #ea580c;
-  --color-tertiary-contrast: #000000;
-  --color-border: #fcdcc0;
+  --color-accent: #db2777;
+  --color-accent-contrast: #ffffff;
+  --color-tertiary: #a16207;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #f7d3b3;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -185,9 +185,9 @@
   --color-text-cast: var(--color-text);
   --color-primary: #fb923c;
   --color-primary-contrast: #1a0a00;
-  --color-accent: #fb923c;
+  --color-accent: #f472b6;
   --color-accent-contrast: #1a0a00;
-  --color-tertiary: #fb923c;
+  --color-tertiary: #fcd34d;
   --color-tertiary-contrast: #1a0a00;
   --color-border: #6a3a14;
   --color-danger: #f87171;
@@ -199,19 +199,19 @@
 // ─── forest · verde ───────────────────────────────────────────────────────────
 
 [data-theme='forest'][data-mode='light'] {
-  --color-bg: #f1faf3;
+  --color-bg: #eaf6ed;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
   --color-text: #052e16;
-  --color-text-muted: #4a7c59;
+  --color-text-muted: #457452;
   --color-text-cast: var(--color-text-muted);
   --color-primary: #16a34a;
   --color-primary-contrast: #000000;
-  --color-accent: #16a34a;
+  --color-accent: #0d9488;
   --color-accent-contrast: #000000;
-  --color-tertiary: #16a34a;
-  --color-tertiary-contrast: #000000;
-  --color-border: #c3eccf;
+  --color-tertiary: #4d7c0f;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #bde5c9;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -227,9 +227,9 @@
   --color-text-cast: var(--color-text);
   --color-primary: #4ade80;
   --color-primary-contrast: #051a0d;
-  --color-accent: #4ade80;
+  --color-accent: #2dd4bf;
   --color-accent-contrast: #051a0d;
-  --color-tertiary: #4ade80;
+  --color-tertiary: #a3e635;
   --color-tertiary-contrast: #051a0d;
   --color-border: #20603a;
   --color-danger: #f87171;
@@ -241,7 +241,7 @@
 // ─── amatista · violeta (sobrio) · acento magenta · terciario cian ────────────
 
 [data-theme='amatista'][data-mode='light'] {
-  --color-bg: #efe9fa;
+  --color-bg: #eae2f8;
   --color-surface: #f7f2fe;
   --color-surface-elevated: #fdfbff;
   --color-text: #2a1a3e;
@@ -251,9 +251,9 @@
   --color-primary-contrast: #ffffff;
   --color-accent: #db2777;
   --color-accent-contrast: #ffffff;
-  --color-tertiary: #0891b2;
-  --color-tertiary-contrast: #000000;
-  --color-border: #ddd0f0;
+  --color-tertiary: #0e7490;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #d8c9ee;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -283,7 +283,7 @@
 // ─── carmesi · rojo-magenta (vibrante) · acento ámbar · terciario violeta ─────
 
 [data-theme='carmesi'][data-mode='light'] {
-  --color-bg: #ffeef1;
+  --color-bg: #ffe7ec;
   --color-surface: #fff5f7;
   --color-surface-elevated: #fffdfd;
   --color-text: #3a0a14;
@@ -291,11 +291,11 @@
   --color-text-cast: var(--color-text-muted);
   --color-primary: #e11d48;
   --color-primary-contrast: #ffffff;
-  --color-accent: #f59e0b;
-  --color-accent-contrast: #3a0a14;
-  --color-tertiary: #8b5cf6;
-  --color-tertiary-contrast: #000000;
-  --color-border: #fbcad4;
+  --color-accent: #b45309;
+  --color-accent-contrast: #ffffff;
+  --color-tertiary: #7c3aed;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #f9bfcb;
   --color-danger: #b91c1c;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -325,19 +325,19 @@
 // ─── cian · teal-turquesa (vibrante) · acento violeta · terciario rosa ────────
 
 [data-theme='cian'][data-mode='light'] {
-  --color-bg: #e2f7f3;
+  --color-bg: #dbf3ee;
   --color-surface: #effbf8;
   --color-surface-elevated: #fbfffe;
   --color-text: #042f2e;
-  --color-text-muted: #3e7872;
+  --color-text-muted: #37706a;
   --color-text-cast: var(--color-text-muted);
   --color-primary: #0d9488;
   --color-primary-contrast: #000000;
   --color-accent: #7c3aed;
   --color-accent-contrast: #ffffff;
-  --color-tertiary: #f43f5e;
-  --color-tertiary-contrast: #000000;
-  --color-border: #bce8e1;
+  --color-tertiary: #be123c;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #b2e3db;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -367,7 +367,7 @@
 // ─── crepusculo · índigo (sobrio) · acento naranja · terciario teal ───────────
 
 [data-theme='crepusculo'][data-mode='light'] {
-  --color-bg: #ecebfa;
+  --color-bg: #e6e4f8;
   --color-surface: #f4f3fd;
   --color-surface-elevated: #fcfcff;
   --color-text: #1e1b3a;
@@ -375,11 +375,11 @@
   --color-text-cast: var(--color-text-muted);
   --color-primary: #4f46e5;
   --color-primary-contrast: #ffffff;
-  --color-accent: #f97316;
-  --color-accent-contrast: #000000;
-  --color-tertiary: #14b8a6;
-  --color-tertiary-contrast: #000000;
-  --color-border: #d8d6f0;
+  --color-accent: #c2410c;
+  --color-accent-contrast: #ffffff;
+  --color-tertiary: #0f766e;
+  --color-tertiary-contrast: #ffffff;
+  --color-border: #d2cfee;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;
@@ -406,25 +406,21 @@
   --focus-ring: rgba(129, 140, 248, 0.5);
 }
 
-// ─── Acentos categóricos de las KPI cards ────────────────────────────────────
-// Por defecto = la paleta categórica del tema (D1). En los 4 temas mono-hue
-// accent y tertiary son iguales a primary, así que sus slots 2/3/4 se derivan
-// rotando el matiz del propio primary a pasos de 90°.
+// ─── Paleta categórica ───────────────────────────────────────────────────────
+// Los 5 slots que consumen los chips de género y los acentos de las KPI cards.
+// Se derivan del `primary` del tema rotando el matiz a pasos de 72°, así que
+// garantizan 72° de separación entre sí en los 8 temas y en los 2 modos, sin
+// depender de que `accent` y `tertiary` sean hue distintos (en `default` y
+// `ocean` son clones de `primary`, y en `forest` `primary` y `success` son el
+// mismo verde). Conservar `l` y `c` mantiene el peso visual y el contraste.
+//
+// Una sola regla vale para los 16 combos: al derivar de `var(--color-primary)`,
+// cada tema y cada modo resuelven con el suyo.
 
 :root {
-  --kpi-accent-1: var(--color-primary);
-  --kpi-accent-2: var(--color-accent);
-  --kpi-accent-3: var(--color-tertiary);
-  --kpi-accent-4: var(--color-success);
-}
-
-// Sin `[data-mode]` a propósito: al derivar de `--color-primary`, cada modo
-// resuelve con su propio primary (más luminoso en oscuro) sin duplicar bloques.
-[data-theme='default'],
-[data-theme='ocean'],
-[data-theme='sunset'],
-[data-theme='forest'] {
-  --kpi-accent-2: oklch(from var(--color-primary) l c calc(h + 90));
-  --kpi-accent-3: oklch(from var(--color-primary) l c calc(h + 180));
-  --kpi-accent-4: oklch(from var(--color-primary) l c calc(h + 270));
+  --cat-1: var(--color-primary);
+  --cat-2: oklch(from var(--color-primary) l c calc(h + 72));
+  --cat-3: oklch(from var(--color-primary) l c calc(h + 144));
+  --cat-4: oklch(from var(--color-primary) l c calc(h + 216));
+  --cat-5: oklch(from var(--color-primary) l c calc(h + 288));
 }

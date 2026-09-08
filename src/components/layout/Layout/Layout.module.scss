@@ -1,7 +1,10 @@
 @use '@/styles/mixins' as m;
 
 .root {
-  min-height: 100%;
+  // `100dvh` en vez de `100%`: el porcentaje depende de la cadena
+  // html > body > #root y en móvil no cuenta con la barra del navegador, así
+  // que con poco contenido el fondo del tema se quedaba corto.
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--color-bg);

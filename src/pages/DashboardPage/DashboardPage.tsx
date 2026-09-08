@@ -39,28 +39,28 @@ export function DashboardPage() {
           label={MESSAGES.dashboard.totalSeries}
           value={totalSeries}
           icon={<CollectionIcon />}
-          accent="var(--kpi-accent-1)"
+          accent="var(--cat-1)"
         />
         <KPICard
           label={MESSAGES.dashboard.featuredSeries}
           value={featuredSeries}
           detail={MESSAGES.dashboard.featuredDetail}
           icon={<StarIcon />}
-          accent="var(--kpi-accent-2)"
+          accent="var(--cat-2)"
         />
         <KPICard
           label={MESSAGES.dashboard.miniseries}
           value={miniseriesCount}
           detail={MESSAGES.dashboard.miniseriesDetail}
           icon={<MiniseriesIcon />}
-          accent="var(--kpi-accent-3)"
+          accent="var(--cat-3)"
         />
         <KPICard
           label={MESSAGES.dashboard.multiSeason}
           value={multiSeasonCount}
           detail={MESSAGES.dashboard.multiSeasonDetail}
           icon={<LayersIcon />}
-          accent="var(--kpi-accent-4)"
+          accent="var(--cat-4)"
         />
       </div>
 

@@ -98,17 +98,19 @@ El sistema actual es plano: no hay nivel de elevación, el foco no está tokeniz
 // Sombra grande (no existía)
 --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
 
-// Acentos categóricos de las KPI cards del dashboard (4 slots)
---kpi-accent-1..4          // por defecto: primary · accent · tertiary · success
+// Paleta categórica (chips de género, acentos de KPI, gráficos)
+--cat-1..5                 // 5 slots derivados del primary del tema
 ```
 
-**`--kpi-accent-1..4`**: los 4 matices que tiñen la franja izquierda y el icono de cada `KPICard`. Por defecto valen la paleta categórica del tema, lo que ya da 4 hue distintos en los 4 temas multi-hue. En los **4 temas mono-hue** (`default`, `ocean`, `sunset`, `forest`) `accent` y `tertiary` son iguales a `primary` — y en `forest` además `primary` == `success` — así que sus slots 2/3/4 se sobreescriben derivándolos del propio primary con relative color syntax:
+**`--cat-1..5`**: la paleta categórica del proyecto. `--cat-1` es `--color-primary` y los otros cuatro se derivan de él rotando el matiz a pasos de 72° con relative color syntax:
 
 ```scss
---kpi-accent-2: oklch(from var(--color-primary) l c calc(h + 90));
+--cat-2: oklch(from var(--color-primary) l c calc(h + 72));
 ```
 
-Conserva luminancia y croma (mismo peso visual y contraste en claro y en oscuro) y rota solo el matiz. Si necesitas otra paleta categórica de N slots, sigue este patrón en vez de hardcodear hex.
+Conserva luminancia y croma (mismo peso visual y contraste en claro y en oscuro) y rota solo el matiz, así que **una sola regla en `:root` sirve para los 16 combos**: cada tema y cada modo resuelven con su propio `primary`. Garantiza 72° de separación entre los 5 slots en todos los temas, cosa que la paleta curada no da: en `default` y `ocean` `accent` y `tertiary` son clones de `primary`, en `forest` `primary` y `success` son el mismo verde, y en `sunset`/`carmesi`/`crepusculo` el `warning` ámbar choca con sus acentos cálidos.
+
+Consúmela con `categoricalColor(i)` (`src/utils/categoricalPalette.ts`), que devuelve el número de slot, y pásalo al primitivo `Tag` (`<Tag color={categoricalColor(i)} />`). En Recharts o en un `accent` inline usa `var(--cat-N)` directamente. **No hardcodees hex para series de datos.**
 
 **Importante para modo oscuro:** las sombras `rgba(0,0,0,…)` apenas se perciben sobre fondos oscuros. Para dar elevación en dark, **combina `--color-surface-elevated` + `--color-border`** (un borde sutil más claro) en lugar de confiar en `box-shadow`. En claro, la sombra sí trabaja.
 
