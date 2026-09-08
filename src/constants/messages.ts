@@ -98,8 +98,12 @@ export const MESSAGES = {
 
   // Filtros
   filters: {
-    title: 'Filtros',
-    titleWithCount: (n: number) => `Filtros (${n})`,
+    clearAll: 'Limpiar todo',
+    removeFilter: (label: string) => `Quitar filtro ${label}`,
+    count: (n: number) => (n === 1 ? '1 serie' : `${n} series`),
+    countFiltered: (shown: number, total: number) => `${shown} de ${total} series`,
+    searchChip: (q: string) => `\u201C${q}\u201D`,
+    ratingChip: (n: number) => `${n}\u2605 o más`,
   },
 
   // Series
@@ -128,7 +132,9 @@ export const MESSAGES = {
     genreDeleteConfirmDetail: 'Se quitará del listado y de cualquier otra serie que lo tenga asignado. Esta acción no se puede deshacer.',
     newSeries: 'Nueva serie',
     editSeries: 'Editar serie',
+    view: 'Vista',
     viewCards: 'Vista en cuadrícula',
+    viewMosaic: 'Vista en mosaico',
     viewList: 'Vista en lista',
     sections: {
       cover: 'Portada',

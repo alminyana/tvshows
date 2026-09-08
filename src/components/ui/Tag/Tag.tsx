@@ -5,7 +5,7 @@ import styles from './Tag.module.scss';
 interface TagProps {
   label: string;
   onRemove?: () => void;
-  /** Color categórico decorativo (p. ej. chips de género). Por defecto `primary`. */
+  /** Slot de la paleta categórica (p. ej. chips de género). Por defecto el 1. */
   color?: CategoricalColor;
   /** Texto con el color de texto principal en oscuro, en vez del color categórico. */
   strongText?: boolean;
@@ -16,11 +16,11 @@ interface TagProps {
 export function Tag({
   label,
   onRemove,
-  color = 'primary',
+  color = 1,
   strongText = false,
   size = 'sm',
 }: TagProps) {
-  const colorStyle = { '--tag-c': `var(--color-${color})` } as CSSProperties;
+  const colorStyle = { '--tag-c': `var(--cat-${color})` } as CSSProperties;
   const className = [styles.tag, strongText && styles.strongText, size === 'md' && styles.md]
     .filter(Boolean)
     .join(' ');

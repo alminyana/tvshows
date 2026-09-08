@@ -234,6 +234,16 @@ export function ShowcasePage() {
         </div>
       </section>
 
+      {/* ─── SeriesCard · variante mosaico ───────────────────── */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>SeriesCard (mosaico)</h2>
+        <div className={styles.mosaicGrid}>
+          {MOCK_SERIES.map((s) => (
+            <SeriesCard key={s.id} series={s} variant="mosaic" />
+          ))}
+        </div>
+      </section>
+
       {/* ─── SeriesRow (componente real) ─────────────────────── */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>SeriesRow</h2>
@@ -271,28 +281,28 @@ export function ShowcasePage() {
             label={MESSAGES.dashboard.totalSeries}
             value={19}
             icon={<CollectionIcon />}
-            accent="var(--kpi-accent-1)"
+            accent="var(--cat-1)"
           />
           <KPICard
             label={MESSAGES.dashboard.featuredSeries}
             value={12}
             detail={MESSAGES.dashboard.featuredDetail}
             icon={<StarIcon />}
-            accent="var(--kpi-accent-2)"
+            accent="var(--cat-2)"
           />
           <KPICard
             label={MESSAGES.dashboard.miniseries}
             value={3}
             detail={MESSAGES.dashboard.miniseriesDetail}
             icon={<MiniseriesIcon />}
-            accent="var(--kpi-accent-3)"
+            accent="var(--cat-3)"
           />
           <KPICard
             label={MESSAGES.dashboard.multiSeason}
             value={9}
             detail={MESSAGES.dashboard.multiSeasonDetail}
             icon={<LayersIcon />}
-            accent="var(--kpi-accent-4)"
+            accent="var(--cat-4)"
           />
         </div>
       </section>

@@ -92,6 +92,19 @@ describe('SeriesCard', () => {
     expect(screen.queryByText('Bryan Cranston')).not.toBeInTheDocument();
   });
 
+  it('en variante mosaico muestra solo título y valoración numérica', () => {
+    render(
+      <MemoryRouter>
+        <SeriesCard series={mockSeries} variant="mosaic" />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText('Breaking Bad')).toBeInTheDocument();
+    expect(screen.getByLabelText('Valoración: 5 de 5')).toBeInTheDocument();
+    expect(screen.queryByText('Drama')).not.toBeInTheDocument();
+    expect(screen.queryByText('Bryan Cranston')).not.toBeInTheDocument();
+    expect(screen.queryByText(/2008/)).not.toBeInTheDocument();
+  });
+
   it('navega al detalle al hacer click', () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Breaking Bad' }));

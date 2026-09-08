@@ -1,6 +1,7 @@
 @use '@/styles/mixins' as *;
 
 .row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-4);
@@ -8,12 +9,28 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  overflow: hidden;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: box-shadow 0.15s;
+
+  // Franja de acento a la izquierda, el mismo patrón que usa `KPICard`.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background: var(--color-primary);
+    transition: width 0.15s ease;
+  }
 
   &:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+    box-shadow: var(--shadow-md);
+  }
+
+  &:hover::before,
+  &:focus-visible::before {
+    width: 3px;
   }
 
   &:focus-visible {
@@ -26,7 +43,7 @@
   flex-shrink: 0;
   width: 64px;
   height: 96px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--color-border);
 }
@@ -41,7 +58,7 @@
 .placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(150deg, var(--color-primary), var(--color-accent), var(--color-tertiary));
+  background: linear-gradient(150deg, var(--cat-1), var(--cat-3), var(--cat-5));
 }
 
 // Móvil: las zonas se apilan. Tablet+: se reparten en horizontal ocupando el ancho.

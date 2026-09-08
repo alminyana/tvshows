@@ -15,7 +15,9 @@ vi.mock('@/hooks', () => ({
 }));
 
 vi.mock('@/components/features', () => ({
-  SeriesCard: ({ series }: { series: Series }) => <div data-testid="series-card">{series.title}</div>,
+  SeriesCard: ({ series, variant }: { series: Series; variant?: string }) => (
+    <div data-testid={variant === 'mosaic' ? 'series-mosaic' : 'series-card'}>{series.title}</div>
+  ),
   SeriesRow: ({ series }: { series: Series }) => <div data-testid="series-row">{series.title}</div>,
 }));
 
@@ -174,5 +176,73 @@ describe('SeriesListPage', () => {
     renderPage();
     await userEvent.click(screen.getByRole('button', { name: /vista en lista/i }));
     expect(setViewMode).toHaveBeenCalledWith('list');
+  });
+
+  it('el toggle de vista cambia a mosaico', async () => {
+    const setViewMode = vi.fn();
+    vi.mocked(useSeriesViewMode).mockReturnValue(['cards', setViewMode]);
+    vi.mocked(useSeries).mockReturnValue({ series: [], loading: false, error: null, reload: vi.fn() });
+    renderPage();
+    await userEvent.click(screen.getByRole('button', { name: /vista en mosaico/i }));
+    expect(setViewMode).toHaveBeenCalledWith('mosaic');
+  });
+
+  it('renderiza las series en modo mosaico', () => {
+    vi.mocked(useSeriesViewMode).mockReturnValue(['mosaic', vi.fn()]);
+    vi.mocked(useSeries).mockReturnValue({
+      series: [makeSeries(), makeSeries({ id: 'id-2', title: 'Severance' })],
+      loading: false,
+      error: null,
+      reload: vi.fn(),
+    });
+    renderPage();
+    expect(screen.getAllByTestId('series-mosaic')).toHaveLength(2);
+    expect(screen.queryByTestId('series-card')).not.toBeInTheDocument();
+  });
+
+  it('muestra el contador de series y lo ajusta al filtrar', async () => {
+    vi.mocked(useSeries).mockReturnValue({
+      series: [makeSeries(), makeSeries({ id: 'id-2', title: 'Severance' })],
+      loading: false,
+      error: null,
+      reload: vi.fn(),
+    });
+    renderPage();
+    expect(screen.getByText('2 series')).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText(/buscar por título/i), { target: { value: 'Sever' } });
+    await waitFor(() => {
+      expect(screen.getByText('1 de 2 series')).toBeInTheDocument();
+    });
+  });
+
+  it('el chip de un filtro activo lo elimina al pulsarlo', async () => {
+    vi.mocked(useSeries).mockReturnValue({
+      series: [makeSeries({ genres: ['Drama'] }), makeSeries({ id: 'id-2', title: 'Severance', genres: ['Ciencia ficción'] })],
+      loading: false,
+      error: null,
+      reload: vi.fn(),
+    });
+    renderPage('?genre=Drama');
+    expect(screen.queryByText('Severance')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /quitar filtro drama/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Severance')).toBeInTheDocument();
+    });
+  });
+
+  it('"Limpiar todo" quita todos los filtros a la vez', async () => {
+    vi.mocked(useSeries).mockReturnValue({
+      series: [makeSeries({ genres: ['Drama'], rating: 5 }), makeSeries({ id: 'id-2', title: 'Severance', genres: ['Ciencia ficción'], rating: 3 })],
+      loading: false,
+      error: null,
+      reload: vi.fn(),
+    });
+    renderPage('?genre=Drama&rating=5');
+    await userEvent.click(screen.getByRole('button', { name: /limpiar todo/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Severance')).toBeInTheDocument();
+      expect(screen.getByText('2 series')).toBeInTheDocument();
+    });
   });
 });
