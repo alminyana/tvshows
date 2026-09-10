@@ -258,3 +258,35 @@ Repetida sobre los 16 bloques comparando el conjunto de fallos antes y después:
 
 ### Hecho cuando
 - Las 3 vistas conmutan y el modo persiste; los filtros filtran y los chips limpian su query param; los 16 combos se revisan en `/showcase`; `lint`, `tsc -b`, `build` y la suite en verde.
+
+---
+
+## D8 — Formulario de series (ayuda + reagrupación) · Complejidad: M
+
+- **Objetivo:** que el formulario de crear/editar series se entienda sin conocimiento previo, respire, y avise de lo que hace y no se ve.
+- **Entregable:** cinco secciones con icono, un primitivo de ayuda contextual y cuatro campos explicados.
+- **Estado:** ✅ Completada. Propuesta visual aprobada en un canvas de diseño (prototipo clicable) antes de implementar. Cubre `/series/new` y `/series/:id/edit`.
+- **Dependencias:** D5 (que reagrupa), D7 (la paleta `--cat-1..5`).
+
+### Tareas
+1. **`ui/HelpPopover`**, primitivo nuevo: se abre al pulsar (nunca hover — en móvil un tooltip de hover es inalcanzable, y ahí es donde estos campos más confunden), cierra con Escape, con la × y con clic fuera devolviendo el foco al disparador. Los listeners solo se suscriben mientras está abierto, como en `Modal` y `Header`. ✅
+2. **`FormField`**: hueco etiqueta→control de `--space-1` a `--space-2` — cambio **global**, alcanza también a `LoginForm` — y nueva prop `help?: ReactNode` con su `.labelRow` como ancla del panel. ✅
+3. **Cinco secciones** en `SeriesForm`, sustituyendo la agrupación de D5: **Portada · Datos básicos · Géneros · Reparto · Valoración y opinión**. «Clasificación» desaparece: metía Temporadas, Géneros y Reparto bajo un rótulo genérico. Temporadas se muda a Datos básicos y Valoración se funde con Opinión, así cinco secciones encajan en los cinco slots `--cat-1..5` sin repetir matiz. Iconos en `SeriesForm/icons.tsx`, con el patrón de `dashboard/icons.tsx`. ✅
+4. **Cuatro campos con ayuda**: portada, temporadas, géneros y reparto. El texto de temporadas se escribió leyendo `classifySeasons.ts` y explica su regex. ✅
+5. **Copy** a `MESSAGES.series.help.*` y `MESSAGES.series.sections.*`; de paso, los `placeholder`/`aria-label` que estaban hardcodeados en el componente. ✅
+6. **Responsive y a11y**: en móvil el panel se ancla a `.labelRow` y ocupa el ancho del campo; botón de ayuda a 32px y botones de chips/guardar a 44px; `aria-describedby` de cada control a su panel. ✅
+7. **Tests**: 8 del primitivo + 5 del formulario (secciones como `role="group"`, la ayuda de géneros, Escape, la de temporadas y los cuatro `aria-describedby`). ✅
+
+### El aviso que justifica el hito
+La **×** de un chip de género **no lo quita de la serie**: abre un `ConfirmDialog` que borra el género **del catálogo entero y de todas las demás series**. Nada lo anunciaba hasta que el diálogo ya estaba abierto. Es el tercer párrafo de `MESSAGES.series.help.genres`.
+
+### Ajustes que arrastró el hito
+- **`ThemeToggle`**: el par bombilla encendida/apagada pasa a **sol / media luna**, y ambos toman `--color-text-muted` del tema activo. Desaparece el `#b45309` hardcodeado, el último color fijo del componente: el icono ya distingue el estado, no hace falta que además lo haga el color.
+- **`default` en modo claro**: `--color-bg` `#f3f4f6` → `#eaecf0`. Obligó a bajar `--color-text-muted` a `#646b78` (el valor anterior estaba en 4.53:1, justo en el filo, y el fondo nuevo lo habría dejado en 4.21:1) y a oscurecer `--color-border` a `#dfe2e8` para que el filo de las cards siguiera leyéndose. Auditoría repetida contra `HEAD`: **47 pares por debajo de AA antes y después, cero regresiones**.
+- **`GenrePieChart`**: como la card ocupa una fila entera del dashboard desde D7, la restricción de igualar alturas ya no aplica. El donut se ancla a la izquierda y la leyenda se queda con el ancho sobrante en `repeat(auto-fit, minmax(190px, 1fr))`, en vez de columnas fijas de 7 filas. El orden de lectura pasa de por columnas a por filas.
+
+### Fuera de alcance
+El campo **Géneros conserva sus tres controles apilados** (chips + `<select multiple>` + input de alta) por decisión explícita del usuario. La ayuda tapa el hueco, pero el `<select multiple>` sigue siendo el control menos intuitivo de la pantalla.
+
+### Hecho cuando
+- Las cinco secciones se distinguen, los cuatro popovers abren y cierran por los tres caminos, crear y editar una serie funciona de principio a fin (incluida la portada por pegado y por selector), el modal de login no se descuadra con el `gap` global, y `lint`, `tsc -b`, `build` y la suite (318 tests) en verde.
