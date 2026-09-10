@@ -3,35 +3,55 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
   max-width: 720px;
 }
 
 .fieldset {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
   margin: 0;
-  padding: var(--space-5);
+  padding: var(--space-6);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .legend {
-  padding: 0 var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
   margin-left: var(--space-2);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-primary);
+}
+
+// Cuadrado tintado al 14%, el mismo tratamiento que el icono de `KPICard`.
+.legendIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  color: var(--section-color, var(--color-primary));
+  background: color-mix(in srgb, var(--section-color, var(--color-primary)) 14%, transparent);
+}
+
+.legendText {
+  color: var(--section-color, var(--color-primary));
 }
 
 .row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: var(--space-5);
 
   @include tablet {
     grid-template-columns: 1fr 1fr;
@@ -41,7 +61,7 @@
 .chips {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .chipRow {
@@ -53,7 +73,7 @@
 .selectedGenres {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .chipRowLabel {
@@ -64,15 +84,39 @@
 
 .chipInput {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
+
+  // El campo ocupa la fila y el botón cae debajo, con objetivo táctil completo.
+  > :first-child {
+    flex: 1 0 100%;
+  }
+
+  button {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  @include tablet {
+    flex-wrap: nowrap;
+
+    > :first-child {
+      flex: 1;
+    }
+
+    button {
+      flex: 0 0 auto;
+      min-height: 28px;
+    }
+  }
 }
 
 .imageField {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--space-4);
+  gap: var(--space-5);
 
   @include tablet {
     flex-direction: row;
@@ -138,7 +182,21 @@
 
 .formActions {
   display: flex;
-  justify-content: flex-end;
-  padding-top: var(--space-2);
+  justify-content: stretch;
+  padding-top: var(--space-5);
   border-top: 1px solid var(--color-border);
+
+  button {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  @include tablet {
+    justify-content: flex-end;
+
+    button {
+      flex: 0 0 auto;
+      min-height: 36px;
+    }
+  }
 }

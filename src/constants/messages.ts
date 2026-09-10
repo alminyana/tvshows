@@ -81,6 +81,7 @@ export const MESSAGES = {
     create: 'Crear',
     confirm: 'Confirmar',
     close: 'Cerrar',
+    helpAbout: (field: string) => `Ayuda sobre ${field}`,
     add: 'Añadir',
     remove: 'Quitar',
     search: 'Buscar',
@@ -139,10 +140,39 @@ export const MESSAGES = {
     sections: {
       cover: 'Portada',
       basics: 'Datos básicos',
-      classification: 'Clasificación',
-      rating: 'Valoración',
-      opinion: 'Opinión',
+      genres: 'Géneros',
+      cast: 'Reparto',
+      verdict: 'Valoración y opinión',
     },
+    // Ayuda contextual de los campos que hacen algo que no se adivina mirándolos.
+    help: {
+      cover: {
+        paste: 'Puedes copiar una imagen de otra web y pegarla aquí con Ctrl+V (o Cmd+V) sin descargarla antes.',
+        file: 'Si prefieres un archivo del ordenador, usa «Seleccionar imagen». Se aceptan JPEG, PNG y WebP de hasta 2 MB.',
+      },
+      seasons: {
+        free: 'Es un campo de texto libre: escribe la duración como quieras — «Miniserie - 8 episodios», «4 temporadas», «6 seasons - 52 episodios».',
+        parsed: 'Eso sí, la ficha y el dashboard lo leen para clasificar la serie en miniserie, 1 temporada o multi-temporada. Para que acierten: si es una miniserie incluye la palabra «miniserie»; si no, escribe el número pegado a «temporada» o «season».',
+        example: 'Así no confunde las temporadas con los episodios: en «1 temporada - 8 episodios» se queda con el 1, no con el 8.',
+      },
+      genres: {
+        pick: 'Marca en la lista los géneros que quieras. Con Ctrl (o Cmd) pulsado puedes marcar varios a la vez.',
+        create: '¿No está el que buscas? Escríbelo abajo y pulsa Enter: se añade a esta serie y queda en el catálogo para las demás.',
+        remove: 'La × de un género seleccionado lo borra del catálogo entero, no solo de esta serie.',
+      },
+      cast: {
+        add: 'Escribe un nombre y pulsa Enter para añadirlo. Repite para cada actor o actriz.',
+        free: 'Es texto libre: no hay catálogo ni autocompletado, así que cuida la ortografía si quieres que los nombres coincidan entre series.',
+      },
+    },
+    // Campos de alta de chips.
+    genreNewPlaceholder: 'Nuevo género y Enter para añadir',
+    genreNewLabel: 'Añadir nuevo género',
+    genreAddLabel: 'Añadir género',
+    castNewPlaceholder: 'Nombre y Enter para añadir',
+    castNewLabel: 'Añadir miembro del reparto',
+    castAddLabel: 'Añadir reparto',
+    coverPreviewAlt: 'Previsualización de portada',
   },
 
   // Login

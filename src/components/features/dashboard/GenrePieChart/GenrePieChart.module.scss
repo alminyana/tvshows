@@ -44,8 +44,8 @@
   @include tablet {
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-5);
+    justify-content: flex-start;
+    gap: var(--space-6);
   }
 }
 
@@ -68,15 +68,15 @@
   margin: var(--space-1) 0 0;
   padding: 0;
 
-  // Columnas de 7 filas: la leyenda crece a lo ancho, nunca por encima de la
-  // altura del donut, que es lo que mantiene las 4 cards a la misma altura.
+  // Tantas columnas como quepan en el ancho sobrante, nunca por debajo de 190px
+  // para que nombre y recuento no se peguen. La altura se mantiene por debajo de
+  // la del donut, así la card no crece de más.
   @include tablet {
     display: grid;
-    grid-auto-flow: column;
-    grid-template-rows: repeat(7, auto);
-    grid-auto-columns: max-content;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    align-content: center;
     gap: var(--space-2) var(--space-5);
-    flex: 0 1 auto;
+    flex: 1;
     min-width: 0;
     margin: 0;
   }
@@ -104,7 +104,6 @@
 .legendName {
   @include tablet {
     min-width: 0;
-    max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
