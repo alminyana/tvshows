@@ -73,11 +73,11 @@
 
 :root,
 [data-theme='default'][data-mode='light'] {
-  --color-bg: #f3f4f6;
+  --color-bg: #eaecf0;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
   --color-text: #1a1a2e;
-  --color-text-muted: #69707d;
+  --color-text-muted: #646b78;
   --color-text-cast: var(--color-text-muted);
   --color-primary: #2563eb;
   --color-primary-contrast: #ffffff;
@@ -85,7 +85,7 @@
   --color-accent-contrast: #ffffff;
   --color-tertiary: #2563eb;
   --color-tertiary-contrast: #ffffff;
-  --color-border: #e5e7eb;
+  --color-border: #dfe2e8;
   --color-danger: #dc2626;
   --color-success: #16a34a;
   --color-warning: #d97706;

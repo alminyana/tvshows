@@ -230,3 +230,31 @@ D3 depende de D2 (consume los tokens nuevos). D4 y D5 dependen de D3 (consumen p
 
 ### Hecho cuando
 - Los 16 combos pasan revisión visual y de contraste, el responsive aguanta en los 3 breakpoints, y toda la cadena de calidad está en verde.
+
+---
+
+## D7 — Rediseño de `/series` (póster + mosaico) · Complejidad: L
+
+- **Objetivo:** que el listado de series se lea como un muro de pósters, añadir una tercera densidad y sacar los filtros del acordeón, sin tocar lógica de negocio ni de datos.
+- **Entregable:** 3 vistas conmutables, barra de filtros siempre visible con chips descartables, `sunset` y `forest` multi-hue, y una única paleta categórica.
+- **Estado:** ✅ Completada. Propuesta visual aprobada en un canvas de diseño (prototipo clicable con las 132 series y portadas reales del export) antes de implementar.
+- **Dependencias:** D0–D6.
+
+### Tareas
+1. `ViewMode` pasa a `'cards' | 'mosaic' | 'list'`; `useSeriesViewMode` acepta el valor nuevo sin migración (los `cards`/`list` guardados siguen valiendo). ✅
+2. `SeriesCard` gana `variant?: 'card' | 'mosaic'`. Portada `3/4` → **`2/3`**; los datos siguen **debajo** de la portada sobre `--color-surface` (la versión con el texto superpuesto se construyó y se descartó). En `mosaic` los datos sí van sobre la imagen con degradado inferior, y solo se montan título a 1 línea y valoración numérica. ✅
+3. `SeriesRow`: el hover deja de teñir el borde y pasa a franja de acento a la izquierda vía `::before`, el patrón de `KPICard`. Miniatura a `--radius-md`. ✅
+4. `SeriesListPage`: toggle de 3 botones, barra de filtros siempre visible (búsqueda con icono + los dos `Select`), contador de resultados y un chip descartable por filtro activo. El estado sigue en query params, así que cada chip solo borra su clave. ✅
+5. **`Collapsible` eliminado**: sin ningún otro consumidor tras sacar los filtros. Se van con él `filters.title` y `filters.titleWithCount`. ✅
+6. Temas: `sunset` (accent magenta, tertiary ámbar) y `forest` (accent turquesa, tertiary oliva) dejan de ser mono-hue; los 4 multi-hue reciben fondo claro algo más profundo y acentos claros oscurecidos. **`default` y `ocean` intactos por decisión explícita.** ✅
+7. **Paleta categórica unificada en `--cat-1..5`**: cinco slots derivados del `primary` del tema rotando el matiz a pasos de 72° con `oklch(from …)`. Una sola regla en `:root` cubre los 16 combos y garantiza 72° de separación en todos los temas. Absorbe la rampa `--kpi-accent-*` (eran dos rotaciones haciendo lo mismo) y la paleta por nombre de token. La consumen `Tag` vía `categoricalColor(i)`, los acentos de las KPI y el degradado del placeholder de portada (`--cat-1 → --cat-3 → --cat-5`). ✅
+8. `.root` pasa a `min-height: 100dvh`. ✅
+9. `/showcase` gana la sección de la variante mosaico, junto a card y row. ✅
+
+### Auditoría de contraste
+Repetida sobre los 16 bloques comparando el conjunto de fallos antes y después: **cero regresiones** (48 pares por debajo de AA antes, 47 después). Se corrigieron 3 introducidos por la paleta nueva — `--color-accent-contrast` de `forest` (blanco sobre turquesa, 3.74:1 → negro, 5.61:1) y los `--color-text-muted` de `forest` y `cian`, que dejaban de pasar sobre sus fondos claros más profundos.
+
+**Queda abierto:** los 47 restantes ya fallaban y afectan igual a `default` y `ocean`. Son el par del chip de género (`Tag` pinta el texto con `--tag-c` sobre un tinte del 15% de sí mismo, que **nunca** llega a 4.5:1 en claro en ningún tema) más algún `primary / surface` en los temas de hue claro. La auditoría de D6 no cubría ese par: viene de origen. Arreglarlo exige subir el tinte del chip (15% → ~25-30%) o dar al texto del chip un token propio más oscuro; es una decisión de diseño pendiente.
+
+### Hecho cuando
+- Las 3 vistas conmutan y el modo persiste; los filtros filtran y los chips limpian su query param; los 16 combos se revisan en `/showcase`; `lint`, `tsc -b`, `build` y la suite en verde.

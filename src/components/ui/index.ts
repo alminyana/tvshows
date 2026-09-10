@@ -11,6 +11,7 @@ export { ConfirmDialog } from './ConfirmDialog/ConfirmDialog';
 export { Rating } from './Rating/Rating';
 export { IconButton } from './IconButton/IconButton';
 export { FormField } from './FormField/FormField';
+export { HelpPopover } from './HelpPopover/HelpPopover';
 export { Spinner } from './Spinner/Spinner';
 export { Avatar } from './Avatar/Avatar';
 export { ThemeToggle } from './ThemeToggle/ThemeToggle';

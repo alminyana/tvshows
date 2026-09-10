@@ -7,19 +7,24 @@ interface FormFieldProps {
   error?: string;
   hint?: string;
   required?: boolean;
+  /** Ayuda contextual junto a la etiqueta (p. ej. un `HelpPopover`). */
+  help?: ReactNode;
   children: ReactNode;
 }
 
-export function FormField({ label, htmlFor, error, hint, required, children }: FormFieldProps) {
+export function FormField({ label, htmlFor, error, hint, required, help, children }: FormFieldProps) {
   const errorId = htmlFor ? `${htmlFor}-error` : undefined;
   const hintId = htmlFor ? `${htmlFor}-hint` : undefined;
 
   return (
     <div className={styles.field}>
-      <label className={styles.label} htmlFor={htmlFor}>
-        {label}
-        {required && <span className={styles.required} aria-hidden="true"> *</span>}
-      </label>
+      <div className={styles.labelRow}>
+        <label className={styles.label} htmlFor={htmlFor}>
+          {label}
+          {required && <span className={styles.required} aria-hidden="true"> *</span>}
+        </label>
+        {help}
+      </div>
 
       {hint && (
         <p id={hintId} className={styles.hint}>{hint}</p>
