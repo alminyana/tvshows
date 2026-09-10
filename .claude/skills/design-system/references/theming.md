@@ -36,3 +36,5 @@ const primary = css.getPropertyValue('--color-primary').trim();
 Pásalo luego a `fill`, `stroke`, etc. Para tooltips, usa objetos inline con los valores resueltos (`contentStyle`, `itemStyle`, `labelStyle`, `cursor`) — es el puente ya usado en `GenreDistributionChart`/`RatingDistributionChart`/`GenrePieChart`. Si el usuario cambia de tema en caliente, recalcula (los gráficos del dashboard ya consumen colores del tema activo).
 
 **No** intentes pasar `var(--color-…)` como string a una prop de color de Recharts: no se resuelve y el gráfico sale sin color.
+
+**Para series de datos** (barras por categoría, sectores de un donut, líneas) no elijas colores a mano: usa la paleta categórica `--cat-1..5` (ver `references/tokens.md`), que ya garantiza 72° de separación en los 8 temas. Resuelve `--cat-N` con `getComputedStyle` igual que cualquier otro token.
