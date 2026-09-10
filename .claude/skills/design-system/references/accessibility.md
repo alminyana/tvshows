@@ -22,9 +22,11 @@ Cumplir lo **básico de WCAG AA**:
 
 ## Patrones ARIA del proyecto
 
-- **Formularios:** `FormField` envuelve label + control + error. Para agrupar secciones usa `fieldset` + `legend` (legend = título de sección). El error se asocia al control; usa `aria-live` para feedback de acciones (el proyecto tiene `NotificationContext` con `role="status" aria-live="polite"`).
+- **Formularios:** `FormField` envuelve label + control + error, y admite un `help` junto a la etiqueta. Para agrupar secciones usa `fieldset` + `legend` (legend = título de sección). El error se asocia al control; usa `aria-live` para feedback de acciones (el proyecto tiene `NotificationContext` con `role="status" aria-live="polite"`).
+- **Ayuda contextual:** para un campo que hace algo no evidente, `HelpPopover` vía la prop `help` de `FormField`, y el control apuntando al panel con `aria-describedby`. Se abre **al pulsar, nunca al pasar el ratón**: un tooltip de hover es inalcanzable en táctil, que es justo donde peor se entienden esos campos. Cierra con Escape, con su × y con clic fuera, devolviendo el foco al disparador.
 - **Iconos decorativos:** SVG con `aria-hidden="true"`; el texto accesible vive en el botón (`aria-label`/`title` dinámicos, como en `ThemeToggle`).
 - **Botones con label ambiguo:** si dos botones comparten texto visible ("Añadir"), diferéncialos con `aria-label` distinto (`"Añadir género"` vs `"Añadir reparto"`) para no romper `getByRole`/`getByLabelText`.
+- **Cuidado con el efecto contrario:** un `aria-label` que *contiene* el nombre del campo (`"Ayuda sobre Temporadas"`) hace que `getByLabelText(/temporadas/i)` encuentre dos elementos. Es correcto para un lector de pantalla, pero obliga a anclar la consulta en los tests (`/^temporadas$/i`).
 - **Selects multi nativos:** el `<select multiple>` nativo no es estilable ni del todo accesible de forma consistente; está aceptado como limitación temporal del proyecto. Si se reemplaza algún día, hazlo con un patrón de checkboxes/chips accesible.
 
 ## Checklist al maquetar un interactivo
@@ -33,4 +35,5 @@ Cumplir lo **básico de WCAG AA**:
 2. ¿Es operable por teclado (enter/space/escape donde aplique)?
 3. ¿Tiene nombre accesible (label, `aria-label`, o texto)?
 4. ¿Contraste AA en claro y oscuro?
+5. ¿Llega a 44px de objetivo táctil en móvil? (En escritorio puede bajar; el proyecto sube a 44 bajo el breakpoint `tablet` y reduce por encima.)
 5. ¿Iconos decorativos con `aria-hidden`?
