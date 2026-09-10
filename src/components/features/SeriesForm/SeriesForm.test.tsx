@@ -85,8 +85,8 @@ describe('SeriesForm', () => {
     expect(screen.getByLabelText(/título/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/sinopsis/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/año/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/temporadas/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/géneros/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^temporadas$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^géneros$/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /guardar/i })).toBeInTheDocument();
   });
 
@@ -192,15 +192,15 @@ describe('SeriesForm', () => {
     await user.type(screen.getByLabelText(/sinopsis/i), validValues.synopsis);
     await user.clear(screen.getByLabelText(/año/i));
     await user.type(screen.getByLabelText(/año/i), String(validValues.year));
-    await user.clear(screen.getByLabelText(/temporadas/i));
-    await user.type(screen.getByLabelText(/temporadas/i), String(validValues.seasons));
+    await user.clear(screen.getByLabelText(/^temporadas$/i));
+    await user.type(screen.getByLabelText(/^temporadas$/i), String(validValues.seasons));
 
     // valoración: click en estrella 5
     const stars = screen.getAllByRole('radio');
     await user.click(stars[4]);
 
     // géneros: seleccionar Drama
-    const genreSelect = screen.getByLabelText(/géneros/i);
+    const genreSelect = screen.getByLabelText(/^géneros$/i);
     await user.selectOptions(genreSelect, ['Drama']);
 
     await user.click(screen.getByRole('button', { name: /guardar/i }));
@@ -263,5 +263,41 @@ describe('SeriesForm', () => {
     await waitFor(() => {
       expect(screen.getByText(/solo se aceptan imágenes/i)).toBeInTheDocument();
     });
+  });
+
+  it('agrupa el formulario en cinco secciones', () => {
+    renderForm();
+    const legends = ['Portada', 'Datos básicos', 'Géneros', 'Reparto', 'Valoración y opinión'];
+    legends.forEach((name) => {
+      expect(screen.getByRole('group', { name })).toBeInTheDocument();
+    });
+  });
+
+  it('la ayuda de géneros avisa de que la × borra del catálogo', async () => {
+    renderForm();
+    await userEvent.click(screen.getByRole('button', { name: /ayuda sobre géneros/i }));
+    expect(screen.getByText(/borra del catálogo entero/i)).toBeInTheDocument();
+  });
+
+  it('cierra la ayuda con Escape', async () => {
+    renderForm();
+    await userEvent.click(screen.getByRole('button', { name: /ayuda sobre géneros/i }));
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByText(/borra del catálogo entero/i)).not.toBeInTheDocument();
+  });
+
+  it('la ayuda de temporadas explica que es texto libre', async () => {
+    renderForm();
+    await userEvent.click(screen.getByRole('button', { name: /ayuda sobre temporadas/i }));
+    expect(screen.getByText(/campo de texto libre/i)).toBeInTheDocument();
+  });
+
+  it('asocia cada ayuda a su control con aria-describedby', () => {
+    renderForm();
+    expect(screen.getByLabelText(/^temporadas$/i)).toHaveAttribute('aria-describedby', 'seasons-help');
+    expect(screen.getByLabelText(/^géneros$/i)).toHaveAttribute('aria-describedby', 'genres-help');
+    expect(screen.getByLabelText(/añadir miembro del reparto/i)).toHaveAttribute('aria-describedby', 'cast-help');
+    expect(screen.getByRole('button', { name: /pega aquí una imagen/i }))
+      .toHaveAttribute('aria-describedby', 'cover-help');
   });
 });
