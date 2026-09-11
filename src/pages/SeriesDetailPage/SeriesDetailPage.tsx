@@ -62,28 +62,16 @@ export function SeriesDetailPage() {
   return (
     <article className={styles.page}>
       <div className={styles.topBar}>
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/series')}
-          className={styles.back}
-        >
+        <Button variant="ghost" onClick={() => navigate('/series')} className={styles.back}>
           ← {MESSAGES.actions.back}
         </Button>
 
         {canModify && (
           <div className={styles.actions}>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => navigate(`/series/${id}/edit`)}
-            >
+            <Button variant="secondary" onClick={() => navigate(`/series/${id}/edit`)}>
               {MESSAGES.actions.edit}
             </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
+            <Button variant="danger" onClick={() => setShowDeleteConfirm(true)}>
               {MESSAGES.actions.delete}
             </Button>
           </div>
@@ -91,31 +79,51 @@ export function SeriesDetailPage() {
       </div>
 
       <div className={styles.layout}>
-        <aside className={styles.cover}>
-          {imageUrl ? (
-            <img src={imageUrl} alt={series.title} className={styles.image} />
-          ) : (
-            <div className={styles.placeholder} aria-hidden="true" />
-          )}
+        <aside className={styles.side}>
+          <div className={styles.cover}>
+            {imageUrl ? (
+              <img src={imageUrl} alt={series.title} className={styles.image} />
+            ) : (
+              <div className={styles.placeholder} aria-hidden="true" />
+            )}
+          </div>
+
+          {/* La cifra repite lo que ya anuncia el aria-label de Rating */}
+          <div className={styles.ratingTile}>
+            <div className={styles.ratingHead} aria-hidden="true">
+              <span className={styles.ratingLabel}>{MESSAGES.series.rating}</span>
+              <p className={styles.ratingValue}>
+                {series.rating}
+                <span className={styles.ratingMax}>/5</span>
+              </p>
+            </div>
+            <div className={styles.stars}>
+              <Rating value={series.rating} readOnly label={MESSAGES.series.rating} />
+            </div>
+          </div>
         </aside>
 
         <div className={styles.content}>
-          <h1 className={styles.title}>{series.title}</h1>
+          <header className={styles.head}>
+            <h1 className={styles.title}>{series.title}</h1>
 
-          <div className={styles.metaCard}>
-            <div className={styles.meta}>
-              <span className={styles.year}>{series.year}</span>
-              <span className={styles.seasons}>{series.seasons}</span>
-            </div>
-
-            <Rating value={series.rating} readOnly label={MESSAGES.series.rating} />
+            <dl className={styles.facts}>
+              <div className={styles.fact}>
+                <dt className={styles.factLabel}>{MESSAGES.series.year}</dt>
+                <dd className={styles.factValue}>{series.year}</dd>
+              </div>
+              <div className={styles.fact}>
+                <dt className={styles.factLabel}>{MESSAGES.series.seasons}</dt>
+                <dd className={styles.factValue}>{series.seasons}</dd>
+              </div>
+            </dl>
 
             <div className={styles.genres}>
               {Array.from(new Set(series.genres)).map((g, i) => (
                 <Tag key={g} label={g} color={categoricalColor(i)} />
               ))}
             </div>
-          </div>
+          </header>
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>{MESSAGES.series.synopsis}</h2>
@@ -136,7 +144,12 @@ export function SeriesDetailPage() {
           {series.opinion && (
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>{MESSAGES.series.opinion}</h2>
-              <p className={styles.text}>{series.opinion}</p>
+              <div className={styles.opinion}>
+                <span className={styles.quote} aria-hidden="true">
+                  “
+                </span>
+                <p className={styles.text}>{series.opinion}</p>
+              </div>
             </section>
           )}
         </div>

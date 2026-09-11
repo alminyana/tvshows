@@ -2,16 +2,33 @@
 
 .page {
   padding: var(--space-4);
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
+
+  @include tablet {
+    padding: var(--space-6);
+  }
 }
 
 .topBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
   gap: var(--space-3);
+
+  @include tablet {
+    margin-bottom: var(--space-7);
+  }
+
+  // Objetivo táctil de 44px en móvil; desde tablet vuelve al alto del botón md.
+  button {
+    min-height: 44px;
+
+    @include tablet {
+      min-height: 36px;
+    }
+  }
 }
 
 .back {
@@ -24,72 +41,196 @@
 }
 
 .layout {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-6);
 
   @include tablet {
-    flex-direction: row;
-    align-items: flex-start;
+    grid-template-columns: 260px 1fr;
+    align-items: start;
+  }
+
+  @include desktop {
+    grid-template-columns: 320px 1fr;
     gap: var(--space-8);
+  }
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+
+  @include tablet {
+    max-width: none;
+    margin: 0;
+    gap: var(--space-5);
+  }
+
+  // La columna acompaña al scroll del texto, que es mucho más largo.
+  @include desktop {
+    position: sticky;
+    top: var(--space-5);
   }
 }
 
 .cover {
   width: 100%;
-  max-width: 280px;
-  flex-shrink: 0;
-  margin: 0 auto;
-
-  @include tablet {
-    margin: 0;
-  }
 }
 
 .image {
   width: 100%;
   border-radius: var(--radius-md);
   display: block;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
 }
 
 .placeholder {
   width: 100%;
   aspect-ratio: 2 / 3;
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
   background: linear-gradient(150deg, var(--cat-1), var(--cat-3), var(--cat-5));
 }
 
-.content {
-  flex: 1;
+// ─── Valoración (tratamiento KPI del dashboard) ──────────────────────────────
+
+.ratingTile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+
+  @include tablet {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+}
+
+.ratingTile::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--cat-2);
+}
+
+.ratingHead {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-1);
+}
+
+.ratingLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.ratingValue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+.ratingMax {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+// Rating readOnly hereda el font-size del contenedor.
+.stars {
+  display: flex;
+  font-size: var(--font-size-xl);
+
+  @include tablet {
+    font-size: var(--font-size-lg);
+  }
+}
+
+// ─── Contenido ───────────────────────────────────────────────────────────────
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+
+  @include tablet {
+    gap: var(--space-5);
+    padding-bottom: var(--space-6);
+  }
 }
 
 .title {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
   color: var(--color-text);
-  letter-spacing: -0.01em;
+  text-wrap: balance;
   margin: 0;
+
+  @include tablet {
+    font-size: var(--font-size-4xl);
+  }
 }
 
-.metaCard {
+// Los datos duros como fila de hechos, no como tarjeta apretada.
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0;
+
+  @include tablet {
+    gap: var(--space-7);
+  }
+}
+
+.fact {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  gap: var(--space-1);
 }
 
-.meta {
-  display: flex;
-  gap: var(--space-4);
+.factLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+}
+
+.factValue {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
 }
 
 .genres {
@@ -104,23 +245,86 @@
   gap: var(--space-2);
 }
 
+// El aire entre bloques lo da el espaciado; la hairline solo marca el corte.
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+
+  @include tablet {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+  }
 }
 
+// Patrón canónico de título de sección del sistema (legend de mockup-D1).
 .sectionTitle {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+}
+
+.sectionTitle::before {
+  content: '';
+  flex-shrink: 0;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
 }
 
 .text {
+  max-width: 68ch;
   color: var(--color-text);
-  line-height: 1.6;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  text-wrap: pretty;
   margin: 0;
+
+  @include tablet {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.opinion {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-5);
+  padding-left: var(--space-6);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+
+  @include tablet {
+    padding: var(--space-6);
+    padding-left: var(--space-8);
+  }
+}
+
+.quote {
+  position: absolute;
+  top: -6px;
+  left: var(--space-2);
+  font-size: calc(var(--font-size-3xl) * 2);
+  line-height: 1;
+  font-weight: var(--font-weight-bold);
+  color: color-mix(in srgb, var(--cat-4) 26%, transparent);
+  pointer-events: none;
+
+  @include tablet {
+    left: var(--space-3);
+    font-size: calc(var(--font-size-4xl) * 2);
+  }
 }
 
 .center {
