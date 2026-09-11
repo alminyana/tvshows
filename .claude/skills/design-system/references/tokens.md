@@ -32,7 +32,7 @@ Viven en `:root` y son **idénticos en los 8 temas**. Mejorarlos afecta a todos 
 
 --font-size-xs: .75rem;   --font-size-sm: .875rem;  --font-size-md: 1rem;
 --font-size-lg: 1.125rem; --font-size-xl: 1.25rem;  --font-size-2xl: 1.5rem;
---font-size-3xl: 1.875rem;
+--font-size-3xl: 1.875rem; --font-size-4xl: 2.5rem;   // 4xl: título de la ficha de detalle
 
 --font-weight-normal: 400; --font-weight-medium: 500;
 --font-weight-semibold: 600; --font-weight-bold: 700;
