@@ -290,3 +290,33 @@ El campo **Géneros conserva sus tres controles apilados** (chips + `<select mul
 
 ### Hecho cuando
 - Las cinco secciones se distinguen, los cuatro popovers abren y cierran por los tres caminos, crear y editar una serie funciona de principio a fin (incluida la portada por pegado y por selector), el modal de login no se descuadra con el `gap` global, y `lint`, `tsc -b`, `build` y la suite (318 tests) en verde.
+
+---
+
+## D9 — Ficha de detalle de serie (`/series/:id`) · Complejidad: M
+
+- **Objetivo:** que la última vista sin pasar por el rediseño deje de ser plana: más visual, con los bloques de información respirando, y coherente en los 16 combos tema × modo.
+- **Entregable:** ficha en dos columnas con portada elevada, valoración como tile KPI y bloques separados por aire + hairline.
+- **Estado:** ✅ Completada. Tres direcciones propuestas en un canvas de diseño (A · Cartel, B · Editorial, C · Panel de datos); el usuario eligió **B · Editorial**.
+- **Dependencias:** D7 (la paleta `--cat-1..5`), D8 (el patrón de título de sección en versalita).
+
+### Tareas
+1. **Retícula en vez de flex.** `.layout` pasa a `grid`: 1 columna en móvil, `260px 1fr` desde `tablet`, `320px 1fr` con `--space-8` desde `desktop`. La columna izquierda es `sticky` **solo en desktop**, donde el texto es mucho más largo que la portada. ✅
+2. **Columna izquierda = portada + valoración.** La portada sube a `--shadow-lg`; debajo, un **tile con el tratamiento KPI del dashboard** (franja de 4px en `--cat-2`, `--color-surface-elevated`, cifra a `--font-size-3xl`). En móvil el tile va en fila (cifra a la izquierda, estrellas a la derecha) y desde `tablet` pasa a columna. ✅
+3. **Fuera el `.metaCard`.** Año y temporadas se convierten en un `<dl>` de hechos con etiqueta en versalita (`xs`, uppercase, `.05em`, muted) y valor a `lg/semibold`; los géneros quedan sueltos bajo la cabecera. ✅
+4. **Títulos de sección al patrón canónico**: `sm`, uppercase, `letter-spacing: .05em`, `--color-primary`, con un guion de acento de 22×2px por delante. Sustituyen al `lg/semibold` en `--color-text`. Es el mismo vocabulario que las `legend` de `SeriesForm`. ✅
+5. **Aire entre bloques.** Cada `section` abre con `margin-top`/`padding-top` de `--space-5` (móvil) / `--space-6` (tablet) y una hairline `--color-border`. El cuerpo de texto pasa a `--line-height-relaxed`, `--font-size-lg` desde tablet y `max-width: 68ch`. ✅
+6. **Opinión como tarjeta**, elevada, con una comilla decorativa en `--cat-4` al 26% y tamaño derivado del token (`calc(var(--font-size-4xl) * 2)`), no un hex ni un px suelto. ✅
+7. **Responsive y táctil.** Mobile-first con los mixins `tablet`/`desktop`; los tres botones de la barra superior a 44px en móvil y 36px desde tablet, vía `.topBar button`. ✅
+
+### Token nuevo
+**`--font-size-4xl: 2.5rem`** en el bloque no cromático de `_tokens.scss`: no existía ningún tamaño por encima de `--font-size-3xl` (1.875rem) y el título de la ficha se quedaba corto. El título usa `3xl` en móvil y `4xl` desde tablet. Reflejado en `.claude/skills/design-system/references/tokens.md`.
+
+### Decisiones
+- **Sin tocar primitivas.** `Tag`, `Rating` y `Button` se consumen tal cual; todo lo nuevo vive en el SCSS de la página. El tamaño de las estrellas se ajusta desde el contenedor, ya que `Rating` en `readOnly` hereda el `font-size`.
+- **La cifra `4/5` es decorativa** (`aria-hidden`): el `aria-label` de `Rating` ya anuncia «Valoración: 4 de 5»; repetirla la haría sonar dos veces.
+- **Un solo botón «Editar».** El mockup llevaba un segundo botón en la columna izquierda; se descartó: además de redundante, dos botones con el mismo nombre accesible rompen `getByRole`.
+- Las direcciones **A** (portada ampliada y desenfocada como banda superior) y **C** (panel lateral de datos) quedan descartadas, no aplazadas.
+
+### Hecho cuando
+- La ficha se lee bien en los 8 temas × 2 modos y en los 3 breakpoints, con y sin portada y con y sin opinión, y `lint`, `tsc -b`, `build` y la suite (318 tests) en verde.

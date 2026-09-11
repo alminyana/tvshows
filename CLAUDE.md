@@ -27,7 +27,7 @@ Personal SPA to manage favorite TV shows. The app is scaffolded and functional. 
 
 The **visual redesign is complete** (design/visual only, no business logic changes): tokens-first overhaul of elevation, typography and themes, 4 new themes, primitives/views/form restyling, and an a11y + responsive closing pass. See `docs/IMPLEMENTATION-PLAN-Design.md` and the redesign status below.
 
-Two follow-up passes build on that foundation: **D7** reworked the `/series` view (poster-first cards, a new **mosaic** density, filters out of the accordion, and a single categorical palette `--cat-1..5` shared by genre chips and KPI accents), and **D8** reworked the series form (five icon-led sections plus contextual help on the four fields that do something non-obvious). See their entries below.
+Three follow-up passes build on that foundation: **D7** reworked the `/series` view (poster-first cards, a new **mosaic** density, filters out of the accordion, and a single categorical palette `--cat-1..5` shared by genre chips and KPI accents), **D8** reworked the series form (five icon-led sections plus contextual help on the four fields that do something non-obvious), and **D9** reworked the series detail page (two-column grid, rating as a KPI tile, blocks separated by air + hairline). See their entries below.
 
 ## Visual redesign (complete — D0–D6)
 
@@ -67,6 +67,19 @@ Follow-up to D5, same tokens-first rules. Visual proposal approved on a design c
 - **`ThemeToggle`** swapped the on/off lightbulb pair for **sun / crescent moon**, and both now take `--color-text-muted` from the active theme — the last hardcoded hex (`#b45309`) in the component is gone. The icon alone signals the state; the colour no longer needs to.
 - **`default` light mode** deepened: `--color-bg` `#f3f4f6` → `#eaecf0`, with `--color-text-muted` `#69707d` → `#646b78` (the old value sat at 4.53:1, so the deeper background alone would have dropped it below AA) and `--color-border` `#e5e7eb` → `#dfe2e8` to keep card edges legible. Contrast audit re-run against `HEAD`: 47 pairs below AA before and after, **zero regressions**.
 - **`GenrePieChart`** legend: now that the card owns a full dashboard row, the donut anchors left and the legend takes the remaining width with `repeat(auto-fit, minmax(190px, 1fr))` instead of fixed 7-row columns. Reading order changed from column-major to row-major.
+
+### D9 — Series detail page (`/series/:id`)
+
+Follow-up to D0–D6, same tokens-first rules. Three directions were drafted on a design canvas (A · poster-led hero, B · editorial, C · data panel); the user picked **B · Editorial**. A and C are discarded, not deferred.
+
+- **Grid, not flex.** `.layout` is a `grid`: one column on mobile, `260px 1fr` from `tablet`, `320px 1fr` with `--space-8` from `desktop`. The left column is `sticky` **only on desktop**, where the text runs much longer than the cover.
+- **Left column = cover + rating.** The cover moves up to `--shadow-lg`; under it, a **rating tile with the dashboard's KPI treatment** (4px `--cat-2` stripe, `--color-surface-elevated`, figure at `--font-size-3xl`). On mobile the tile is a row (figure left, stars right); from `tablet` it becomes a column. The `4/5` figure is `aria-hidden` — `Rating`'s own `aria-label` already announces it.
+- **`.metaCard` is gone.** Year and seasons are a `<dl>` of facts (label in small caps `xs`/uppercase/`.05em`/muted, value at `lg/semibold`); genres sit loose under the header.
+- **Section titles moved to the canonical pattern**: `sm`, uppercase, `letter-spacing: .05em`, `--color-primary`, preceded by a 22×2px accent dash — the same vocabulary as `SeriesForm`'s legends, replacing the old `lg/semibold` in `--color-text`.
+- **Air between blocks.** Each `section` opens with `margin-top`/`padding-top` of `--space-5` (mobile) / `--space-6` (tablet) plus a `--color-border` hairline. Body copy goes to `--line-height-relaxed`, `--font-size-lg` from tablet, `max-width: 68ch`.
+- **New token `--font-size-4xl: 2.5rem`** in the shared non-chromatic block — nothing existed above `--font-size-3xl` (1.875rem) and the page title fell short. The title uses `3xl` on mobile, `4xl` from tablet. Mirrored in the `design-system` skill's `references/tokens.md`.
+- **No primitives were touched.** `Tag`/`Rating`/`Button` are consumed as-is; everything new lives in the page's SCSS (star size is set from the container, since `Rating` in `readOnly` inherits `font-size`). Touch targets: the three top-bar buttons are 44px on mobile, 36px from tablet.
+- Also fixed just before: the landing's KPI accents were still on `--color-primary`/`accent`/`tertiary`/`success` and now use `--cat-1..4`, matching the dashboard (in `default`/`ocean` the first three cards were rendering the same colour).
 
 ## Skills
 
