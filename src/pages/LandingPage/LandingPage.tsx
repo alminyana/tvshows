@@ -133,28 +133,28 @@ export function LandingPage() {
                 label={MESSAGES.dashboard.totalSeries}
                 value={totalSeries}
                 icon={<CollectionIcon />}
-                accent="var(--color-primary)"
+                accent="var(--cat-1)"
               />
               <KPICard
                 label={MESSAGES.dashboard.featuredSeries}
                 value={featuredSeries}
                 detail={MESSAGES.dashboard.featuredDetail}
                 icon={<StarIcon />}
-                accent="var(--color-accent)"
+                accent="var(--cat-2)"
               />
               <KPICard
                 label={MESSAGES.dashboard.miniseries}
                 value={miniseriesCount}
                 detail={MESSAGES.dashboard.miniseriesDetail}
                 icon={<MiniseriesIcon />}
-                accent="var(--color-tertiary)"
+                accent="var(--cat-3)"
               />
               <KPICard
                 label={MESSAGES.dashboard.multiSeason}
                 value={multiSeasonCount}
                 detail={MESSAGES.dashboard.multiSeasonDetail}
                 icon={<LayersIcon />}
-                accent="var(--color-success)"
+                accent="var(--cat-4)"
               />
             </div>
           </div>
