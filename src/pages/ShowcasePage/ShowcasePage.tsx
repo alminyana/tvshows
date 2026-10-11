@@ -55,7 +55,7 @@ const MOCK_SERIES: Series[] = [
     synopsis: 'Un profesor de química diagnosticado con cáncer terminal se convierte en fabricante de metanfetamina.',
     seasons: '5 temporadas (2008–2013).',
     cast: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'],
-    year: 2008,
+    year: '2008',
     rating: 5,
     genres: ['Drama', 'Thriller'],
     createdBy: 'showcase',
@@ -69,7 +69,7 @@ const MOCK_SERIES: Series[] = [
     synopsis: 'Retrato coral del narcotráfico y las instituciones de Baltimore.',
     seasons: '5 temporadas (2002–2008).',
     cast: ['Dominic West', 'Idris Elba'],
-    year: 2002,
+    year: '2002',
     rating: 5,
     genres: ['Drama', 'Thriller'],
     createdBy: 'showcase',
@@ -83,7 +83,7 @@ const MOCK_SERIES: Series[] = [
     synopsis: 'Dramatización del accidente nuclear de 1986 y sus consecuencias.',
     seasons: 'Miniserie (5 episodios).',
     cast: ['Jared Harris', 'Stellan Skarsgård'],
-    year: 2019,
+    year: '2019',
     rating: 4,
     genres: ['Drama', 'Documental'],
     createdBy: 'showcase',
@@ -160,7 +160,7 @@ export function ShowcasePage() {
             <Input id="sc-title" placeholder="Nombre de la serie" />
           </FormField>
           <FormField label="Año" htmlFor="sc-year" error="El año es obligatorio.">
-            <Input id="sc-year" type="number" hasError />
+            <Input id="sc-year" type="text" hasError />
           </FormField>
           <FormField label="Sinopsis" htmlFor="sc-synopsis">
             <Textarea id="sc-synopsis" rows={3} placeholder="Descripción…" />

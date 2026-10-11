@@ -7,7 +7,7 @@ export interface Series {
   synopsis: string;
   seasons: string;
   cast: string[];
-  year: number;
+  year: string;
   opinion?: string;
   rating: number;
   genres: Genre[];

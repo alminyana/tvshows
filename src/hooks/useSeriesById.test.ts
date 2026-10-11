@@ -9,7 +9,7 @@ const mockSeries: Series = {
   synopsis: 'Sinopsis',
   seasons: '2 temporadas',
   cast: ['Adam Scott'],
-  year: 2022,
+  year: '2022',
   rating: 5,
   genres: ['Ciencia ficción'],
   coverImage: 'img-1',

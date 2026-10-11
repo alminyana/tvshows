@@ -88,7 +88,7 @@ export type Database = {
           synopsis: string
           title: string
           updated_at: string
-          year: number | null
+          year: string | null
         }
         Insert: {
           cast_members?: string[]
@@ -102,7 +102,7 @@ export type Database = {
           synopsis?: string
           title: string
           updated_at?: string
-          year?: number | null
+          year?: string | null
         }
         Update: {
           cast_members?: string[]
@@ -116,7 +116,7 @@ export type Database = {
           synopsis?: string
           title?: string
           updated_at?: string
-          year?: number | null
+          year?: string | null
         }
         Relationships: [
           {

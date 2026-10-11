@@ -149,7 +149,7 @@ PROFILE.md
 .env.local
 .env.example
 
-#mocks
+#mo
 tvshows-export.json
 
 # wrangler files
@@ -163,3 +163,4 @@ docs/.DS_Store
 
 #development plans
 /docs
+/supabase

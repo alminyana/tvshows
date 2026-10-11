@@ -29,7 +29,7 @@ const makeSeries = (overrides: Partial<Series> = {}): Series => ({
   synopsis: 'Sinopsis',
   seasons: '5 temporadas',
   cast: [],
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama'],
   coverImage: 'img-1',

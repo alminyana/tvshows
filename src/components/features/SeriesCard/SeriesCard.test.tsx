@@ -23,7 +23,7 @@ const mockSeries: Series = {
   synopsis: 'Sinopsis',
   seasons: '5 temporadas',
   cast: ['Bryan Cranston'],
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   coverImage: 'img-1',

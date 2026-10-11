@@ -21,7 +21,7 @@ const series: Series = {
   synopsis: 'Química y crimen.',
   seasons: '5 temporadas',
   cast: ['Bryan Cranston'],
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   coverImage: 'img-1',

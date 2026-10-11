@@ -29,7 +29,7 @@ const makeSeries = (overrides: Partial<Series> = {}): Series => ({
   synopsis: 'Sinopsis',
   seasons: '5 temporadas',
   cast: [],
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama'],
   coverImage: 'cover-1.jpg',
@@ -40,9 +40,9 @@ const makeSeries = (overrides: Partial<Series> = {}): Series => ({
 });
 
 const SERIES: Series[] = [
-  makeSeries({ id: '1', title: 'Breaking Bad', year: 2008 }),
-  makeSeries({ id: '2', title: 'Fariña', year: 2018, coverImage: 'cover-2.jpg' }),
-  makeSeries({ id: '3', title: 'Sin portada', year: 2024, coverImage: '' }),
+  makeSeries({ id: '1', title: 'Breaking Bad', year: '2008' }),
+  makeSeries({ id: '2', title: 'Fariña', year: '2018', coverImage: 'cover-2.jpg' }),
+  makeSeries({ id: '3', title: 'Sin portada', year: '2024', coverImage: '' }),
 ];
 
 const METRICS: DashboardMetrics = {
