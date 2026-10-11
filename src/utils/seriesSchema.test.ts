@@ -5,7 +5,7 @@ const validData = {
   title: 'Breaking Bad',
   synopsis: 'Un profesor de química.',
   seasons: '5 temporadas',
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   cast: ['Bryan Cranston'],
@@ -43,14 +43,14 @@ describe('seriesSchema', () => {
     expect(seriesSchema.safeParse(rest).success).toBe(true);
   });
 
-  it('year mínimo 1900 cuando se proporciona', () => {
-    expect(seriesSchema.safeParse({ ...validData, year: 1899 }).success).toBe(false);
-    expect(seriesSchema.safeParse({ ...validData, year: 1900 }).success).toBe(true);
+  it('year acepta texto libre', () => {
+    expect(seriesSchema.safeParse({ ...validData, year: '2008-2013' }).success).toBe(true);
+    expect(seriesSchema.safeParse({ ...validData, year: '2019 (piloto 2018)' }).success).toBe(true);
   });
 
-  it('year máximo año actual cuando se proporciona', () => {
-    const futureYear = new Date().getFullYear() + 1;
-    expect(seriesSchema.safeParse({ ...validData, year: futureYear }).success).toBe(false);
+  it('year recorta espacios', () => {
+    const result = seriesSchema.safeParse({ ...validData, year: '  2008  ' });
+    expect(result.success && result.data.year).toBe('2008');
   });
 
   it('year opcional (acepta ausente o string vacío)', () => {
