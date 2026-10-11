@@ -26,7 +26,7 @@ const mockSeries: Series = {
   synopsis: 'Un profesor de química.',
   seasons: '5 temporadas',
   cast: ['Bryan Cranston', 'Aaron Paul'],
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   coverImage: 'img-1',

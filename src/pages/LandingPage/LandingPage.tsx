@@ -42,7 +42,7 @@ export function LandingPage() {
     ? Array.from({ length: HERO_TILES }, (_, i) => covers[i % covers.length])
     : [];
 
-  const years = series.map((s) => s.year).filter((y): y is number => Number.isFinite(y));
+  const years = series.flatMap((s) => (s.year.match(/\d{4}/g) ?? []).map(Number));
   const yearsRange = years.length ? { from: Math.min(...years), to: Math.max(...years) } : null;
 
   const topGenres = genreDistribution.slice(0, TOP_GENRES);

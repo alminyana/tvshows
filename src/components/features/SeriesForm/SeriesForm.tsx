@@ -195,7 +195,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           </FormField>
 
           <FormField label={MESSAGES.series.year} htmlFor="year" error={errors.year?.message}>
-            <Input id="year" type="number" {...register('year')} hasError={!!errors.year} />
+            <Input id="year" type="text" {...register('year')} hasError={!!errors.year} />
           </FormField>
         </div>
 

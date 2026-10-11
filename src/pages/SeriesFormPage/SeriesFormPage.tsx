@@ -68,7 +68,7 @@ export function SeriesFormPage() {
       title: data.title,
       synopsis: data.synopsis ?? '',
       seasons: data.seasons ?? '',
-      year: data.year ?? 0,
+      year: data.year ?? '',
       rating: data.rating ?? 0,
       genres: data.genres ?? [],
       cast: data.cast ?? [],

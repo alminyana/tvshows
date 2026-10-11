@@ -52,7 +52,7 @@ const validValues = {
   title: 'Breaking Bad',
   synopsis: 'Un profesor de química.',
   seasons: '5 temporadas',
-  year: 2008,
+  year: '2008',
   rating: 5,
   genres: ['Drama', 'Thriller'],
   cast: ['Bryan Cranston'],
