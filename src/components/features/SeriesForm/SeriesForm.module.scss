@@ -182,7 +182,7 @@
 
 // Alto dirigido por contenido en la vista de edición; en navegadores sin
 // soporte de field-sizing el textarea conserva el alto fijo de `rows`.
-.opinionAutoResize {
+.autoResizeTextarea {
   field-sizing: content;
   resize: none;
 }

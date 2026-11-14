@@ -201,7 +201,13 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         </div>
 
         <FormField label={MESSAGES.series.synopsis} htmlFor="synopsis" error={errors.synopsis?.message}>
-          <Textarea id="synopsis" rows={4} {...register('synopsis')} hasError={!!errors.synopsis} />
+          <Textarea
+            id="synopsis"
+            rows={4}
+            className={isEdit ? styles.autoResizeTextarea : undefined}
+            {...register('synopsis')}
+            hasError={!!errors.synopsis}
+          />
         </FormField>
 
         <FormField
@@ -390,7 +396,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
           <Textarea
             id="opinion"
             rows={isEdit ? 3 : 5}
-            className={isEdit ? styles.opinionAutoResize : undefined}
+            className={isEdit ? styles.autoResizeTextarea : undefined}
             {...register('opinion')}
             hasError={!!errors.opinion}
           />
