@@ -61,6 +61,7 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
   const { genres: genreCatalog, add: addGenreToCatalog, remove: removeGenreFromCatalog } = useGenres();
   const { user } = useAuth();
   const isLoggedIn = user !== null;
+  const isEdit = initialValues !== undefined;
 
   const genreOptions = genreCatalog.map((g) => ({ value: g, label: g }));
 
@@ -386,7 +387,13 @@ export function SeriesForm({ initialValues, existingImageId, onSubmit, isSubmitt
         </FormField>
 
         <FormField label={MESSAGES.series.opinion} htmlFor="opinion" error={errors.opinion?.message}>
-          <Textarea id="opinion" rows={3} {...register('opinion')} hasError={!!errors.opinion} />
+          <Textarea
+            id="opinion"
+            rows={isEdit ? 3 : 5}
+            className={isEdit ? styles.opinionAutoResize : undefined}
+            {...register('opinion')}
+            hasError={!!errors.opinion}
+          />
         </FormField>
       </fieldset>
 
