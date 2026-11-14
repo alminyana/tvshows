@@ -180,6 +180,13 @@
   color: var(--color-text-muted);
 }
 
+// Alto dirigido por contenido en la vista de edición; en navegadores sin
+// soporte de field-sizing el textarea conserva el alto fijo de `rows`.
+.opinionAutoResize {
+  field-sizing: content;
+  resize: none;
+}
+
 .formActions {
   display: flex;
   justify-content: stretch;
